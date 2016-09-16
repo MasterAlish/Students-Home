@@ -50,7 +50,7 @@ class Group(models.Model):
 
 class Student(models.Model):
     avatar = models.FileField(verbose_name=_(u"Аватар"),
-                              default='avatars/anon.png',
+                              default='/static/img/anon.png',
                               upload_to='avatars')
     user = models.OneToOneField(get_user_model(), related_name="student")
     group = models.ForeignKey(Group, verbose_name=_(u"Группа"), related_name="students")

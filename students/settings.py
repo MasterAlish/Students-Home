@@ -137,12 +137,12 @@ CKEDITOR_CONFIGS = {
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "students", "static"),
+    os.path.join(BASE_DIR, "static")  # from where to collect static files
 )
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.expanduser('~/static')  # to where to store static files. better do it with proxy server
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = os.path.expanduser('~/media')
 
 try:
     from local_settings import *
