@@ -1,0 +1,11 @@
+{% extends 'students/base2.html' %}
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <div class="offset3 span6 zone-content">
+        <h1 class="notfound-title">404</h1>
+
+        <p class="notfound-message">
+            {% trans 'Сиз издеген бет табылган жок!' %}
+        </p>
+    </div>
+{% endblock %}

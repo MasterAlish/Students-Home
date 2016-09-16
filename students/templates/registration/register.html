@@ -1,0 +1,62 @@
+{% extends "students/base.html" %}
+{% load i18n %}
+{% block content %}
+    <div style="width: 800px; margin-right: auto; margin-left: auto; text-align: center; ">
+        <div class="row">
+            <form id="this-form" role="form" style="text-align: left; " method="post" action="{% url 'register' %}">
+                <div style="padding: 0 20px;">
+                    <h3 class="m-t-none m-b">{% trans 'Регистрация' %}</h3>
+                    <div class="col-md-6">
+                        {% for field in form %}
+                            {% if field.name in form.main_fields %}
+                                <div class="form-group {% if field.errors %}has-error{% endif %} ">
+                                    {{ field.label_tag }}
+                                    {{ field }}
+                                    {% if field.errors %}
+                                         <div class="help-block">
+                                            {{ field.errors.0 }}
+                                         </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-md-6">
+                        {% for field in form %}
+                            {% if field.name not in form.main_fields %}
+                                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                                    {{ field.label_tag }}
+                                    {{ field }}
+                                    {% if field.errors %}
+                                         <div class="help-block">
+                                            {{ field.errors.0 }}
+                                         </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-12">
+                        <button class="form-control button-link" type="submit">
+                            <strong>{% trans 'Регистрация' %}</strong>
+                        </button>
+                    </div>
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="/"/>
+
+                </div>
+            </form>
+            <script>
+                $(document).ready(function () {
+                    $("#this-form").find("input").each(function () {
+                        $(this).addClass("form-control");
+                    });
+                    $("#this-form").find("select").each(function () {
+                        $(this).addClass("form-control");
+                    });
+                })
+            </script>
+        </div>
+    </div>
+{% endblock %}

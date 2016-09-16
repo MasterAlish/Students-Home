@@ -1,0 +1,31 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <div class="container">
+        <h1>{{ course.name }}</h1>
+        <div class="lead">
+            {{ course.get_semester_display }} семестр {{ course.year }} года <br>
+            Преподаватели:
+            {% for teacher in course.teachers.all %}
+                {{ teacher.user.get_full_name }}{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        </div>
+        <div>
+            {{ course.description|safe }}
+        </div>
+
+        <div>
+            <h3>Лекции</h3>
+            {% if course.lectures.count > 0 %}
+                <ol>
+                    {% for lecture in course.lectures.all %}
+                        <li><a href="{% url 'lecture' lecture.id %}">{{ lecture }}</a></li>
+                    {% endfor %}
+                </ol>
+            {% else %}
+                Пока лекций нет
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

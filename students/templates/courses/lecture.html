@@ -1,0 +1,18 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <div class="container">
+        <h1>{{ lecture.title }}</h1>
+        <div class="lead">
+            {{ course }} <br>
+            {% if lecture.pptx.name %}
+                Файл презентации: <a href="{{ lecture.pptx.url }}" download>Скачать</a>
+            {% endif %}
+        </div>
+
+        <div>
+            {{ lecture.body|safe }}
+        </div>
+    </div>
+{% endblock %}
