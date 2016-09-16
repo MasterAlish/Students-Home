@@ -60,6 +60,9 @@ WSGI_APPLICATION = 'students.wsgi.application'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -137,9 +140,9 @@ CKEDITOR_CONFIGS = {
 
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
+STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")  # from where to collect static files
-)
+]
 STATIC_ROOT = os.path.expanduser('~/static')  # to where to store static files. better do it with proxy server
 
 MEDIA_URL = "/media/"
