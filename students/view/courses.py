@@ -1,7 +1,10 @@
 # coding=utf-8
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
+from django.utils.translation import ugettext as _
+
 
 from students.model.students import Course, Student, Lecture
 
@@ -16,6 +19,10 @@ def user_authenticated_to_course(user, course):
 class MyGroupView(TemplateView):
     template_name = "courses/my_group.html"
 
+    @login_required
+    def get(self, request, *args, **kwargs):
+        return super(MyGroupView, self).get(request, *args, **kwargs)
+
     def dispatch(self, request, *args, **kwargs):
         try:
             assert is_student(request.user)
@@ -25,12 +32,16 @@ class MyGroupView(TemplateView):
             return render(request, self.template_name, context)
         except:
             pass
-        messages.error(request, u"Ошибочная страница")
+        messages.error(request, _(u"Ошибочная страница"))
         return redirect("/")
 
 
 class CourseView(TemplateView):
     template_name = "courses/course.html"
+
+    @login_required
+    def get(self, request, *args, **kwargs):
+        return super(CourseView, self).get(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -42,13 +53,16 @@ class CourseView(TemplateView):
                 return render(request, self.template_name, context)
         except:
             pass
-        messages.error(request, u"Такой курс не существует")
+        messages.error(request, _(u"Такой курс не существует"))
         return redirect("/")
-
 
 
 class LectureView(TemplateView):
     template_name = "courses/lecture.html"
+
+    @login_required
+    def get(self, request, *args, **kwargs):
+        return super(LectureView, self).get(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -61,5 +75,5 @@ class LectureView(TemplateView):
                 return render(request, self.template_name, context)
         except:
             pass
-        messages.error(request, u"Такая лекция не существует")
+        messages.error(request, _(u"Такая лекция не существует"))
         return redirect("/")
