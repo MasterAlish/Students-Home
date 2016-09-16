@@ -3,6 +3,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
+from django.utils.translation import ugettext as _
+
 
 from students.model.students import Course, Student, Lecture
 
@@ -30,7 +32,7 @@ class MyGroupView(TemplateView):
             return render(request, self.template_name, context)
         except:
             pass
-        messages.error(request, u"Ошибочная страница")
+        messages.error(request, _(u"Ошибочная страница"))
         return redirect("/")
 
 
@@ -51,7 +53,7 @@ class CourseView(TemplateView):
                 return render(request, self.template_name, context)
         except:
             pass
-        messages.error(request, u"Такой курс не существует")
+        messages.error(request, _(u"Такой курс не существует"))
         return redirect("/")
 
 
@@ -73,5 +75,5 @@ class LectureView(TemplateView):
                 return render(request, self.template_name, context)
         except:
             pass
-        messages.error(request, u"Такая лекция не существует")
+        messages.error(request, _(u"Такая лекция не существует"))
         return redirect("/")

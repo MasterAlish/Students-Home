@@ -3,6 +3,8 @@ from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.db import models
 from slugify import slugify_unicode
+from django.utils.translation import ugettext as _
+
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
@@ -37,9 +39,9 @@ class MyUser(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    date_of_birth = models.DateField(null=True, blank=False, verbose_name=u"Дата рождения")
-    phone = models.CharField(max_length=100, null=True, blank=False, verbose_name=u"Номер телефона")
-    fullname = models.CharField(max_length=255, null=True, blank=False, verbose_name=u"Полное имя")
+    date_of_birth = models.DateField(null=True, blank=False, verbose_name=_(u"Дата рождения"))
+    phone = models.CharField(max_length=100, null=True, blank=False, verbose_name=_(u"Номер телефона"))
+    fullname = models.CharField(max_length=255, null=True, blank=False, verbose_name=_(u"Полное имя"))
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
