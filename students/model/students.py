@@ -3,6 +3,8 @@ from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from django.conf import settings
+
 
 class Teacher(models.Model):
     user = models.OneToOneField(get_user_model(), related_name="teacher")
@@ -41,7 +43,9 @@ class Group(models.Model):
 
 
 class Student(models.Model):
-    avatar = models.FileField(verbose_name=u"Аватар")
+    avatar = models.FileField(verbose_name=u"Аватар",
+                              default='avatars/anon.jpg',
+                              upload_to='avatars')
     user = models.OneToOneField(get_user_model(), related_name="student")
     group = models.ForeignKey(Group, verbose_name=u"Группа", related_name="students")
 
