@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 
@@ -15,6 +16,10 @@ def user_authenticated_to_course(user, course):
 
 class MyGroupView(TemplateView):
     template_name = "courses/my_group.html"
+
+    @login_required
+    def get(self, request, *args, **kwargs):
+        return super(MyGroupView, self).get(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -32,6 +37,10 @@ class MyGroupView(TemplateView):
 class CourseView(TemplateView):
     template_name = "courses/course.html"
 
+    @login_required
+    def get(self, request, *args, **kwargs):
+        return super(CourseView, self).get(request, *args, **kwargs)
+
     def dispatch(self, request, *args, **kwargs):
         try:
             course = Course.objects.get(pk=kwargs['id'])
@@ -46,9 +55,12 @@ class CourseView(TemplateView):
         return redirect("/")
 
 
-
 class LectureView(TemplateView):
     template_name = "courses/lecture.html"
+
+    @login_required
+    def get(self, request, *args, **kwargs):
+        return super(LectureView, self).get(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
         try:
