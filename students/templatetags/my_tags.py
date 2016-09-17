@@ -1,10 +1,8 @@
 # coding=utf-8
 from django import template
 from random import randint
-
 from django.utils import translation
-
-from students.model.students import Student, Teacher
+from students.model.base import Student, Teacher
 
 register = template.Library()
 

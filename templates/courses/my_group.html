@@ -22,7 +22,12 @@
                         {% for student in group.students.all %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ student.user.fullname }}</td>
+                                <td>
+                                    <div class="mini-student-avatar">
+                                        <img src="{{ student.avatar_url }}">
+                                    </div>
+                                    {{ student.user.fullname }}
+                                </td>
                                 <td>{{ student.user.date_of_birth }}</td>
                                 <td>
                                     <a href="mailto:{{ student.user.email }}"><span class="fa fa-envelope"></span></a>

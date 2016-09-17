@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 from django.utils.translation import ugettext as _
 
 
-from students.model.students import Course, Student, Lecture
+from students.model.base import Course, Student, Lecture
 
 
 def is_student(user):
@@ -18,10 +18,6 @@ def user_authenticated_to_course(user, course):
 
 class MyGroupView(TemplateView):
     template_name = "courses/my_group.html"
-
-    @login_required
-    def get(self, request, *args, **kwargs):
-        return super(MyGroupView, self).get(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -39,10 +35,6 @@ class MyGroupView(TemplateView):
 class CourseView(TemplateView):
     template_name = "courses/course.html"
 
-    @login_required
-    def get(self, request, *args, **kwargs):
-        return super(CourseView, self).get(request, *args, **kwargs)
-
     def dispatch(self, request, *args, **kwargs):
         try:
             course = Course.objects.get(pk=kwargs['id'])
@@ -59,10 +51,6 @@ class CourseView(TemplateView):
 
 class LectureView(TemplateView):
     template_name = "courses/lecture.html"
-
-    @login_required
-    def get(self, request, *args, **kwargs):
-        return super(LectureView, self).get(request, *args, **kwargs)
 
     def dispatch(self, request, *args, **kwargs):
         try:

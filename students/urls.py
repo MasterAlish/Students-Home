@@ -3,6 +3,7 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login
 
 from students.view.courses import CourseView, LectureView, MyGroupView
@@ -19,9 +20,9 @@ urlpatterns = [
     url(r'^accounts/register/$', auth_register, name="register"),
 
     url(r'^$', HomeView.as_view(), name='home'),
-    url(r'^my/group/$', MyGroupView.as_view(), name='my_group'),
-    url(r'^course/(?P<id>\d+)$', CourseView.as_view(), name='course'),
-    url(r'^lecture/(?P<id>\d+)$', LectureView.as_view(), name='lecture'),
+    url(r'^my/group/$', login_required(MyGroupView.as_view()), name='my_group'),
+    url(r'^course/(?P<id>\d+)$', login_required(CourseView.as_view()), name='course'),
+    url(r'^lecture/(?P<id>\d+)$', login_required(LectureView.as_view()), name='lecture'),
 
     url(r'^error/$', on_error, name='error500'),
     url(r'^not-found/$', on_not_found, name='error404'),
@@ -29,7 +30,7 @@ urlpatterns = [
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/',  include(admin.site.urls)),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)

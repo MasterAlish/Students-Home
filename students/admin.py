@@ -5,7 +5,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group as UserGroup
 
-from students.model.students import Teacher, Student, Course, Group as StudentGroup, Lecture
+from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture
 
 from students.models import MyUser, UserChangeForm, UserCreationForm
 

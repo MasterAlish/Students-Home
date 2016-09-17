@@ -1,16 +1,36 @@
 # coding=utf-8
+from hashlib import md5
 from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import ugettext as _
 
+from image.processing import image_is_big, make_image_small
 
 
-class Teacher(models.Model):
+class AvatarMixin:
+    avatar = None
+    user = None
+
+    def avatar_url(self):
+        if self.avatar.name:
+            return self.avatar.url
+        else:
+            return "https://www.gravatar.com/avatar/%s?d=monsterid" % md5(self.user.email).hexdigest()
+
+
+class Teacher(models.Model, AvatarMixin):
+    avatar = models.FileField(verbose_name=_(u"Аватар"), upload_to="avatars/", null=True)
     user = models.OneToOneField(get_user_model(), related_name="teacher")
 
     def __unicode__(self):
         return unicode(self.user)
+
+    def save(self, **kwargs):
+        super(Teacher, self).save(**kwargs)
+        if self.avatar.name and image_is_big(self.avatar.name):
+            self.avatar.name = make_image_small(self.avatar.name)
+        return super(Teacher, self).save(**kwargs)
 
 
 class Course(models.Model):
@@ -48,12 +68,16 @@ class Group(models.Model):
         return unicode(self.name)
 
 
-class Student(models.Model):
-    avatar = models.FileField(verbose_name=_(u"Аватар"),
-                              default='/static/img/anon.png',
-                              upload_to='avatars')
+class Student(models.Model, AvatarMixin):
+    avatar = models.FileField(verbose_name=_(u"Аватар"), null=True, upload_to="avatars/")
     user = models.OneToOneField(get_user_model(), related_name="student")
     group = models.ForeignKey(Group, verbose_name=_(u"Группа"), related_name="students")
 
     def __unicode__(self):
         return unicode(self.user)+u" "+unicode(self.group)
+
+    def save(self, **kwargs):
+        super(Student, self).save(**kwargs)
+        if self.avatar.name and image_is_big(self.avatar.name):
+            self.avatar.name = make_image_small(self.avatar.name)
+        return super(Student, self).save(**kwargs)

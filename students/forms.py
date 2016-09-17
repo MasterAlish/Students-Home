@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.contrib.auth import get_user_model
 
-from students.model.students import Group
+from students.model.base import Group
 from students.simplemathcaptcha.fields import MathCaptchaField
 from ckeditor.widgets import CKEditorWidget
 from django import forms

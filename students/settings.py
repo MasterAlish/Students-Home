@@ -143,10 +143,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")  # from where to collect static files
 ]
-STATIC_ROOT = os.path.expanduser('~/static')  # to where to store static files. better do it with proxy server
+STATIC_ROOT = os.path.join(BASE_DIR, "collected_static")  # to where to store static files. better do it with proxy server
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.expanduser('~/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 try:
     from local_settings import *

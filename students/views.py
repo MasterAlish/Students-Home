@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView, View
 
-from students.model.students import Student
+from students.model.base import Student
 from students.models import MyUser
 
 

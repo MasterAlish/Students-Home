@@ -9,3 +9,14 @@ body {
 .navbar {
   margin-bottom: 20px;
 }
+
+.mini-student-avatar{
+  width: 32px;
+  height: 32px;
+  display: inline;
+}
+
+.mini-student-avatar img{
+  max-width: 32px;
+  max-height: 32px;
+}
