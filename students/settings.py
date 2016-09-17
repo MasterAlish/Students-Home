@@ -185,6 +185,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, "collected_static")  # to where to store st
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+)
+
 try:
     from local_settings import *
 except ImportError:
