@@ -1,6 +1,6 @@
 #!/bin/bash
 
-zip -r update.zip students/ static/ templates/ manage.py requirements.txt
+zip -r update.zip students/ static/ templates/ image/ manage.py requirements.txt
 scp update.zip masteralish@masteralish.myjino.ru:django/students/
 rm update.zip
 ssh masteralish@masteralish.myjino.ru << END

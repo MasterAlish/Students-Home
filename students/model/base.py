@@ -62,7 +62,7 @@ class Lecture(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=100, verbose_name=_(u"Название"))
-    courses = models.ManyToManyField(Course, blank=True, verbose_name=_(u"Курсы"))
+    courses = models.ManyToManyField(Course, blank=True, verbose_name=_(u"Курсы"), related_name="groups")
 
     def __unicode__(self):
         return unicode(self.name)

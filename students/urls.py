@@ -6,7 +6,9 @@ from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login
 
+from students.view.common import GroupView
 from students.view.courses import CourseView, LectureView, MyGroupView
+from students.view.teachers import TeacherGroupsView
 from views import HomeView,on_error, on_not_found, auth_logout, \
     auth_profile, auth_register
 
@@ -23,6 +25,10 @@ urlpatterns = [
     url(r'^my/group/$', login_required(MyGroupView.as_view()), name='my_group'),
     url(r'^course/(?P<id>\d+)$', login_required(CourseView.as_view()), name='course'),
     url(r'^lecture/(?P<id>\d+)$', login_required(LectureView.as_view()), name='lecture'),
+
+     url(r'^teacher/groups/$', login_required(TeacherGroupsView.as_view()), name='teacher_groups'),
+
+     url(r'^groups/(?P<id>\d+)$', login_required(GroupView.as_view()), name='group'),
 
     url(r'^error/$', on_error, name='error500'),
     url(r'^not-found/$', on_not_found, name='error404'),
