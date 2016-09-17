@@ -84,15 +84,3 @@ class StudentsAndTeachersView(TemplateView):
 
     def handle(self, request, *args, **kwargs):
         return super(StudentsAndTeachersView, self).dispatch(request, *args, **kwargs)
-
-
-class GroupView(StudentsAndTeachersView):
-    template_name = "courses/group.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        group = Group.objects.get(pk=kwargs['id'])
-        if user_authenticated_to_group(request.user, group):
-            self.context['group'] = group
-            return render(request, self.template_name, self.context)
-        raise Exception(u"Smth went wrong")
-

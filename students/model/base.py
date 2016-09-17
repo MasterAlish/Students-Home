@@ -16,7 +16,7 @@ class AvatarMixin:
         if self.avatar.name:
             return self.avatar.url
         else:
-            return "https://www.gravatar.com/avatar/%s?d=monsterid" % md5(self.user.email).hexdigest()
+            return "https://www.gravatar.com/avatar/%s?d=monsterid&s=256" % md5(self.user.email).hexdigest()
 
 
 class Teacher(models.Model, AvatarMixin):

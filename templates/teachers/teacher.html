@@ -1,0 +1,44 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <div class="container">
+        <h1>{{ teacher.user.fullname }}</h1>
+
+        <div>
+            <div class="big-student-avatar">
+                <img src="{{ teacher.avatar_url }}">
+            </div>
+            <div>
+                <table class="table" style="width: auto;">
+                    <tr>
+                        <th>Email:</th>
+                        <td>
+                            <a href="mailto:{{ teacher.user.email }}"><span class="fa fa-envelope"></span></a>
+                            {{ teacher.user.email }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Тел:</th>
+                        <td>{{ teacher.user.phone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Дата рождения:</th>
+                        <td>{{ teacher.user.date_of_birth }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <h3>Курсы</h3>
+        {% if teacher.courses.count > 0 %}
+            <ul>
+                {% for course in teacher.courses.all %}
+                    <li>{{ course.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            Курсов нет
+        {% endif %}
+    </div>
+{% endblock %}

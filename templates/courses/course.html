@@ -8,7 +8,10 @@
             {{ course.get_semester_display }} семестр {{ course.year }} года <br>
             Преподаватели:
             {% for teacher in course.teachers.all %}
-                {{ teacher.user.get_full_name }}{% if not forloop.last %},{% endif %}
+                <a href="{% url 'teacher' teacher.id %}">
+                    {{ teacher.user.get_full_name }}
+                </a>
+                {% if not forloop.last %},{% endif %}
             {% endfor %}
         </div>
         <div>

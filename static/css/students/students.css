@@ -2,21 +2,35 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300);
 
 body {
-  padding-top: 20px;
-  padding-bottom: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .navbar {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
-.mini-student-avatar{
-  width: 32px;
-  height: 32px;
-  display: inline;
+.mini-student-avatar {
+    width: 32px;
+    height: 32px;
+    display: inline;
 }
 
-.mini-student-avatar img{
-  max-width: 32px;
-  max-height: 32px;
+.mini-student-avatar img {
+    max-width: 32px;
+    max-height: 32px;
+}
+
+.big-student-avatar {
+    width: 256px;
+    height: 256px;
+    display: inline;
+    float: left;
+    margin-right: 30px;
+    margin-bottom: 30px;
+}
+
+.big-student-avatar img {
+    max-width: 256px;
+    max-height: 256px;
 }
