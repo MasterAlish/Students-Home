@@ -20,7 +20,7 @@ class AvatarMixin:
 
 
 class Teacher(models.Model, AvatarMixin):
-    avatar = models.FileField(verbose_name=_(u"Аватар"), upload_to="avatars/", null=True)
+    avatar = models.FileField(verbose_name=_(u"Аватар"), upload_to="avatars/", null=True, blank=True)
     user = models.OneToOneField(get_user_model(), related_name="teacher")
 
     def __unicode__(self):
@@ -69,7 +69,7 @@ class Group(models.Model):
 
 
 class Student(models.Model, AvatarMixin):
-    avatar = models.FileField(verbose_name=_(u"Аватар"), null=True, upload_to="avatars/")
+    avatar = models.FileField(verbose_name=_(u"Аватар"), null=True, blank=True, upload_to="avatars/")
     user = models.OneToOneField(get_user_model(), related_name="student")
     group = models.ForeignKey(Group, verbose_name=_(u"Группа"), related_name="students")
 
