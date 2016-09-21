@@ -1,0 +1,51 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <div class="container">
+        <h1>{{ user.fullname }}</h1>
+
+        <div>
+            <div class="big-student-avatar">
+                {% if user|is_student %}
+                    <img src="{{ user.student.avatar_url }}">
+                {% elif user|is_teacher %}
+                    <img src="{{ user.teacher.avatar_url }}">
+                {% else %}
+                    <img src="{{ user.email|gravatar }}">
+                {% endif %}
+            </div>
+            <div>
+                <table class="table" style="width: auto;">
+                    {% if user|is_student %}
+                        <tr>
+                            <th>Моя группа:</th>
+                            <td>{{ user.student.group.name }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <th>Мой email:</th>
+                        <td>
+                            <span class="fa fa-envelope"></span>
+                            {{ user.email }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Мой тел:</th>
+                        <td>{{ user.phone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Моя дата рождения:</th>
+                        <td>{{ user.date_of_birth }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div>
+            <a class="btn btn-default" href="{% url 'change_password' %}">Изменить пароль</a>
+            <a class="btn btn-default" href="{% url 'change_user_data' %}">Изменить данные</a>
+        </div>
+
+    </div>
+{% endblock %}

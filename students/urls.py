@@ -3,13 +3,14 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth import views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login
 
 from students.view.courses import CourseView, LectureView, MyGroupView, GroupView
-from students.view.teachers import TeacherGroupsView, TeacherView
+from students.view.teachers import TeacherGroupsView, TeacherView, StudentView
 from students.view.main import HomeView,on_error, on_not_found, auth_logout, \
-    auth_profile, auth_register
+    auth_profile, auth_register, password_change, user_change, reset_password
 
 handler500 = 'students.views.on_error'
 handler404 = 'students.views.on_not_found'
@@ -17,8 +18,14 @@ handler404 = 'students.views.on_not_found'
 urlpatterns = [
     url(r'^accounts/login/$', login, name="login"),
     url(r'^accounts/logout/$', auth_logout, name="logout"),
-    url(r'^accounts/profile/$', auth_profile, name="profile"),
+    url(r'^accounts/profile/$', login_required(auth_profile), name="profile"),
     url(r'^accounts/register/$', auth_register, name="register"),
+    url(r'^accounts/password/reset/$', reset_password, name="reset_password"),
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        views.password_reset_confirm, name='password_reset_confirm'),
+    url(r'^reset/done/$', views.password_reset_complete, name='password_reset_complete'),
+    url(r'^accounts/password/change/$', login_required(password_change), name="change_password"),
+    url(r'^accounts/profile/edit/$', login_required(user_change), name="change_user_data"),
 
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^my/group/$', login_required(MyGroupView.as_view()), name='my_group'),
@@ -28,6 +35,7 @@ urlpatterns = [
     url(r'^teacher/groups/$', login_required(TeacherGroupsView.as_view()), name='teacher_groups'),
 
     url(r'^teacher/(?P<id>\d+)/$', login_required(TeacherView.as_view()), name='teacher'),
+    url(r'^student/(?P<id>\d+)/$', login_required(StudentView.as_view()), name='student'),
     url(r'^groups/(?P<id>\d+)$', login_required(GroupView.as_view()), name='group'),
 
     url(r'^error/$', on_error, name='error500'),

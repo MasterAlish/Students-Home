@@ -2,6 +2,7 @@
 from django.contrib.auth import get_user_model
 
 from students.model.base import Group
+from students.models import MyUser
 from students.simplemathcaptcha.fields import MathCaptchaField
 from ckeditor.widgets import CKEditorWidget
 from django import forms
@@ -43,3 +44,12 @@ class UserCreateForm(forms.Form):
             email = self.cleaned_data['email']
             if User.objects.filter(email=email).count() > 0:
                 self.add_error("email", _(u"Такой email уже зарегистрирован в системе"))
+
+
+class UserChangeForm(forms.ModelForm):
+    date_of_birth = forms.DateField(label=_(u"Дата рождения"), widget=MyDateInput)
+    email = forms.EmailField(label=_(u"Email"))
+
+    class Meta:
+        model = MyUser
+        fields = ('fullname', 'phone', 'email', 'date_of_birth',)

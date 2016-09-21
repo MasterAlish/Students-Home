@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.shortcuts import render
 
-from students.model.base import Group, Teacher
+from students.model.base import Group, Teacher, Student
 from students.view.common import TeachersView, StudentsAndTeachersView, user_authenticated_to_group
 
 
@@ -19,4 +19,13 @@ class TeacherView(StudentsAndTeachersView):
     def dispatch(self, request, *args, **kwargs):
         teacher = Teacher.objects.get(pk=kwargs['id'])
         self.context['teacher'] = teacher
+        return render(request, self.template_name, self.context)
+
+
+class StudentView(StudentsAndTeachersView):
+    template_name = "teachers/student.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        student = Student.objects.get(pk=kwargs['id'])
+        self.context['student'] = student
         return render(request, self.template_name, self.context)

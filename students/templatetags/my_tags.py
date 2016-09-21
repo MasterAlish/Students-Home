@@ -1,6 +1,6 @@
 # coding=utf-8
 from django import template
-from random import randint
+from hashlib import md5
 from django.utils import translation
 from students.model.base import Student, Teacher
 
@@ -26,6 +26,11 @@ def convert_tag(tag):
     if tag == 'error':
         return 'danger'
     return tag
+
+
+@register.filter
+def gravatar(email):
+    return "https://www.gravatar.com/avatar/%s?d=monsterid&s=256" % md5(email).hexdigest()
 
 
 @register.filter

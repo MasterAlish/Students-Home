@@ -1,10 +1,14 @@
 # coding=utf-8
-from students.forms import UserCreateForm
+from django.conf import settings
+from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
+from django.core.mail import send_mail
+
+from students.forms import UserCreateForm, UserChangeForm
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView, View
 
 from students.model.base import Student
@@ -25,7 +29,7 @@ def auth_logout(request):
 
 
 def auth_profile(request):
-    return redirect(reverse("home"))
+    return render(request, "registration/profile.html")
 
 
 def create_user(form):
@@ -53,6 +57,54 @@ def auth_register(request):
             return redirect(reverse("home"))
 
     context['form'] = form
+    return render(request, template_name, context=context)
+
+
+def reset_password(request):
+    template_name = "registration/form.html"
+    form = PasswordResetForm()
+    if request.method == 'POST':
+        form = PasswordResetForm(data=request.POST)
+        if form.is_valid():
+            form.save(request=request, from_email=settings.DEFAULT_FROM_EMAIL)
+            messages.success(request, u"Ссылка на восстановление пароля была отправлена на указанную почту")
+            return redirect(reverse("login"))
+    context = {
+        'form': form,
+        'title': _(u'Восстановить пароль')
+    }
+    return render(request, template_name, context=context)
+
+
+def password_change(request):
+    template_name = "registration/form.html"
+    form = PasswordChangeForm(request.user)
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, u"Пароль успешно изменен! Войдите снова используя новый пароль")
+            return redirect(reverse("login"))
+    context = {
+        'form': form,
+        'title': _(u'Изменить пароль')
+    }
+    return render(request, template_name, context=context)
+
+
+def user_change(request):
+    template_name = "registration/form.html"
+    form = UserChangeForm(instance=request.user)
+    if request.method == 'POST':
+        form = UserChangeForm(instance=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, u"Данные успешно изменены!")
+            return redirect(reverse("profile"))
+    context = {
+        'form': form,
+        'title': _(u'Изменить данные')
+    }
     return render(request, template_name, context=context)
 
 

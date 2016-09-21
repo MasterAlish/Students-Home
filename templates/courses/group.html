@@ -8,6 +8,11 @@
         <div>
             <h3>Студенты</h3>
             {% if group.students.count > 0 %}
+                <style>
+                    td{
+                        vertical-align: middle !important;
+                    }
+                </style>
                 <table class="table table-responsive table-striped table-hover">
                     <thead>
                         <tr>
@@ -26,14 +31,16 @@
                                     <div class="mini-student-avatar">
                                         <img src="{{ student.avatar_url }}">
                                     </div>
-                                    {{ student.user.fullname }}
+                                    <a href="{% url 'student' student.id %}">
+                                        {{ student.user.fullname }}
+                                    </a>
                                 </td>
-                                <td>{{ student.user.date_of_birth }}</td>
+                                <td><span class="fa fa-calendar"></span> {{ student.user.date_of_birth }}</td>
                                 <td>
                                     <a href="mailto:{{ student.user.email }}"><span class="fa fa-envelope"></span></a>
                                     {{ student.user.email }}
                                 </td>
-                                <td>{{ student.user.phone }}</td>
+                                <td><span class="fa fa-phone"></span> {{ student.user.phone }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

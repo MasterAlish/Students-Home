@@ -25,6 +25,9 @@
                                     <button class="form-control button-link" type="submit">
                                         <strong>{% trans 'Вход' %}</strong>
                                     </button>
+                                    <a class="btn btn-danger form-control button-link" href="{% url 'reset_password' %}" style="margin-top: 15px;">
+                                        {% trans 'Забыл пароль' %} <i class="em em-scream"></i>
+                                    </a>
                                 </div>
                                 {% csrf_token %}
                                 <input type="hidden" name="next" value="{% url 'home' %}"/>

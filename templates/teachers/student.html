@@ -1,0 +1,39 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <div class="container">
+        <h1>{{ student.user.fullname }}</h1>
+
+        <div>
+            <div class="big-student-avatar">
+                <img src="{{ student.avatar_url }}">
+            </div>
+            <div>
+                <table class="table" style="width: auto;">
+                    <tr>
+                        <th>Группа:</th>
+                        <td>{{ student.group.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td>
+                            <a href="mailto:{{ student.user.email }}"><span class="fa fa-envelope"></span></a>
+                            {{ student.user.email }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Тел:</th>
+                        <td>{{ student.user.phone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Дата рождения:</th>
+                        <td>{{ student.user.date_of_birth }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+
+    </div>
+{% endblock %}
