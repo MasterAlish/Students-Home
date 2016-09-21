@@ -49,6 +49,12 @@ class UserCreateForm(forms.Form):
 class UserChangeForm(forms.ModelForm):
     date_of_birth = forms.DateField(label=_(u"Дата рождения"), widget=MyDateInput)
     email = forms.EmailField(label=_(u"Email"))
+    avatar = forms.ImageField(label=_(u"Загрузить новую аватарку"), required=False)
+
+    def __init__(self, data=None, files=None, instance=None, has_avatar=False):
+        super(UserChangeForm, self).__init__(data=data, files=files, instance=instance)
+        if not has_avatar:
+            del self.fields['avatar']
 
     class Meta:
         model = MyUser

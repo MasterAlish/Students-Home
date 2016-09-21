@@ -13,6 +13,7 @@ from django.views.generic import TemplateView, View
 
 from students.model.base import Student
 from students.models import MyUser
+from students.view.common import is_student, is_teacher
 
 
 def on_error(request):
@@ -94,11 +95,20 @@ def password_change(request):
 
 def user_change(request):
     template_name = "registration/form.html"
-    form = UserChangeForm(instance=request.user)
+    has_avatar = is_student(request.user) or is_teacher(request.user)
+    form = UserChangeForm(instance=request.user, has_avatar=has_avatar)
     if request.method == 'POST':
-        form = UserChangeForm(instance=request.user, data=request.POST)
+        form = UserChangeForm(instance=request.user, data=request.POST, files=request.FILES, has_avatar=has_avatar)
         if form.is_valid():
             form.save()
+            if 'avatar' in form.cleaned_data and form.cleaned_data['avatar']:
+                avatar = form.cleaned_data['avatar']
+                if is_student(request.user):
+                    request.user.student.avatar = avatar
+                    request.user.student.save()
+                if is_teacher(request.user):
+                    request.user.teacher.avatar = avatar
+                    request.user.teacher.save()
             messages.success(request, u"Данные успешно изменены!")
             return redirect(reverse("profile"))
     context = {

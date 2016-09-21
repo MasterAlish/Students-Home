@@ -3,7 +3,7 @@
 {% block content %}
     <div style="width: 400px; margin-right: auto; margin-left: auto; text-align: center; ">
         <div class="row">
-            <form id="this-form" role="form" style="text-align: left; " method="post">
+            <form id="this-form" role="form" style="text-align: left; " method="post" enctype="multipart/form-data">
                 <div style="padding: 0 20px;">
                     <h3 class="m-t-none m-b">{{ title }}</h3>
                     {% for field in form %}
