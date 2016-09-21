@@ -194,3 +194,8 @@ try:
     from local_settings import *
 except ImportError:
     pass
+
+try:
+    from email_settings import *
+except ImportError:
+    pass
