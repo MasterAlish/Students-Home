@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from students.model.base import Group
 from students.models import MyUser
 from students.simplemathcaptcha.fields import MathCaptchaField
-from ckeditor.widgets import CKEditorWidget
 from django import forms
 from django.utils.translation import ugettext as _
 

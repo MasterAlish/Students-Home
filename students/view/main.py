@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
 from django.core.mail import send_mail
 
-from students.forms import UserCreateForm, UserChangeForm
+from students.forms.users import UserCreateForm, UserChangeForm
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.core.urlresolvers import reverse

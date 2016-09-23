@@ -7,7 +7,8 @@ from django.contrib.auth import views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login
 
-from students.view.courses import CourseView, LectureView, MyGroupView, GroupView
+from students.view.courses import CourseView, LectureView, MyGroupView, GroupView, LabWorkView, \
+    EmailToCourseStudentsView
 from students.view.teachers import TeacherGroupsView, TeacherView, StudentView
 from students.view.main import HomeView,on_error, on_not_found, auth_logout, \
     auth_profile, auth_register, password_change, user_change, reset_password
@@ -31,6 +32,8 @@ urlpatterns = [
     url(r'^my/group/$', login_required(MyGroupView.as_view()), name='my_group'),
     url(r'^course/(?P<id>\d+)$', login_required(CourseView.as_view()), name='course'),
     url(r'^lecture/(?P<id>\d+)$', login_required(LectureView.as_view()), name='lecture'),
+    url(r'^labwork/(?P<id>\d+)$', login_required(LabWorkView.as_view()), name='labwork'),
+    url(r'^course/(?P<id>\d+)/email_students/$', login_required(EmailToCourseStudentsView.as_view()), name='email-course'),
 
     url(r'^teacher/groups/$', login_required(TeacherGroupsView.as_view()), name='teacher_groups'),
 

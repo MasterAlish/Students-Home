@@ -114,7 +114,8 @@ CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.j
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': [['Smiley', 'Bold', 'Italic', 'Underline', 'Strike'], ['Link', 'Unlink'], ['Source']],
-        'height': 100,
+        'height': 150,
+        'width': '100%',
         'toolbarCanCollapse': False,
     },
     'short': {
@@ -131,6 +132,7 @@ CKEDITOR_CONFIGS = {
                     ['Link', 'Unlink'],
                     ['Smiley', 'Image']],
         'height': 250,
+        'width': '100%',
         'toolbarCanCollapse': False,
     }
 }

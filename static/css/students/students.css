@@ -34,3 +34,7 @@ body {
     max-width: 256px;
     max-height: 256px;
 }
+
+.django-ckeditor-widget{
+    display: block !important;
+}

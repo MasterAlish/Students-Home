@@ -1,0 +1,41 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <div class="container">
+        <h1>{{ title }}</h1>
+        <div class="lead">
+            Написать сообщение
+            <div style="margin-top: 10px;" id="upload-form" class="panel panel-default">
+                <div class="panel-body">
+                    <form method="post" enctype="multipart/form-data" id="this-form">
+                        {% csrf_token %}
+                        {{ form.media }}
+                        {% for field in form %}
+                            <div class="form-group {% if field.errors %}has-error{% endif %} ">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="help-block">
+                                        {{ field.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <input type="submit" class="btn btn-sm btn-default" value="Отправить">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $("#this-form").find("input").each(function () {
+                $(this).addClass("form-control");
+            });
+            $("#this-form").find("select").each(function () {
+                $(this).addClass("form-control");
+            });
+        })
+    </script>
+{% endblock %}

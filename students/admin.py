@@ -1,11 +1,12 @@
 # coding=utf-8
 from django import forms
 from django.contrib import admin
+from django.contrib.admin import ModelAdmin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group as UserGroup
 
-from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture
+from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture, LabWork, Solution
 
 from students.models import MyUser, UserChangeForm, UserCreationForm
 
@@ -44,8 +45,21 @@ admin.site.register(MyUser, UserAdmin)
 admin.site.unregister(UserGroup)
 
 admin.site.register(Teacher)
-admin.site.register(Student)
+
+
+class StudentAdmin(ModelAdmin):
+    list_display = ['name', 'group', 'user']
+    ordering = ['group', 'user']
+
+
+class SolutionAdmin(ModelAdmin):
+    list_display = ['datetime', 'student', 'labwork']
+    ordering = ['-datetime']
+
+admin.site.register(Student, StudentAdmin)
 admin.site.register(Course)
 admin.site.register(StudentGroup)
 admin.site.register(Lecture)
+admin.site.register(LabWork)
+admin.site.register(Solution, SolutionAdmin)
 

@@ -13,6 +13,10 @@
                 </a>
                 {% if not forloop.last %},{% endif %}
             {% endfor %}
+            {% if user|is_teacher %}
+                <br>
+                <a class="btn btn-sm btn-default" href="{% url 'email-course' course.id %}">Написать студентам курса</a>
+            {% endif %}
         </div>
         <div>
             {{ course.description|safe }}
@@ -28,6 +32,36 @@
                 </ol>
             {% else %}
                 Пока лекций нет
+            {% endif %}
+        </div>
+
+        <div>
+            <h3>Лабораторные работы</h3>
+            {% if user|is_teacher %}
+                {% if course.labworks.count > 0 %}
+                    <ol>
+                        {% for labwork in course.labworks.all %}
+                            <li>
+                                <a href="{% url 'labwork' labwork.id %}">{{ labwork }}</a>
+                                {% if not labwork.active %}
+                                    (Не активен)
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    Пока лабораторных работ нет
+                {% endif %}
+            {% else %}
+                {% if course.active_labworks.count > 0 %}
+                    <ol>
+                        {% for labwork in course.active_labworks.all %}
+                            <li><a href="{% url 'labwork' labwork.id %}">{{ labwork }}</a></li>
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    Пока лабораторных работ нет
+                {% endif %}
             {% endif %}
         </div>
     </div>

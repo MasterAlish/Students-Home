@@ -49,12 +49,26 @@ class Course(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
+    def active_labworks(self):
+        return self.labworks.filter(active=True).all()
+
 
 class Lecture(models.Model):
     course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name='lectures')
     title = models.CharField(max_length=255, verbose_name=_(u"Тема"))
     body = RichTextField(verbose_name=_(u"Текст"), config_name="long")
     pptx = models.FileField(verbose_name=_(u"Презентация"))
+
+    def __unicode__(self):
+        return unicode(self.title)
+
+
+class LabWork(models.Model):
+    course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name='labworks')
+    title = models.CharField(max_length=255, verbose_name=_(u"Тема"))
+    body = RichTextField(verbose_name=_(u"Текст"), config_name="long")
+    deadline = models.DateTimeField(verbose_name=_(u"Крайний срок сдачи"))
+    active = models.BooleanField(verbose_name=_(u"Активен"), default=True)
 
     def __unicode__(self):
         return unicode(self.title)
@@ -76,8 +90,24 @@ class Student(models.Model, AvatarMixin):
     def __unicode__(self):
         return unicode(self.user)+u" "+unicode(self.group)
 
+    @property
+    def name(self):
+        return self.user.get_full_name()
+
     def save(self, **kwargs):
         super(Student, self).save(**kwargs)
         if self.avatar.name and image_is_big(self.avatar.name):
             self.avatar.name = make_image_small(self.avatar.name)
         return super(Student, self).save(**kwargs)
+
+
+class Solution(models.Model):
+    file = models.FileField(verbose_name=_(u"Файл"))
+    comment = RichTextField(verbose_name=_(u"Комментарий"), config_name="default", null=True, blank=True)
+    student = models.ForeignKey(Student, verbose_name=_(u"Студент"), related_name='solutions')
+    labwork = models.ForeignKey(LabWork, verbose_name=_(u"Работа"), related_name='solutions')
+    datetime = models.DateTimeField(verbose_name=_(u"Время"), auto_now_add=True, null=True)
+    mark = models.IntegerField(verbose_name=_(u"Баллы"), default=0)
+
+    def __unicode__(self):
+        return u"Лаба от %s" % unicode(self.student)
