@@ -6,7 +6,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group as UserGroup
 
-from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture, LabWork, Solution
+from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture, LabWork, Solution, ChatMessage
 
 from students.models import MyUser, UserChangeForm, UserCreationForm
 
@@ -53,7 +53,12 @@ class StudentAdmin(ModelAdmin):
 
 
 class SolutionAdmin(ModelAdmin):
-    list_display = ['datetime', 'student', 'labwork']
+    list_display = ['datetime', 'student', 'labwork', 'mark']
+    ordering = ['-datetime']
+
+
+class MessageAdmin(ModelAdmin):
+    list_display = ['datetime', 'user', 'body', 'course']
     ordering = ['-datetime']
 
 admin.site.register(Student, StudentAdmin)
@@ -62,4 +67,5 @@ admin.site.register(StudentGroup)
 admin.site.register(Lecture)
 admin.site.register(LabWork)
 admin.site.register(Solution, SolutionAdmin)
+admin.site.register(ChatMessage, MessageAdmin)
 

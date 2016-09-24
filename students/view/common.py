@@ -1,4 +1,7 @@
 # coding=utf-8
+import traceback
+
+import sys
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
@@ -29,13 +32,17 @@ class TeachersView(TemplateView):
     context = {}
 
     def dispatch(self, request, *args, **kwargs):
+        self.context = {}
+        self.teacher = None
+
         if is_teacher(request.user):
             self.teacher = request.user.teacher
             self.context['teacher'] = self.teacher
             try:
                 return self.handle(request, *args, **kwargs)
-            except:
-                pass
+            except Exception as e:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                traceback.print_exception(type(e), e, exc_traceback)
         messages.error(request, _(u"Что-то пошло не так"))
         return redirect("/")
 
@@ -48,13 +55,17 @@ class StudentsView(TemplateView):
     context = {}
 
     def dispatch(self, request, *args, **kwargs):
+        self.context = {}
+        self.student = None
+
         if is_student(request.user):
             self.student = request.user.student
             self.context['student'] = self.student
             try:
                 return self.handle(request, *args, **kwargs)
-            except:
-                pass
+            except Exception as e:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                traceback.print_exception(type(e), e, exc_traceback)
         messages.error(request, _(u"Что-то пошло не так"))
         return redirect("/")
 
@@ -68,6 +79,10 @@ class StudentsAndTeachersView(TemplateView):
     context = {}
 
     def dispatch(self, request, *args, **kwargs):
+        self.context = {}
+        self.teacher = None
+        self.student = None
+
         if is_student(request.user):
             self.student = request.user.student
             self.context['student'] = self.student
@@ -77,8 +92,9 @@ class StudentsAndTeachersView(TemplateView):
         if self.teacher or self.student:
             try:
                 return self.handle(request, *args, **kwargs)
-            except:
-                pass
+            except Exception as e:
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                traceback.print_exception(type(e), e, exc_traceback)
         messages.error(request, _(u"Что-то пошло не так"))
         return redirect("/")
 

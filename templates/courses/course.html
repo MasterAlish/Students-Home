@@ -13,10 +13,11 @@
                 </a>
                 {% if not forloop.last %},{% endif %}
             {% endfor %}
+            <br>
             {% if user|is_teacher %}
-                <br>
                 <a class="btn btn-sm btn-default" href="{% url 'email-course' course.id %}">Написать студентам курса</a>
             {% endif %}
+            <a class="btn btn-sm btn-default" href="{% url 'chat' course.id %}">Открыть чат</a>
         </div>
         <div>
             {{ course.description|safe }}

@@ -88,7 +88,7 @@ class Student(models.Model, AvatarMixin):
     group = models.ForeignKey(Group, verbose_name=_(u"Группа"), related_name="students")
 
     def __unicode__(self):
-        return unicode(self.user)+u" "+unicode(self.group)
+        return self.user.get_full_name()+u" "+unicode(self.group)
 
     @property
     def name(self):
@@ -111,3 +111,10 @@ class Solution(models.Model):
 
     def __unicode__(self):
         return u"Лаба от %s" % unicode(self.student)
+
+
+class ChatMessage(models.Model):
+    course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name="chats")
+    user = models.ForeignKey(get_user_model(), verbose_name=_(u"Пользователь"), null=True, on_delete=models.SET_NULL)
+    datetime = models.DateTimeField(verbose_name=_(u"Время"), auto_now_add=True)
+    body = models.CharField(max_length=1000, verbose_name=_(u"Сообщение"))
