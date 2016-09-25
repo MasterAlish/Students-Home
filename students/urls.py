@@ -15,8 +15,8 @@ from students.view.teachers import TeacherGroupsView, TeacherView, StudentView
 from students.view.main import HomeView,on_error, on_not_found, auth_logout, \
     auth_profile, auth_register, password_change, user_change, reset_password
 
-handler500 = 'students.views.on_error'
-handler404 = 'students.views.on_not_found'
+handler500 = 'students.view.main.on_error'
+handler404 = 'students.view.main.on_not_found'
 
 urlpatterns = [
     url(r'^accounts/login/$', login, name="login"),

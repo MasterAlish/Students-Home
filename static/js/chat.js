@@ -39,7 +39,9 @@ var Chat = {
         }).done(function (data) {
             Chat.lastMessageId = data.last_message_id;
             Chat.lastMessageDiv.before(data.new_messages);
-            Chat.scrollToBottom();
+            if(data.new_messages.length > 0){
+                Chat.scrollToBottom();
+            }
         }).fail(function (e) {
             console.log(e);
         });

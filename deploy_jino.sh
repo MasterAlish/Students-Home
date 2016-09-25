@@ -6,6 +6,7 @@ rm update.zip
 ssh masteralish@masteralish.myjino.ru << END
     cd django/students
     unzip -uo update.zip
+    rm update.zip
     if [ -f students/local_settings.py ]; then
         rm students/local_settings.py
     fi

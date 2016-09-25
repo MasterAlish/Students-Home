@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import ugettext as _
 
+from image.color import random_bright_color
 from image.processing import image_is_big, make_image_small
 
 
@@ -22,6 +23,7 @@ class AvatarMixin:
 class Teacher(models.Model, AvatarMixin):
     avatar = models.FileField(verbose_name=_(u"Аватар"), upload_to="avatars/", null=True, blank=True)
     user = models.OneToOneField(get_user_model(), related_name="teacher")
+    color = models.CharField(max_length=20, verbose_name=_(u"Цвет"), default="#f44336")
 
     def __unicode__(self):
         return unicode(self.user)
@@ -30,6 +32,7 @@ class Teacher(models.Model, AvatarMixin):
         super(Teacher, self).save(**kwargs)
         if self.avatar.name and image_is_big(self.avatar.name):
             self.avatar.name = make_image_small(self.avatar.name)
+        self.color = random_bright_color()
         return super(Teacher, self).save(**kwargs)
 
 
@@ -86,6 +89,7 @@ class Student(models.Model, AvatarMixin):
     avatar = models.FileField(verbose_name=_(u"Аватар"), null=True, blank=True, upload_to="avatars/")
     user = models.OneToOneField(get_user_model(), related_name="student")
     group = models.ForeignKey(Group, verbose_name=_(u"Группа"), related_name="students")
+    color = models.CharField(max_length=20, verbose_name=_(u"Цвет"), default="#ff1493")
 
     def __unicode__(self):
         return self.user.get_full_name()+u" "+unicode(self.group)
@@ -98,6 +102,7 @@ class Student(models.Model, AvatarMixin):
         super(Student, self).save(**kwargs)
         if self.avatar.name and image_is_big(self.avatar.name):
             self.avatar.name = make_image_small(self.avatar.name)
+        self.color = random_bright_color()
         return super(Student, self).save(**kwargs)
 
 
@@ -118,3 +123,11 @@ class ChatMessage(models.Model):
     user = models.ForeignKey(get_user_model(), verbose_name=_(u"Пользователь"), null=True, on_delete=models.SET_NULL)
     datetime = models.DateTimeField(verbose_name=_(u"Время"), auto_now_add=True)
     body = models.CharField(max_length=1000, verbose_name=_(u"Сообщение"))
+
+    def color(self):
+        from students.view.common import is_student, is_teacher
+        if is_student(self.user):
+            return self.user.student.color
+        if is_teacher(self.user):
+            return self.user.teacher.color
+        return "#00000"
