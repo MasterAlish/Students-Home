@@ -8,6 +8,7 @@ var Chat = {
     lastMessageId: 0,
     lastMessageDiv: null,
     messageInput: null,
+    sound: null,
 
     init: function () {
         this.messagesList = $(".messages");
@@ -23,10 +24,15 @@ var Chat = {
             return false;
         });
         Chat.scrollToBottom();
+        Chat.sound = new Audio('/static/sound/income.mp3');
     },
 
     startTimer: function () {
         setInterval(Chat.updateMessages, 3000);
+    },
+
+    playSound: function () {
+        Chat.sound.play();
     },
 
     updateMessages: function () {
@@ -41,6 +47,7 @@ var Chat = {
             Chat.lastMessageDiv.before(data.new_messages);
             if(data.new_messages.length > 0){
                 Chat.scrollToBottom();
+                Chat.playSound();
             }
         }).fail(function (e) {
             console.log(e);
