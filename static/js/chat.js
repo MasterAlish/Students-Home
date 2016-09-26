@@ -24,7 +24,7 @@ var Chat = {
             return false;
         });
         Chat.scrollToBottom();
-        Chat.sound = new Audio('/static/sound/income.mp3');
+        Chat.sound = $("#player");
     },
 
     startTimer: function () {
@@ -32,7 +32,7 @@ var Chat = {
     },
 
     playSound: function () {
-        Chat.sound.play();
+        Chat.sound[0].play();
     },
 
     updateMessages: function () {
@@ -67,6 +67,7 @@ var Chat = {
             Chat.lastMessageId = data.last_message_id;
             Chat.lastMessageDiv.before(data.new_messages);
             Chat.scrollToBottom();
+            Chat.playSound();
         }).fail(function (e) {
             console.log(e);
         });
