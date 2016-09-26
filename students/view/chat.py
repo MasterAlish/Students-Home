@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.generic import TemplateView
 
+from students.mobile import is_mobile
 from students.model.base import Course, ChatMessage
 from students.view.common import StudentsAndTeachersView, user_authenticated_to_course
 
@@ -16,6 +17,7 @@ from students.view.common import StudentsAndTeachersView, user_authenticated_to_
 
 class ChatView(StudentsAndTeachersView):
     template_name = "chat/chat.html"
+    template_name_mobile = "chat/chat_mobile.html"
 
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=kwargs['id'])
@@ -30,7 +32,10 @@ class ChatView(StudentsAndTeachersView):
             messages = ChatMessage.objects.filter(course=course).order_by("-datetime")[:50]
             self.context['messages'] = reversed(messages)
             self.context['last_message_id'] = messages.first().id if messages.count() > 0 else 0
-            return render(request, self.template_name, self.context)
+            if is_mobile(request):
+                return render(request, self.template_name_mobile, self.context)
+            else:
+                return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
 
 
