@@ -6,7 +6,8 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group as UserGroup
 
-from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture, LabWork, Solution, ChatMessage
+from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture, LabWork, Solution, ChatMessage, \
+    Medal, StudentMedal
 
 from students.models import MyUser, UserChangeForm, UserCreationForm
 
@@ -66,6 +67,8 @@ admin.site.register(Course)
 admin.site.register(StudentGroup)
 admin.site.register(Lecture)
 admin.site.register(LabWork)
+admin.site.register(Medal)
+admin.site.register(StudentMedal)
 admin.site.register(Solution, SolutionAdmin)
 admin.site.register(ChatMessage, MessageAdmin)
 

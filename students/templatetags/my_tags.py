@@ -79,3 +79,11 @@ def best_mark_of_student(solutions_for_lab, student):
         return max
     else:
         return 0
+
+
+@register.filter
+def medals_of(medals_by_students, student):
+    if student.id in medals_by_students:
+        return medals_by_students[student.id]
+    else:
+        return []

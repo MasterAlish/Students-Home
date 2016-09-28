@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from students.forms.courses import SolutionUploadForm, EmailForm
 from students.mail import StudentsMail
-from students.model.base import Course, Lecture, Group, LabWork, Solution
+from students.model.base import Course, Lecture, Group, LabWork, Solution, StudentMedal
 from students.view.common import StudentsView, user_authenticated_to_course, StudentsAndTeachersView, \
     user_authenticated_to_group, TeachersView
 
@@ -85,6 +85,7 @@ class MarksView(StudentsAndTeachersView):
             labworks = course.active_labworks()
             self.context['labs'] = labworks
             self.context['solutions_map'] = self.map_solutions(Solution.objects.filter(labwork__in=labworks))
+            self.context['medals_by_students'] = self.get_medals_by_students(course)
 
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
@@ -107,6 +108,17 @@ class MarksView(StudentsAndTeachersView):
             solutions_for_work[solution.student_id] = students_solutions
             solutions_map[solution.labwork.id] = solutions_for_work
         return solutions_map
+
+    def get_medals_by_students(self, course):
+        medals_by_students = {}
+        medals = StudentMedal.objects.filter(course=course)
+        for medal in medals:
+            student_medals = []
+            if medal.student_id in medals_by_students:
+                student_medals = medals_by_students[medal.student_id]
+            student_medals.append(medal)
+            medals_by_students[medal.student_id] = student_medals
+        return medals_by_students
 
 
 class EmailToCourseStudentsView(TeachersView):

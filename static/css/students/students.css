@@ -38,3 +38,12 @@ body {
 .django-ckeditor-widget{
     display: block !important;
 }
+
+.medal{
+    display: inline-block;
+}
+
+.medal img{
+    width: 40px;
+    height: 40px;
+}

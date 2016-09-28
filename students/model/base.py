@@ -131,3 +131,14 @@ class ChatMessage(models.Model):
         if is_teacher(self.user):
             return self.user.teacher.color
         return "#00000"
+
+
+class Medal(models.Model):
+    image = models.ImageField(verbose_name=_(u"Изображение"))
+    name = models.CharField(max_length=255, verbose_name=_(u"Название"))
+
+
+class StudentMedal(models.Model):
+    student = models.ForeignKey(Student, verbose_name=_(u"Студент"), related_name="medals")
+    medal = models.ForeignKey(Medal, verbose_name=_(u"Медаль"), related_name="medals")
+    course = models.ForeignKey(Course, verbose_name=_(u"За курс"), null=True, blank=True, on_delete=models.SET_NULL)
