@@ -1,0 +1,51 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <div class="container">
+        <h1>{{ course.name }}</h1>
+        <div class="lead">
+            Оценки студентов <br>
+        </div>
+        <div>
+            <table class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>ФИО</th>
+                        {% for lab in labs %}
+                            <th>Лаб {{ forloop.counter }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group in course.groups.all %}
+                        <tr>
+                            <th colspan="{{ 2|add:labs.count }}">{{ group.name }}</th>
+                        </tr>
+                        {% for student in group.students.all %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ student.user.get_full_name }}</td>
+                                {% for lab in labs %}
+                                    <td class="mark">{{ solutions_map|solutions_for_lab:lab|best_mark_of_student:student }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <script>
+        $(document).ready(function(){
+            $(".mark").each(function(){
+                var mark = parseInt($(this).text().trim());
+                if(mark > 10){
+                    $(this).addClass("success");
+                }
+            });
+        })
+    </script>
+{% endblock %}

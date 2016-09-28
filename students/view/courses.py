@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from students.forms.courses import SolutionUploadForm, EmailForm
 from students.mail import StudentsMail
-from students.model.base import Course, Lecture, Group, LabWork
+from students.model.base import Course, Lecture, Group, LabWork, Solution
 from students.view.common import StudentsView, user_authenticated_to_course, StudentsAndTeachersView, \
     user_authenticated_to_group, TeachersView
 
@@ -73,6 +73,40 @@ class GroupView(StudentsAndTeachersView):
             self.context['group'] = group
             return render(request, self.template_name, self.context)
         raise Exception(u"Smth went wrong")
+
+
+class MarksView(StudentsAndTeachersView):
+    template_name = "courses/marks.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['id'])
+        if user_authenticated_to_course(request.user, course):
+            self.context['course'] = course
+            labworks = course.active_labworks()
+            self.context['labs'] = labworks
+            self.context['solutions_map'] = self.map_solutions(Solution.objects.filter(labwork__in=labworks))
+
+            return render(request, self.template_name, self.context)
+        raise Exception(u"User is not authenticated")
+
+    def map_solutions(self, solutions):
+        """
+        :type solutions: list of students.base.model.Solution
+        """
+        solutions_map = {}
+        for solution in solutions:
+            solutions_for_work = {}
+            if solution.labwork_id in solutions_map:
+                solutions_for_work = solutions_map[solution.labwork.id]
+
+            students_solutions = []
+            if solution.student_id in solutions_for_work:
+                students_solutions = solutions_for_work[solution.student_id]
+            students_solutions.append(solution)
+
+            solutions_for_work[solution.student_id] = students_solutions
+            solutions_map[solution.labwork.id] = solutions_for_work
+        return solutions_map
 
 
 class EmailToCourseStudentsView(TeachersView):

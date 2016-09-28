@@ -58,3 +58,24 @@ def is_teacher(user):
         return Teacher.objects.filter(user=user).count() > 0
     except:
         return False
+
+
+@register.filter
+def solutions_for_lab(solutions_map, lab):
+    if lab.id in solutions_map:
+        return solutions_map[lab.id]
+    else:
+        return {}
+
+
+@register.filter
+def best_mark_of_student(solutions_for_lab, student):
+    if student.id in solutions_for_lab:
+        solutions = solutions_for_lab[student.id]
+        max = 0
+        for solution in solutions:
+            if max < solution.mark:
+                max = solution.mark
+        return max
+    else:
+        return 0

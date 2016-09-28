@@ -18,6 +18,7 @@
                 <a class="btn btn-sm btn-default" href="{% url 'email-course' course.id %}">Написать студентам курса</a>
             {% endif %}
             <a class="btn btn-sm btn-default" href="{% url 'chat' course.id %}">Открыть чат</a>
+            <a class="btn btn-sm btn-default" href="{% url 'marks' course.id %}">Оценки</a>
         </div>
         <div>
             {{ course.description|safe }}

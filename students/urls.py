@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from students.view.chat import ChatView, NewMessagesView, PostMessageView
 from students.view.courses import CourseView, LectureView, MyGroupView, GroupView, LabWorkView, \
-    EmailToCourseStudentsView
+    EmailToCourseStudentsView, MarksView
 from students.view.teachers import TeacherGroupsView, TeacherView, StudentView
 from students.view.main import HomeView,on_error, on_not_found, auth_logout, \
     auth_profile, auth_register, password_change, user_change, reset_password
@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^labwork/(?P<id>\d+)/$', login_required(LabWorkView.as_view()), name='labwork'),
     url(r'^course/(?P<id>\d+)/email_students/$', login_required(EmailToCourseStudentsView.as_view()), name='email-course'),
     url(r'^course/(?P<id>\d+)/chat/$', login_required(csrf_exempt(ChatView.as_view())), name='chat'),
+    url(r'^course/(?P<id>\d+)/marks/$', login_required(MarksView.as_view()), name='marks'),
 
     url(r'^chat/new-messages/$', login_required(NewMessagesView.as_view())),
     url(r'^chat/post/$', login_required(csrf_exempt(PostMessageView.as_view()))),
