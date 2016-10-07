@@ -11,6 +11,7 @@ from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView, View
 
+from students.mail import StudentsMail
 from students.model.base import Student
 from students.models import MyUser
 from students.view.common import is_student, is_teacher
@@ -33,17 +34,19 @@ def auth_profile(request):
     return render(request, "registration/profile.html")
 
 
-def create_user(form):
+def create_student(form):
     email = form.cleaned_data['email']
     password = form.cleaned_data['password']
     user = MyUser.objects.create_user(email, password)
     user.fullname = form.cleaned_data['name']
     user.phone = form.cleaned_data['phone']
     user.date_of_birth = form.cleaned_data['birthdate']
+    user.is_active = False
     user.save()
     student = Student(user=user)
     student.group = form.cleaned_data['group']
     student.save()
+    return student
 
 
 def auth_register(request):
@@ -53,8 +56,9 @@ def auth_register(request):
     if request.method == "POST":
         form = UserCreateForm(request.POST)
         if form.is_valid():
-            create_user(form)
-            messages.success(request, _(u"Регистрация прошла успешно! Войдите используя свой email и пароль."))
+            student = create_student(form)
+            messages.success(request, _(u"Регистрация прошла успешно! После проверки ваш аккаунт станет доступным."))
+            StudentsMail().student_registered(request, student)
             return redirect(reverse("home"))
 
     context['form'] = form

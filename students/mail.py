@@ -41,6 +41,12 @@ class StudentsMail(object):
             recipients.append(student.user.email)
         self.save_mail(subject, html_text, html_text, recipients)
 
+    def student_registered(self, request, student):
+        subject = u"Зарегистрировался новый студент: %s" % unicode(student)
+        message = u"Перейдите по ссылку чтобы активировать аккаунт студента %s " % unicode(request.META["HTTP_ORIGIN"]+"/admin/students/myuser/"+str(student.user.id))
+        recipients = [settings.EMAIL_ADMIN_EMAIL]
+        self.save_mail(subject, message, message, recipients)
+
     def save_mail(self, subject, message, message_html, recipients):
         Mail(subject=subject, body_html=message_html, body_txt=message, recipients=json.dumps(recipients)).save()
 
