@@ -148,3 +148,10 @@ class StudentMedal(models.Model):
 
     def __unicode__(self):
         return unicode(self.student) + u" "+unicode(self.medal)
+
+
+class Mail(models.Model):
+    recipients = models.TextField(verbose_name=u"К кому(json array)")
+    body_html = models.TextField(verbose_name=u"Тело сообщения (html)")
+    body_txt = models.TextField(verbose_name=u"Тело сообщения (txt)")
+    subject = models.CharField(max_length=255, verbose_name=u"Тема")
