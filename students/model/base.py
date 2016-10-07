@@ -53,7 +53,10 @@ class Course(models.Model):
         return unicode(self.name)
 
     def active_labworks(self):
-        return self.labworks.filter(active=True).all()
+        return self.labworks.filter(active=True).order_by("number").all()
+
+    def all_labworks(self):
+        return self.labworks.order_by("number").all()
 
 
 class Lecture(models.Model):
@@ -67,6 +70,7 @@ class Lecture(models.Model):
 
 
 class LabWork(models.Model):
+    number = models.IntegerField(verbose_name=u"Номер", default=0)
     course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name='labworks')
     title = models.CharField(max_length=255, verbose_name=_(u"Тема"))
     body = RichTextField(verbose_name=_(u"Текст"), config_name="long")
@@ -97,6 +101,9 @@ class Student(models.Model, AvatarMixin):
     @property
     def name(self):
         return self.user.get_full_name()
+
+    def get_short_name(self):
+        return self.user.email[:self.user.email.index("@")]
 
     def save(self, **kwargs):
         super(Student, self).save(**kwargs)

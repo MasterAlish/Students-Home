@@ -40,9 +40,9 @@
         <div>
             <h3>Лабораторные работы</h3>
             {% if user|is_teacher %}
-                {% if course.labworks.count > 0 %}
+                {% if course.all_labworks.count > 0 %}
                     <ol>
-                        {% for labwork in course.labworks.all %}
+                        {% for labwork in course.all_labworks.all %}
                             <li>
                                 <a href="{% url 'labwork' labwork.id %}">{{ labwork }}</a>
                                 {% if not labwork.active %}

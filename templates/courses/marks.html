@@ -29,7 +29,12 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ student.user.get_full_name }}</td>
                                 {% for lab in labs %}
-                                    <td class="mark">{{ solutions_map|solutions_for_lab:lab|best_mark_of_student:student }}</td>
+                                    <td class="mark">
+                                        {{ solutions_map|solutions_for_lab:lab|best_mark_of_student:student }}
+                                        {% if solutions_map|solutions_for_lab:lab|for_student:student|length > 0 %}
+                                            <a target="_blank" title="{% trans 'Посмотреть работу' %}" href="{{ lab|url_for_solution:student }}"><span class="fa fa-external-link"></span></a>
+                                        {% endif %}
+                                    </td>
                                 {% endfor %}
                                 <td>
                                     {% for medal in medals_by_students|medals_of:student %}

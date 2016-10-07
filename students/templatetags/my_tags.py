@@ -1,6 +1,10 @@
 # coding=utf-8
+import os
+
 from django import template
 from hashlib import md5
+
+from django.conf import settings
 from django.utils import translation
 from students.model.base import Student, Teacher
 
@@ -61,11 +65,35 @@ def is_teacher(user):
 
 
 @register.filter
+def url_for_solution(labwork, student):
+    labname = "lab%d" % labwork.number
+    username = student.get_short_name()
+    labpath = os.path.join(settings.MEDIA_URL, "sites", labname, username, "index.html")
+    return labpath
+
+
+@register.filter
 def solutions_for_lab(solutions_map, lab):
     if lab.id in solutions_map:
         return solutions_map[lab.id]
     else:
         return {}
+
+
+@register.filter
+def solutions_for_lab(solutions_map, lab):
+    if lab.id in solutions_map:
+        return solutions_map[lab.id]
+    else:
+        return {}
+
+
+@register.filter
+def for_student(solutions_for_lab, student):
+    if student.id in solutions_for_lab:
+        return solutions_for_lab[student.id]
+    else:
+        return []
 
 
 @register.filter

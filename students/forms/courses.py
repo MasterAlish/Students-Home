@@ -1,4 +1,6 @@
 # coding=utf-8
+import zipfile
+
 from ckeditor.fields import RichTextFormField
 from django import forms
 from django.forms import ModelForm, Form

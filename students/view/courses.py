@@ -1,4 +1,10 @@
 # coding=utf-8
+import os
+import zipfile
+
+import shutil
+
+from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -56,12 +62,66 @@ class LabWorkView(StudentsAndTeachersView):
                     form.instance.student = request.user.student
                     form.instance.labwork = labwork
                     form.instance.save()
-                    StudentsMail().report_new_solution_uploaded(request, form.instance)
-                    messages.success(request, u"Решение успешно сохранено")
-                    return redirect(reverse("labwork", kwargs={'id': labwork.id}))
+                    valid, message = self.validate_archive(form.instance)
+                    if valid:
+                        self.unpack_solution_to_public_dir(form.instance)
+                        StudentsMail().report_new_solution_uploaded(request, form.instance)
+                        messages.success(request, u"Решение успешно сохранено")
+                        return redirect(reverse("labwork", kwargs={'id': labwork.id}))
+                    else:
+                        form.add_error("file", message)
+
             self.context['form'] = form
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
+
+    def validate_archive(self, solution):
+        def is_ascii(s):
+            return all(ord(c) < 128 for c in s)
+        if not zipfile.is_zipfile(solution.file.path):
+            solution.delete()
+            return False, u"Файл должен быть .zip архивом"
+        file_info = os.stat(solution.file.path)
+        if file_info.st_size > 5242880L:
+            solution.delete()
+            return False, u"Файл должен быть не больше 5 МБ (5242880 Б)"
+        files = zipfile.ZipFile(solution.file.path).filelist
+        has_index_file = False
+        not_ascii_file_name = None
+
+        for file in files:
+            if file.filename == "index.html":
+                has_index_file = True
+            if not is_ascii(file.filename):
+                not_ascii_file_name = file.filename
+                break
+        if not_ascii_file_name:
+            solution.delete()
+            return False, "В архиве есть файл с неправильным названием %s" % not_ascii_file_name
+        if not has_index_file:
+            solution.delete()
+            return False, u"В корне архива должен быть файл index.html"
+        return True, u""
+
+    def unpack_solution_to_public_dir(self, solution):
+        labname = "lab%d" % solution.labwork.number
+        username = solution.student.get_short_name()
+        labpath = os.path.join(settings.MEDIA_ROOT, "sites", labname, username)
+        try:
+            os.makedirs(labpath)
+        except:
+            pass
+        try:
+            shutil.rmtree(labpath)
+        except:
+            pass
+        try:
+            zip_ref = zipfile.ZipFile(solution.file.path)
+            zip_ref.extractall(labpath)
+            zip_ref.close()
+        except Exception as e:
+            print "Error: "+repr(e)
+        return labpath
 
 
 class GroupView(StudentsAndTeachersView):
