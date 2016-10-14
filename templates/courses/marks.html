@@ -33,7 +33,11 @@
                                         {{ solutions_map|solutions_for_lab:lab|best_mark_of_student:student }}
                                         {% if solutions_map|solutions_for_lab:lab|for_student:student|length > 0 %}
                                             <a target="_blank" title="{% trans 'Посмотреть работу' %}" href="{{ lab|url_for_solution:student }}"><span class="fa fa-external-link"></span></a>
-                                            <span class="fa fa-quote-right note" data-toggle="popover" role="button" title="Комментарий" data-content="{{ solutions_map|solutions_for_lab:lab|comment_of_student:student|safe }}"></span>
+                                            <span class="fa fa-quote-right note" data-toggle="popover" role="button" title="Комментарий">
+                                                <div style="display:none;" class="content">
+                                                    {{ solutions_map|solutions_for_lab:lab|comment_of_student:student|safe }}
+                                                </div>
+                                            </span>
                                         {% endif %}
                                     </td>
                                 {% endfor %}
@@ -53,8 +57,16 @@
 
     </div>
     <script>
+        function get_content(){
+            return $(this).find(".content").html();
+        }
+
         $(document).ready(function(){
-            $('.note').popover({'html': true, 'trigger': 'hover'});
+            $('.note').popover({
+                'html': true,
+                'trigger': 'click',
+                'content': get_content
+            });
             $(".mark").each(function(){
                 var mark = parseInt($(this).text().trim());
                 if(mark > 10){
