@@ -6,6 +6,8 @@ from hashlib import md5
 
 from django.conf import settings
 from django.utils import translation
+from html2text import html2text
+
 from students.model.base import Student, Teacher
 
 register = template.Library()
@@ -100,13 +102,26 @@ def for_student(solutions_for_lab, student):
 def best_mark_of_student(solutions_for_lab, student):
     if student.id in solutions_for_lab:
         solutions = solutions_for_lab[student.id]
-        max = 0
-        for solution in solutions:
-            if max < solution.mark:
-                max = solution.mark
-        return max
+        return get_best_solution(solutions).mark
     else:
         return 0
+
+
+def get_best_solution(solutions):
+    best = solutions[0]
+    for solution in solutions:
+        if best.mark < solution.mark:
+            best = solution
+    return best
+
+
+@register.filter
+def comment_of_student(solutions_for_lab, student):
+    if student.id in solutions_for_lab:
+        solutions = solutions_for_lab[student.id]
+        return get_best_solution(solutions).comment
+    else:
+        return u"Нет комментариев"
 
 
 @register.filter

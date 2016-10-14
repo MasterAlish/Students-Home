@@ -7,3 +7,4 @@ django-grappelli
 uwsgi
 django-ckeditor
 awesome-slugify
+html2text
