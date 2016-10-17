@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from slugify import slugify_unicode
 
 from students.forms.courses import SolutionUploadForm, EmailForm
 from students.mail import StudentsMail
@@ -97,7 +98,7 @@ class LabWorkView(StudentsAndTeachersView):
                 break
         if not_ascii_file_name:
             solution.delete()
-            return False, "В архиве есть файл с неправильным названием %s" % not_ascii_file_name
+            return False, u"В архиве есть файл с неправильным названием %s. Прочитайте условия сдачи." % not_ascii_file_name.decode('utf-8', 'ignore')
         if not has_index_file:
             solution.delete()
             return False, u"В корне архива должен быть файл index.html"
