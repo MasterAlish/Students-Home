@@ -15,7 +15,8 @@
             {% endfor %}
             <br>
             {% if user|is_teacher %}
-                <a class="btn btn-sm btn-default" href="{% url 'email-course' course.id %}">Написать студентам курса</a>
+                <a class="btn btn-sm btn-info" href="{% url 'email-course' course.id %}">Написать студентам курса</a>
+                <a class="btn btn-sm btn-info" href="{% url 'give-medals' course.id %}">Выдать медаль</a>
             {% endif %}
             <a class="btn btn-sm btn-default" href="{% url 'chat' course.id %}">Открыть чат</a>
             <a class="btn btn-sm btn-default" href="{% url 'marks' course.id %}">Оценки</a>

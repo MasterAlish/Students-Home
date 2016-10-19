@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from slugify import slugify_unicode
 
-from students.forms.courses import SolutionUploadForm, EmailForm
+from students.forms.courses import SolutionUploadForm, EmailForm, MedalForm, GroupStudentsForm
 from students.mail import StudentsMail
 from students.model.base import Course, Lecture, Group, LabWork, Solution, StudentMedal
 from students.view.common import StudentsView, user_authenticated_to_course, StudentsAndTeachersView, \
@@ -199,5 +199,34 @@ class EmailToCourseStudentsView(TeachersView):
                     messages.success(request, u"Сообщение отправлено успешно")
                     return redirect(reverse("course", kwargs={'id': course.id}))
             self.context['form'] = form
+            return render(request, self.template_name, self.context)
+        raise Exception(u"User is not authenticated")
+
+
+class GiveMedalsView(TeachersView):
+    template_name = "courses/give_medals.html"
+
+    def handle(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['id'])
+        if user_authenticated_to_course(request.user, course):
+            self.context['course'] = course
+            medal_form = MedalForm()
+            group_forms = map(lambda g: GroupStudentsForm(g), course.groups.all())
+            if request.method == 'POST':
+                medal_form = MedalForm(request.POST)
+                selected_students = []
+                for group_form in group_forms:
+                    selected_students.extend(group_form.get_selected(request.POST))
+                if len(selected_students) == 0:
+                    messages.error(request, u"Выберите хотя бы одного студента")
+                else:
+                    if medal_form.is_valid():
+                        medal = medal_form.cleaned_data['medal']
+                        for student in selected_students:
+                            StudentMedal(student=student, course=course, medal=medal).save()
+                        messages.success(request, u"Медаль \"%s\" успешна выдана %d студентам" % (medal.name, len(selected_students)))
+                        return redirect(reverse("course", kwargs={'id': course.id}))
+            self.context['medal_form'] = medal_form
+            self.context['group_forms'] = group_forms
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
