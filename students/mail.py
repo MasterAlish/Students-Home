@@ -34,7 +34,7 @@ class StudentsMail(object):
 
     def inform_students_of_group(self, group, subject, html_text):
         """
-        :type teacher: students.model.base.Group
+        :type group: students.model.base.Group
         """
         recipients = []
         for student in group.students.all():
@@ -44,6 +44,18 @@ class StudentsMail(object):
     def student_registered(self, request, student):
         subject = u"Зарегистрировался новый студент: %s" % unicode(student)
         message = u"Перейдите по ссылку чтобы активировать аккаунт студента %s " % unicode(request.META["HTTP_ORIGIN"]+"/admin/students/myuser/"+str(student.user.id))
+        recipients = [settings.EMAIL_ADMIN_EMAIL]
+        self.save_mail(subject, message, message, recipients)
+
+    def inform_about_new_medal(self, student, medal, course, request):
+        """
+        :type student: students.model.base.Student
+        :type medal: students.model.base.Medal
+        :type course: students.model.base.Course
+        """
+        subject = u"У вас новая медаль!"
+        message = u"Уважаемый, %s, поздравляем вас с новым медалем \"%s\"! Перейдите по ссылке чтобы просмотреть свои медали %s " % \
+                  (student.user.get_full_name(), medal.name, unicode(request.META["HTTP_ORIGIN"]+reverse('marks', kwargs={'id': course.id})))
         recipients = [settings.EMAIL_ADMIN_EMAIL]
         self.save_mail(subject, message, message, recipients)
 

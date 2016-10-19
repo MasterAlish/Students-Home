@@ -224,6 +224,7 @@ class GiveMedalsView(TeachersView):
                         medal = medal_form.cleaned_data['medal']
                         for student in selected_students:
                             StudentMedal(student=student, course=course, medal=medal).save()
+                            StudentsMail().inform_about_new_medal(student, medal, course, request)
                         messages.success(request, u"Медаль \"%s\" успешна выдана %d студентам" % (medal.name, len(selected_students)))
                         return redirect(reverse("course", kwargs={'id': course.id}))
             self.context['medal_form'] = medal_form
