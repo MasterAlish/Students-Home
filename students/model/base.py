@@ -58,6 +58,12 @@ class Course(models.Model):
     def __unicode__(self):
         return unicode(self.name)
 
+    def active_tasks(self):
+        return self.tasks.filter(active=True).order_by("created_at").all()
+
+    def all_tasks(self):
+        return self.tasks.order_by("created_at").all()
+
     def active_labtasks(self):
         return self.tasks.instance_of(LabTask).filter(active=True).order_by("created_at").all()
 
@@ -83,24 +89,20 @@ class Lecture(models.Model):
         verbose_name_plural = u"Лекции"
 
 
-# class LabWork(models.Model):
-#     number = models.IntegerField(verbose_name=u"Номер", default=0)
-#     course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name='labworks')
-#     title = models.CharField(max_length=255, verbose_name=_(u"Тема"))
-#     body = RichTextField(verbose_name=_(u"Текст"), config_name="long")
-#     deadline = models.DateTimeField(verbose_name=_(u"Крайний срок сдачи"))
-#     active = models.BooleanField(verbose_name=_(u"Активен"), default=True)
-#
-#     def __unicode__(self):
-#         return unicode(self.title)
-
-
 class Task(PolymorphicModel):
-    created_at = models.DateTimeField(verbose_name=u"Дата объявления", default=datetime.now)
+    created_at = models.DateTimeField(verbose_name=u"Дата объявления")
     course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name='tasks')
     active = models.BooleanField(verbose_name=_(u"Активен"), default=True)
     title = models.CharField(max_length=255, verbose_name=_(u"Тема"))
+    short_name = models.CharField(max_length=255, verbose_name=_(u"Краткое название"), blank=True, null=True)
     body = RichTextField(verbose_name=_(u"Текст"), config_name="long")
+    color = models.CharField(verbose_name=_(u"Цвет"), max_length=20, default="#dff0d8")
+    important = models.BooleanField(verbose_name=_(u"Важное"), default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.short_name:
+            self.short_name = self.title[:5]
+        return super(Task, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return unicode(self.title)
@@ -157,18 +159,6 @@ class Student(models.Model, AvatarMixin):
     class Meta:
         verbose_name = u"Студент"
         verbose_name_plural = u"Студенты"
-
-
-# class Solution(models.Model):
-#     file = models.FileField(verbose_name=_(u"Файл"))
-#     comment = RichTextField(verbose_name=_(u"Комментарий"), config_name="default", null=True, blank=True)
-#     student = models.ForeignKey(Student, verbose_name=_(u"Студент"), related_name='solutions')
-#     labwork = models.ForeignKey(LabWork, verbose_name=_(u"Работа"), related_name='solutions')
-#     datetime = models.DateTimeField(verbose_name=_(u"Время"), auto_now_add=True, null=True)
-#     mark = models.IntegerField(verbose_name=_(u"Баллы"), default=0)
-#
-#     def __unicode__(self):
-#         return u"Лаба от %s" % unicode(self.student)
 
 
 class Resolution(PolymorphicModel):

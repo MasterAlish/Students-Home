@@ -13,8 +13,8 @@
                     <tr>
                         <th>№</th>
                         <th>ФИО</th>
-                        {% for lab in labs %}
-                            <th>Лаб {{ forloop.counter }}</th>
+                        {% for task in tasks %}
+                            <th>{{ task.short_name }}</th>
                         {% endfor %}
                         <th>Медали</th>
                     </tr>
@@ -22,20 +22,23 @@
                 <tbody>
                     {% for group in course.groups.all %}
                         <tr>
-                            <th colspan="{{ 3|add:labs.count }}">{{ group.name }}</th>
+                            <th colspan="{{ 3|add:tasks.count }}">{{ group.name }}</th>
                         </tr>
                         {% for student in group.students.all %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ student.user.get_full_name }}</td>
-                                {% for lab in labs %}
-                                    <td class="mark">
-                                        {{ resolutions_map|resolutions_for_lab:lab|best_mark_of_student:student }}
-                                        {% if resolutions_map|resolutions_for_lab:lab|for_student:student|length > 0 %}
-                                            <a target="_blank" title="{% trans 'Посмотреть работу' %}" href="{{ lab|url_for_file_resolution:student }}"><span class="fa fa-external-link"></span></a>
-                                            <span class="fa fa-quote-right note" data-toggle="popover" role="button" title="Комментарий">
+                                {% for task in tasks %}
+                                    <td class="mark" data-color="{{ task.color }}" style="{% if task.important %}font-weight: bold;{% endif %}">
+                                        {% best_solution_of resolutions_map|resolutions_for_task:task student as best_resolution %}
+                                        {{ best_resolution.mark }}
+                                        {% if best_resolution %}
+                                            {% if best_resolution|has_url %}
+                                                <a target="_blank" title="{% trans 'Посмотреть работу' %}" href="{{ best_resolution|url_for_file_resolution }}"><span class="fa fa-external-link"></span></a>
+                                            {% endif %}
+                                            <span class="fa fa-quote-right note" data-toggle="popover" role="button" title="{% trans 'Комментарий' %}">
                                                 <div style="display:none;" class="content">
-                                                    {{ resolutions_map|resolutions_for_lab:lab|comment_of_student:student|safe }}
+                                                    {{ best_resolution.comment|safe }}
                                                 </div>
                                             </span>
                                         {% endif %}
@@ -69,8 +72,9 @@
             });
             $(".mark").each(function(){
                 var mark = parseInt($(this).text().trim());
+                var color = $(this).data("color");
                 if(mark > 10){
-                    $(this).addClass("success");
+                    $(this).css("background-color", color);
                 }
             });
         })

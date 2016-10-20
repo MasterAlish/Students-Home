@@ -8,7 +8,7 @@ from django.conf import settings
 from django.utils import translation
 from html2text import html2text
 
-from students.model.base import Student, Teacher
+from students.model.base import Student, Teacher, FileResolution, Resolution
 
 register = template.Library()
 
@@ -67,36 +67,33 @@ def is_teacher(user):
 
 
 @register.filter
-def url_for_file_resolution(tabtask, student):
-    labname = "lab%d" % tabtask.number
-    username = student.get_short_name()
+def has_url(resolution):
+    return isinstance(resolution, FileResolution)
+
+
+@register.filter
+def url_for_file_resolution(resolution):
+    labname = "lab%d" % resolution.task.number
+    username = resolution.student.get_short_name()
     labpath = os.path.join(settings.MEDIA_URL, "sites", labname, username, "index.html")
     return labpath
 
 
 @register.filter
-def resolutions_for_lab(resolutions_map, lab):
-    if lab.id in resolutions_map:
-        return resolutions_map[lab.id]
+def resolutions_for_task(resolutions_map, task):
+    if task.id in resolutions_map:
+        return resolutions_map[task.id]
     else:
         return {}
 
 
-@register.filter
-def for_student(resolutions_for_lab, student):
-    if student.id in resolutions_for_lab:
-        return resolutions_for_lab[student.id]
+@register.assignment_tag
+def best_solution_of(resolutions_for_task, student):
+    if student.id in resolutions_for_task:
+        resolutions = resolutions_for_task[student.id]
+        return get_best_resolution(resolutions)
     else:
-        return []
-
-
-@register.filter
-def best_mark_of_student(resolutions_for_lab, student):
-    if student.id in resolutions_for_lab:
-        resolutions = resolutions_for_lab[student.id]
-        return get_best_resolution(resolutions).mark
-    else:
-        return 0
+        return None
 
 
 def get_best_resolution(resolutions):
@@ -105,15 +102,6 @@ def get_best_resolution(resolutions):
         if best.mark < resolution.mark:
             best = resolution
     return best
-
-
-@register.filter
-def comment_of_student(resolutions_for_lab, student):
-    if student.id in resolutions_for_lab:
-        resolutions = resolutions_for_lab[student.id]
-        return get_best_resolution(resolutions).comment
-    else:
-        return u"Нет комментариев"
 
 
 @register.filter

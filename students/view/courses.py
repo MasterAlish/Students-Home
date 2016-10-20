@@ -1,18 +1,16 @@
 # coding=utf-8
 import os
-import zipfile
-
 import shutil
+import zipfile
 
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from slugify import slugify_unicode
 
 from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalForm, GroupStudentsForm
 from students.mail import StudentsMail
-from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution
+from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution, Resolution
 from students.view.common import StudentsView, user_authenticated_to_course, StudentsAndTeachersView, \
     user_authenticated_to_group, TeachersView
 
@@ -143,9 +141,9 @@ class MarksView(StudentsAndTeachersView):
         course = Course.objects.get(pk=kwargs['id'])
         if user_authenticated_to_course(request.user, course):
             self.context['course'] = course
-            labtasks = course.active_labtasks()
-            self.context['labs'] = labtasks
-            self.context['resolutions_map'] = self.map_resolutions(FileResolution.objects.filter(task__in=labtasks))
+            tasks = course.active_tasks()
+            self.context['tasks'] = tasks
+            self.context['resolutions_map'] = self.map_resolutions(Resolution.objects.filter(task__in=tasks))
             self.context['medals_by_students'] = self.get_medals_by_students(course)
 
             return render(request, self.template_name, self.context)
@@ -153,7 +151,7 @@ class MarksView(StudentsAndTeachersView):
 
     def map_resolutions(self, resolutions):
         """
-        :type resolutions: list of students.base.model.FileResolution
+        :type resolutions: list of students.base.model.Resolution
         """
         resolutions_map = {}
         for resolution in resolutions:

@@ -58,6 +58,11 @@ class ResolutionAdmin(ModelAdmin):
     ordering = ['-datetime']
 
 
+class TaskAdmin(ModelAdmin):
+    list_display = ['title', 'short_name', 'course', 'created_at', 'active']
+    ordering = ['-created_at']
+
+
 class MessageAdmin(ModelAdmin):
     list_display = ['datetime', 'user', 'body', 'course']
     ordering = ['-datetime']
@@ -66,8 +71,8 @@ admin.site.register(Student, StudentAdmin)
 admin.site.register(Course)
 admin.site.register(StudentGroup)
 admin.site.register(Lecture)
-admin.site.register(Task)
-admin.site.register(LabTask)
+admin.site.register(Task, TaskAdmin)
+admin.site.register(LabTask, TaskAdmin)
 admin.site.register(Resolution)
 admin.site.register(FileResolution, ResolutionAdmin)
 admin.site.register(Medal)
