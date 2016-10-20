@@ -8,3 +8,4 @@ uwsgi
 django-ckeditor
 awesome-slugify
 html2text
+django-polymorphic

@@ -76,6 +76,10 @@ class MyUser(AbstractBaseUser):
         # Simplest possible answer: All admins are staff
         return self.is_admin
 
+    class Meta:
+        verbose_name = u"Пользователь"
+        verbose_name_plural = u"Пользователи"
+
 
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required

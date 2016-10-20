@@ -9,7 +9,7 @@ from django.contrib.auth.views import login
 from django.views.decorators.csrf import csrf_exempt
 
 from students.view.chat import ChatView, NewMessagesView, PostMessageView
-from students.view.courses import CourseView, LectureView, MyGroupView, GroupView, LabWorkView, \
+from students.view.courses import CourseView, LectureView, MyGroupView, GroupView, LabTaskView, \
     EmailToCourseStudentsView, MarksView, GiveMedalsView
 from students.view.teachers import TeacherGroupsView, TeacherView, StudentView
 from students.view.main import HomeView,on_error, on_not_found, auth_logout, \
@@ -34,7 +34,7 @@ urlpatterns = [
     url(r'^my/group/$', login_required(MyGroupView.as_view()), name='my_group'),
     url(r'^course/(?P<id>\d+)/$', login_required(CourseView.as_view()), name='course'),
     url(r'^lecture/(?P<id>\d+)/$', login_required(LectureView.as_view()), name='lecture'),
-    url(r'^labwork/(?P<id>\d+)/$', login_required(LabWorkView.as_view()), name='labwork'),
+    url(r'^labtask/(?P<id>\d+)/$', login_required(LabTaskView.as_view()), name='labtask'),
     url(r'^course/(?P<id>\d+)/email_students/$', login_required(EmailToCourseStudentsView.as_view()), name='email-course'),
     url(r'^course/(?P<id>\d+)/give_medals/$', login_required(GiveMedalsView.as_view()), name='give-medals'),
     url(r'^course/(?P<id>\d+)/chat/$', login_required(csrf_exempt(ChatView.as_view())), name='chat'),

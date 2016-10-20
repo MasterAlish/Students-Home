@@ -5,13 +5,13 @@ from ckeditor.fields import RichTextFormField
 from django import forms
 from django.forms import ModelForm, Form
 
-from students.model.base import Solution, Medal
+from students.model.base import Medal, FileResolution
 
 
-class SolutionUploadForm(ModelForm):
+class FileResolutionUploadForm(ModelForm):
     class Meta:
         fields = ['file', 'comment']
-        model = Solution
+        model = FileResolution
 
 
 class EmailForm(Form):

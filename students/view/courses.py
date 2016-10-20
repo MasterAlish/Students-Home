@@ -10,9 +10,9 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from slugify import slugify_unicode
 
-from students.forms.courses import SolutionUploadForm, EmailForm, MedalForm, GroupStudentsForm
+from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalForm, GroupStudentsForm
 from students.mail import StudentsMail
-from students.model.base import Course, Lecture, Group, LabWork, Solution, StudentMedal
+from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution
 from students.view.common import StudentsView, user_authenticated_to_course, StudentsAndTeachersView, \
     user_authenticated_to_group, TeachersView
 
@@ -48,27 +48,27 @@ class LectureView(StudentsAndTeachersView):
         raise Exception(u"User is not authenticated")
 
 
-class LabWorkView(StudentsAndTeachersView):
-    template_name = "courses/labwork.html"
+class LabTaskView(StudentsAndTeachersView):
+    template_name = "courses/labtask.html"
 
     def handle(self, request, *args, **kwargs):
-        labwork = LabWork.objects.get(pk=kwargs['id'])
-        if user_authenticated_to_course(request.user, labwork.course):
-            self.context['labwork'] = labwork
-            self.context['course'] = labwork.course
-            form = SolutionUploadForm()
+        labtask = LabTask.objects.get(pk=kwargs['id'])
+        if user_authenticated_to_course(request.user, labtask.course):
+            self.context['labtask'] = labtask
+            self.context['course'] = labtask.course
+            form = FileResolutionUploadForm()
             if request.method == "POST":
-                form = SolutionUploadForm(data=request.POST, files=request.FILES)
+                form = FileResolutionUploadForm(data=request.POST, files=request.FILES)
                 if form.is_valid():
                     form.instance.student = request.user.student
-                    form.instance.labwork = labwork
+                    form.instance.task = labtask
                     form.instance.save()
                     valid, message = self.validate_archive(form.instance)
                     if valid:
-                        self.unpack_solution_to_public_dir(form.instance)
-                        StudentsMail().report_new_solution_uploaded(request, form.instance)
+                        self.unpack_resolution_to_public_dir(form.instance)
+                        StudentsMail().report_new__file_resolution_uploaded(request, form.instance)
                         messages.success(request, u"Решение успешно сохранено")
-                        return redirect(reverse("labwork", kwargs={'id': labwork.id}))
+                        return redirect(reverse("labtask", kwargs={'id': labtask.id}))
                     else:
                         form.add_error("file", message)
 
@@ -76,17 +76,17 @@ class LabWorkView(StudentsAndTeachersView):
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
 
-    def validate_archive(self, solution):
+    def validate_archive(self, resolution):
         def is_ascii(s):
             return all(ord(c) < 128 for c in s)
-        if not zipfile.is_zipfile(solution.file.path):
-            solution.delete()
+        if not zipfile.is_zipfile(resolution.file.path):
+            resolution.delete()
             return False, u"Файл должен быть .zip архивом"
-        file_info = os.stat(solution.file.path)
+        file_info = os.stat(resolution.file.path)
         if file_info.st_size > 5242880L:
-            solution.delete()
+            resolution.delete()
             return False, u"Файл должен быть не больше 5 МБ (5242880 Б)"
-        files = zipfile.ZipFile(solution.file.path).filelist
+        files = zipfile.ZipFile(resolution.file.path).filelist
         has_index_file = False
         not_ascii_file_name = None
 
@@ -97,16 +97,16 @@ class LabWorkView(StudentsAndTeachersView):
                 not_ascii_file_name = file.filename
                 break
         if not_ascii_file_name:
-            solution.delete()
+            resolution.delete()
             return False, u"В архиве есть файл с неправильным названием %s. Прочитайте условия сдачи." % not_ascii_file_name.decode('utf-8', 'ignore')
         if not has_index_file:
-            solution.delete()
+            resolution.delete()
             return False, u"В корне архива должен быть файл index.html"
         return True, u""
 
-    def unpack_solution_to_public_dir(self, solution):
-        labname = "lab%d" % solution.labwork.number
-        username = solution.student.get_short_name()
+    def unpack_resolution_to_public_dir(self, resolution):
+        labname = "lab%d" % resolution.task.number
+        username = resolution.student.get_short_name()
         labpath = os.path.join(settings.MEDIA_ROOT, "sites", labname, username)
         try:
             os.makedirs(labpath)
@@ -117,7 +117,7 @@ class LabWorkView(StudentsAndTeachersView):
         except:
             pass
         try:
-            zip_ref = zipfile.ZipFile(solution.file.path)
+            zip_ref = zipfile.ZipFile(resolution.file.path)
             zip_ref.extractall(labpath)
             zip_ref.close()
         except Exception as e:
@@ -143,32 +143,32 @@ class MarksView(StudentsAndTeachersView):
         course = Course.objects.get(pk=kwargs['id'])
         if user_authenticated_to_course(request.user, course):
             self.context['course'] = course
-            labworks = course.active_labworks()
-            self.context['labs'] = labworks
-            self.context['solutions_map'] = self.map_solutions(Solution.objects.filter(labwork__in=labworks))
+            labtasks = course.active_labtasks()
+            self.context['labs'] = labtasks
+            self.context['resolutions_map'] = self.map_resolutions(FileResolution.objects.filter(task__in=labtasks))
             self.context['medals_by_students'] = self.get_medals_by_students(course)
 
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
 
-    def map_solutions(self, solutions):
+    def map_resolutions(self, resolutions):
         """
-        :type solutions: list of students.base.model.Solution
+        :type resolutions: list of students.base.model.FileResolution
         """
-        solutions_map = {}
-        for solution in solutions:
-            solutions_for_work = {}
-            if solution.labwork_id in solutions_map:
-                solutions_for_work = solutions_map[solution.labwork.id]
+        resolutions_map = {}
+        for resolution in resolutions:
+            resolutions_for_work = {}
+            if resolution.task_id in resolutions_map:
+                resolutions_for_work = resolutions_map[resolution.task.id]
 
-            students_solutions = []
-            if solution.student_id in solutions_for_work:
-                students_solutions = solutions_for_work[solution.student_id]
-            students_solutions.append(solution)
+            students_resolutions = []
+            if resolution.student_id in resolutions_for_work:
+                students_resolutions = resolutions_for_work[resolution.student_id]
+            students_resolutions.append(resolution)
 
-            solutions_for_work[solution.student_id] = students_solutions
-            solutions_map[solution.labwork.id] = solutions_for_work
-        return solutions_map
+            resolutions_for_work[resolution.student_id] = students_resolutions
+            resolutions_map[resolution.task.id] = resolutions_for_work
+        return resolutions_map
 
     def get_medals_by_students(self, course):
         medals_by_students = {}

@@ -67,59 +67,51 @@ def is_teacher(user):
 
 
 @register.filter
-def url_for_solution(labwork, student):
-    labname = "lab%d" % labwork.number
+def url_for_file_resolution(tabtask, student):
+    labname = "lab%d" % tabtask.number
     username = student.get_short_name()
     labpath = os.path.join(settings.MEDIA_URL, "sites", labname, username, "index.html")
     return labpath
 
 
 @register.filter
-def solutions_for_lab(solutions_map, lab):
-    if lab.id in solutions_map:
-        return solutions_map[lab.id]
+def resolutions_for_lab(resolutions_map, lab):
+    if lab.id in resolutions_map:
+        return resolutions_map[lab.id]
     else:
         return {}
 
 
 @register.filter
-def solutions_for_lab(solutions_map, lab):
-    if lab.id in solutions_map:
-        return solutions_map[lab.id]
-    else:
-        return {}
-
-
-@register.filter
-def for_student(solutions_for_lab, student):
-    if student.id in solutions_for_lab:
-        return solutions_for_lab[student.id]
+def for_student(resolutions_for_lab, student):
+    if student.id in resolutions_for_lab:
+        return resolutions_for_lab[student.id]
     else:
         return []
 
 
 @register.filter
-def best_mark_of_student(solutions_for_lab, student):
-    if student.id in solutions_for_lab:
-        solutions = solutions_for_lab[student.id]
-        return get_best_solution(solutions).mark
+def best_mark_of_student(resolutions_for_lab, student):
+    if student.id in resolutions_for_lab:
+        resolutions = resolutions_for_lab[student.id]
+        return get_best_resolution(resolutions).mark
     else:
         return 0
 
 
-def get_best_solution(solutions):
-    best = solutions[0]
-    for solution in solutions:
-        if best.mark < solution.mark:
-            best = solution
+def get_best_resolution(resolutions):
+    best = resolutions[0]
+    for resolution in resolutions:
+        if best.mark < resolution.mark:
+            best = resolution
     return best
 
 
 @register.filter
-def comment_of_student(solutions_for_lab, student):
-    if student.id in solutions_for_lab:
-        solutions = solutions_for_lab[student.id]
-        return get_best_solution(solutions).comment
+def comment_of_student(resolutions_for_lab, student):
+    if student.id in resolutions_for_lab:
+        resolutions = resolutions_for_lab[student.id]
+        return get_best_resolution(resolutions).comment
     else:
         return u"Нет комментариев"
 

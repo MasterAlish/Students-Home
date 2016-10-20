@@ -9,17 +9,17 @@ from students.model.base import Mail
 
 
 class StudentsMail(object):
-    def report_new_solution_uploaded(self, request, solution):
+    def report_new__file_resolution_uploaded(self, request, file_resolution):
         """
-        :type teacher: students.model.base.Solution
+        :type teacher: students.model.base.Teacher
         """
-        subject = u"Новая лабораторка от %s" % unicode(solution.student)
+        subject = u"Новая лабораторка от %s" % unicode(file_resolution.student)
         message = u"Новая лабораторка от %s\n\n\"%s\"\n\nПерейдите по ссылке чтобы скачать решение %s" % \
-                  (solution.student, solution.comment, unicode(request.META["HTTP_ORIGIN"]+"/admin/students/solution/"+str(solution.id)))
+                  (file_resolution.student, file_resolution.comment, unicode(request.META["HTTP_ORIGIN"] + "/admin/students/fileresolution/" + str(file_resolution.id)))
         message_html = u"Новая лабораторка от %s<br><br>\"%s\"<br><br>Перейдите по ссылке чтобы скачать решение " \
                        u"<a href=\"%s\">Перейти</a>"  % \
-                  (solution.student, solution.comment, unicode(request.META["HTTP_ORIGIN"]+"/admin/students/solution/"+str(solution.id)))
-        recipients = map(lambda t:t.user.email, solution.labwork.course.teachers.all())
+                  (file_resolution.student, file_resolution.comment, unicode(request.META["HTTP_ORIGIN"] + "/admin/students/fileresolution/" + str(file_resolution.id)))
+        recipients = map(lambda t:t.user.email, file_resolution.task.course.teachers.all())
         self.save_mail(subject, message, message_html, recipients)
 
     def inform_students_of_course(self, course, subject, html_text):

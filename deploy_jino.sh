@@ -25,6 +25,7 @@ ssh masteralish@masteralish.myjino.ru << END
     cd ../../django/students/
     source env/bin/activate
     pip install -r requirements.txt
+    cp db.sqlite3 db.backup.sqlite3
     python manage.py migrate --noinput
     python manage.py collectstatic --noinput
 END
