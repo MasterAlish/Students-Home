@@ -56,7 +56,7 @@ class StudentsMail(object):
         subject = u"У вас новая медаль!"
         message = u"Уважаемый, %s, поздравляем вас с новым медалем \"%s\"! Перейдите по ссылке чтобы просмотреть свои медали %s " % \
                   (student.user.get_full_name(), medal.name, unicode(request.META["HTTP_ORIGIN"]+reverse('marks', kwargs={'id': course.id})))
-        recipients = [settings.EMAIL_ADMIN_EMAIL]
+        recipients = [student.user.email]
         self.save_mail(subject, message, message, recipients)
 
     def save_mail(self, subject, message, message_html, recipients):
