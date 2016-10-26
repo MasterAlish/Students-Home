@@ -29,8 +29,11 @@
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ student.user.get_full_name }}</td>
                                 {% for task in tasks %}
-                                    <td class="mark" data-color="{{ task.color }}" style="{% if task.important %}font-weight: bold;{% endif %}">
-                                        {% best_solution_of resolutions_map|resolutions_for_task:task student as best_resolution %}
+                                    {% best_solution_of resolutions_map|resolutions_for_task:task student as best_resolution %}
+                                    <td class="mark" style="
+                                            {% if task.important %}font-weight: bold;{% endif %}
+                                            {% if best_resolution.mark > 1 %}background-color: {{ task.color }};{% endif %}
+                                            ">
                                         {{ best_resolution.mark }}
                                         {% if best_resolution %}
                                             {% if best_resolution|has_url %}
@@ -69,13 +72,6 @@
                 'html': true,
                 'trigger': 'click',
                 'content': get_content
-            });
-            $(".mark").each(function(){
-                var mark = parseInt($(this).text().trim());
-                var color = $(this).data("color");
-                if(mark > 10){
-                    $(this).css("background-color", color);
-                }
             });
         })
     </script>
