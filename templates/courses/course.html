@@ -67,5 +67,24 @@
                 {% endif %}
             {% endif %}
         </div>
+
+        <div>
+            <h3>Другие задания</h3>
+            {% if course.non_labtasks.count > 0 %}
+                <ol>
+                    {% for task in course.non_labtasks.all %}
+                        <li>
+                            {{ task.title }}
+                            {% if user|is_teacher %}
+                                <a href="{% url 'set-marks' task.id %}">{% trans 'Выставить оценки' %}</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ol>
+            {% else %}
+                Пока других заданий нет
+            {% endif %}
+
+        </div>
     </div>
 {% endblock %}

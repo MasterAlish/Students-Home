@@ -8,9 +8,10 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalForm, GroupStudentsForm
+from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalForm, GroupStudentsSelectForm, \
+    GroupStudentsInputForm, StudentException
 from students.mail import StudentsMail
-from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution, Resolution
+from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution, Resolution, Task
 from students.view.common import StudentsView, user_authenticated_to_course, StudentsAndTeachersView, \
     user_authenticated_to_group, TeachersView
 
@@ -209,7 +210,7 @@ class GiveMedalsView(TeachersView):
         if user_authenticated_to_course(request.user, course):
             self.context['course'] = course
             medal_form = MedalForm()
-            group_forms = map(lambda g: GroupStudentsForm(g), course.groups.all())
+            group_forms = map(lambda g: GroupStudentsSelectForm(g), course.groups.all())
             if request.method == 'POST':
                 medal_form = MedalForm(request.POST)
                 selected_students = []
@@ -226,6 +227,40 @@ class GiveMedalsView(TeachersView):
                         messages.success(request, u"Медаль \"%s\" успешна выдана %d студентам" % (medal.name, len(selected_students)))
                         return redirect(reverse("course", kwargs={'id': course.id}))
             self.context['medal_form'] = medal_form
+            self.context['group_forms'] = group_forms
+            return render(request, self.template_name, self.context)
+        raise Exception(u"User is not authenticated")
+
+
+class SetMarksView(TeachersView):
+    template_name = "courses/set_marks.html"
+
+    def handle(self, request, *args, **kwargs):
+        task = Task.objects.get(pk=kwargs['id'])
+        course = task.course
+        if user_authenticated_to_course(request.user, course):
+            self.context['task'] = task
+            self.context['course'] = course
+            group_forms = map(lambda g: GroupStudentsInputForm(g), course.groups.all())
+            if request.method == 'POST':
+                has_error = False
+                student_values = {}
+                for group_form in group_forms:
+                    group_form.set_vals(request.POST)
+                    try:
+                        student_values.update(group_form.get_ints(request.POST))
+                    except StudentException as e:
+                        group_form.add_error(e.field, e.error)
+                        has_error = True
+                if len(student_values) == 0 and not has_error:
+                    messages.error(request, u"Ничего не введено")
+                else:
+                    if not has_error:
+                        for student, value in student_values.items():
+                            Resolution.objects.filter(student=student, task=task).delete()
+                            Resolution(student=student, task=task, mark=value).save()
+                        messages.success(request, u"Оценки успешно проставлены")
+                        return redirect(reverse("course", kwargs={'id': course.id}))
             self.context['group_forms'] = group_forms
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")

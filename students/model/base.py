@@ -70,6 +70,9 @@ class Course(models.Model):
     def all_labtasks(self):
         return self.tasks.instance_of(LabTask).order_by("created_at").all()
 
+    def non_labtasks(self):
+        return self.tasks.not_instance_of(LabTask).order_by("created_at").all()
+
     class Meta:
         verbose_name = u"Курс"
         verbose_name_plural = u"Курсы"

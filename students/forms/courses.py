@@ -23,9 +23,9 @@ class MedalForm(Form):
     medal = forms.ModelChoiceField(queryset=Medal.objects.all(), label=u"Медаль", required=True)
 
 
-class GroupStudentsForm(Form):
+class GroupStudentsSelectForm(Form):
     def __init__(self, group):
-        super(GroupStudentsForm, self).__init__()
+        super(GroupStudentsSelectForm, self).__init__()
         self.group = group
         for student in group.students.all():
             self.fields[self.field_name(student)] = forms.BooleanField(label=student.name, required=False)
@@ -51,4 +51,45 @@ class GroupStudentsForm(Form):
 
     def field_name(self, student):
         return u'group_%d_student_%d' % (self.group.id, student.id)
+
+
+class StudentException(Exception):
+    def __init__(self, field, error):
+        super(StudentException, self).__init__()
+        self.field = field
+        self.error = error
+
+
+class GroupStudentsInputForm(Form):
+    def __init__(self, group):
+        super(GroupStudentsInputForm, self).__init__()
+        self.group = group
+        for student in group.students.all():
+            self.fields[self.field_name(student)] = forms.CharField(label=student.name, required=False)
+
+    def set_vals(self, DATA):
+        values = {}
+        for student in self.group.students.all():
+            field_name = self.field_name(student)
+            value = DATA.get(field_name, None)
+            if value:
+                self.initial[field_name] = value
+
+    def get_ints(self, DATA):
+        values = {}
+        for student in self.group.students.all():
+            field_name = self.field_name(student)
+            value = DATA.get(field_name, None)
+            if value:
+                try:
+                    values[student] = int(value.strip())
+                except:
+                    raise StudentException(field_name, u"Значение должно быть целым числом")
+        return values
+
+    def field_name(self, student):
+        return u'group_%d_student_%d' % (self.group.id, student.id)
+
+    def add_error(self, field, error):
+        self.errors[field] = error
 
