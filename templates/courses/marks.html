@@ -39,11 +39,13 @@
                                             {% if best_resolution|has_url %}
                                                 <a target="_blank" title="{% trans 'Посмотреть работу' %}" href="{{ best_resolution|url_for_file_resolution }}"><span class="fa fa-external-link"></span></a>
                                             {% endif %}
-                                            <span class="fa fa-quote-right note" data-toggle="popover" role="button" title="{% trans 'Комментарий' %}">
-                                                <div style="display:none;" class="content">
-                                                    {{ best_resolution.comment|safe }}
-                                                </div>
-                                            </span>
+                                            {% if best_resolution.comment %}
+                                                <span class="fa fa-quote-right note" data-toggle="popover" role="button" title="{% trans 'Комментарий' %}">
+                                                    <div style="display:none;" class="content">
+                                                        {{ best_resolution.comment|safe }}
+                                                    </div>
+                                                </span>
+                                            {% endif %}
                                         {% endif %}
                                     </td>
                                 {% endfor %}
