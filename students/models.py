@@ -44,6 +44,7 @@ class MyUser(AbstractBaseUser):
     fullname = models.CharField(max_length=255, null=True, blank=False, verbose_name=_(u"Полное имя"))
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    last_seen = models.DateTimeField(verbose_name=_(u"Последний визит"), null=True, blank=True)
 
     objects = MyUserManager()
 

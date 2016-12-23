@@ -114,7 +114,7 @@ class LabTaskView(StudentsAndTeachersView):
 class GroupView(StudentsAndTeachersView):
     template_name = "courses/group.html"
 
-    def dispatch(self, request, *args, **kwargs):
+    def handle(self, request, *args, **kwargs):
         group = Group.objects.get(pk=kwargs['id'])
         if user_authenticated_to_group(request.user, group):
             self.context['group'] = group
@@ -125,7 +125,7 @@ class GroupView(StudentsAndTeachersView):
 class MarksView(StudentsAndTeachersView):
     template_name = "courses/marks.html"
 
-    def dispatch(self, request, *args, **kwargs):
+    def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=kwargs['id'])
         if user_authenticated_to_course(request.user, course):
             self.context['course'] = course

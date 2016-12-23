@@ -41,6 +41,8 @@ class UserView(TemplateView):
                             + str(weight) \
                             + activity.activity[current_hour_index+1:]
         activity.save()
+        user.last_seen = now
+        user.save()
 
     def get_context_data(self, **kwargs):
         return {}
@@ -107,11 +109,11 @@ class StudentsAndTeachersView(UserView):
         if is_student(request.user):
             self.student = request.user.student
             self.context['student'] = self.student
-            self.register_user_activity(self.student.user)
+            self.register_user_activity(request.user)
         if is_teacher(request.user):
             self.teacher = request.user.teacher
             self.context['teacher'] = self.teacher
-            self.register_user_activity(self.teacher.user)
+            self.register_user_activity(request.user)
         if self.teacher or self.student:
             try:
                 return self.handle(request, *args, **kwargs)
