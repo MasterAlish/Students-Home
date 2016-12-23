@@ -9,11 +9,11 @@
             На этом сайте вы будете получать лекции, лабораторные работы, проходить тесты, следить за своими результатами и задавать вопросы преподавателю.
         </p>
         <p>
-            Сайт находится на стадии разработки, поэтому многие функции еще не работают.
+            С наступающим Новым Годом! <span class="fa fa-tree"></span>
         </p>
         <p>
             {% if user.is_authenticated %}
-                <a class="btn btn-lg btn-primary" href="/" role="button">Идем учиться »</a>
+                <a class="btn btn-lg btn-primary" href="/" role="button" onclick="this.innerHTML='Ок, иди, учись!'; return false;">Идем учиться »</a>
             {% else %}
                 <a class="btn btn-lg btn-primary" href="{% url 'login' %}" role="button">Войти</a>
                 <a class="btn btn-lg btn-info" href="{% url 'register' %}" role="button">Регистрация</a>

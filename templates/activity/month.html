@@ -1,0 +1,156 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <style>
+        .stats{
+            background: white;
+            border: 1px solid grey;
+            padding: 20px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        th{
+            padding-left: 3px;
+            padding-right:3px;
+        }
+        td{
+            background: white;
+            border: 2px solid white;
+            padding-left: 3px;
+            padding-right:3px;
+        }
+        .hour{
+            font-style: italic;
+            font-size: 10px;
+        }
+
+        .date{
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        td.activity{
+            width: 10px;
+            height: 10px;
+        }
+
+        tr:hover td{
+            border-bottom: 2px solid #5ece64;
+            color: #00d70b;
+        }
+
+        td.activity0{
+            background: #dfdfdf;
+        }
+
+        td.activity1{
+            background: #c4dfc5;
+        }
+
+        td.activity2{
+            background: #a2dfa3;
+        }
+
+        td.activity3{
+            background: #88df8e;
+        }
+
+        td.activity4{
+            background: #71df79;
+        }
+
+        td.activity5{
+            background: #5edf6b;
+        }
+
+        td.activity6{
+            background: #34d63a;
+        }
+
+        td.activity7{
+            background: #2dbc33;
+        }
+
+        td.activity8{
+            background: #18b01b;
+        }
+
+        td.activity9{
+            background: #149617;
+        }
+    </style>
+    <div class="container">
+        <h1>{% trans 'Посещения' %}: {{ activity_user.fullname }} ({{ month_name }} {{ year }})</h1>
+        <div class="stats">
+            <table>
+                <tr>
+                    <th>{% trans 'День' %}</th>
+                    {% for hour in hours %}
+                        <th class="hour">{{ hour|min_length:2 }}:</th>
+                    {% endfor %}
+                </tr>
+                {% for day in days %}
+                    <tr>
+                        <td class="date">{{ forloop.counter|min_length:2 }}.{{ month|min_length:2 }}</td>
+                        {% for hour in day %}
+                            <td class="activity activity{{ hour }}"></td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="stats">
+            <a class="label label-success" href="{% url 'activity' %}?user_id={{ activity_user.id }}&year={{ prev_page_year }}&month={{ prev_page_month }}">
+                <span class="fa fa-arrow-left"></span> {% trans 'месяц' %}
+            </a>&nbsp;
+
+            <a class="label label-success" href="{% url 'activity' %}?user_id={{ activity_user.id }}&year={{ next_page_year }}&month={{ next_page_month }}">
+                {% trans 'месяц' %} <span class="fa fa-arrow-right"></span>
+            </a>
+            <br> <br>
+            <table>
+                <tr>
+                    <td class="activity activity0">&nbsp;</td>
+                    <td> - Нет посещений</td>
+                </tr>
+                <tr>
+                    <td class="activity activity1">&nbsp;</td>
+                    <td> - 1 посещение</td>
+                </tr>
+                <tr>
+                    <td class="activity activity2">&nbsp;</td>
+                    <td> - 2 посещения</td>
+                </tr>
+                <tr>
+                    <td class="activity activity3">&nbsp;</td>
+                    <td> - 3 посещения</td>
+                </tr>
+                <tr>
+                    <td class="activity activity4">&nbsp;</td>
+                    <td> - 4 посещения</td>
+                </tr>
+                <tr>
+                    <td class="activity activity5">&nbsp;</td>
+                    <td> - 5 посещений</td>
+                </tr>
+                <tr>
+                    <td class="activity activity6">&nbsp;</td>
+                    <td> - 6 посещений</td>
+                </tr>
+                <tr>
+                    <td class="activity activity7">&nbsp;</td>
+                    <td> - 7 посещений</td>
+                </tr>
+                <tr>
+                    <td class="activity activity8">&nbsp;</td>
+                    <td> - 8 посещений</td>
+                </tr>
+                <tr>
+                    <td class="activity activity9">&nbsp;</td>
+                    <td> - более 9 посещений</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}

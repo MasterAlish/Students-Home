@@ -9,10 +9,8 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 
 from students.mobile import is_mobile
-from students.model.base import Course, ChatMessage
+from students.model.base import Course, ChatMessage, LastReadMessage
 from students.view.common import StudentsAndTeachersView, user_authenticated_to_course
-
-# TODO: Сделать всякие награды, медали для студентов
 
 
 class ChatView(StudentsAndTeachersView):
@@ -31,7 +29,9 @@ class ChatView(StudentsAndTeachersView):
                     return redirect(reverse("chat", kwargs={'id': course.id}))
             messages = ChatMessage.objects.filter(course=course).order_by("-datetime")[:50]
             self.context['messages'] = reversed(messages)
-            self.context['last_message_id'] = messages.first().id if messages.count() > 0 else 0
+            last_message_id = messages.first().id if messages.count() > 0 else 0
+            self.context['last_message_id'] = last_message_id
+            LastReadMessage.register_last_message(course, request.user, last_message_id)
             if is_mobile(request):
                 return render(request, self.template_name_mobile, self.context)
             else:
@@ -50,6 +50,7 @@ class NewMessagesView(StudentsAndTeachersView):
             self.context['messages'] = messages
             self.context['current_user'] = request.user
             last_message_id = messages.last().id if messages.count() > 0 else last_message_id
+            LastReadMessage.register_last_message(course, request.user, last_message_id)
             return HttpResponse(content=json.dumps({
                 'last_message_id': last_message_id,
                 'new_messages': render_to_string(self.template_name, self.context)
@@ -73,6 +74,7 @@ class PostMessageView(StudentsAndTeachersView):
             self.context['messages'] = messages
             self.context['current_user'] = request.user
             last_message_id = messages.last().id if messages.count() > 0 else last_message_id
+            LastReadMessage.register_last_message(course, request.user, last_message_id)
             return HttpResponse(content=json.dumps({
                 'last_message_id': last_message_id,
                 'new_messages': render_to_string(self.template_name, self.context)

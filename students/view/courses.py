@@ -12,6 +12,7 @@ from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalFor
     GroupStudentsInputForm, StudentException
 from students.mail import StudentsMail
 from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution, Resolution, Task
+from students.model.checks import ZipContainsFileConstraint
 from students.view.common import StudentsView, user_authenticated_to_course, StudentsAndTeachersView, \
     user_authenticated_to_group, TeachersView
 
@@ -62,9 +63,10 @@ class LabTaskView(StudentsAndTeachersView):
                     form.instance.student = request.user.student
                     form.instance.task = labtask
                     form.instance.save()
-                    valid, message = self.validate_archive(form.instance)
+                    valid, message = self.validate_file(form.instance, labtask)
                     if valid:
-                        self.unpack_resolution_to_public_dir(form.instance)
+                        if self.has_html_index_file(labtask):
+                            self.unpack_resolution_to_public_dir(form.instance)
                         StudentsMail().report_new__file_resolution_uploaded(request, form.instance)
                         messages.success(request, u"Решение успешно сохранено")
                         return redirect(reverse("labtask", kwargs={'id': labtask.id}))
@@ -75,32 +77,11 @@ class LabTaskView(StudentsAndTeachersView):
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
 
-    def validate_archive(self, resolution):
-        def is_ascii(s):
-            return all(ord(c) < 128 for c in s)
-        if not zipfile.is_zipfile(resolution.file.path):
-            resolution.delete()
-            return False, u"Файл должен быть .zip архивом"
-        file_info = os.stat(resolution.file.path)
-        if file_info.st_size > 5242880L:
-            resolution.delete()
-            return False, u"Файл должен быть не больше 5 МБ (5242880 Б)"
-        files = zipfile.ZipFile(resolution.file.path).filelist
-        has_index_file = False
-        not_ascii_file_name = None
-
-        for file in files:
-            if file.filename == "index.html":
-                has_index_file = True
-            if not is_ascii(file.filename):
-                not_ascii_file_name = file.filename
-                break
-        if not_ascii_file_name:
-            resolution.delete()
-            return False, u"В архиве есть файл с неправильным названием %s. Прочитайте условия сдачи." % not_ascii_file_name.decode('utf-8', 'ignore')
-        if not has_index_file:
-            resolution.delete()
-            return False, u"В корне архива должен быть файл index.html"
+    def validate_file(self, resolution, labtask):
+        for constraint in labtask.constraints.all():
+            valid, message = constraint.test(resolution)
+            if not valid:
+                return valid, message
         return True, u""
 
     def unpack_resolution_to_public_dir(self, resolution):
@@ -122,6 +103,12 @@ class LabTaskView(StudentsAndTeachersView):
         except Exception as e:
             print "Error: "+repr(e)
         return labpath
+
+    def has_html_index_file(self, labtask):
+        for constraint in labtask.constraints.instance_of(ZipContainsFileConstraint):
+            if u'index.html' in constraint.file_names:
+                return True
+        return False
 
 
 class GroupView(StudentsAndTeachersView):

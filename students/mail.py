@@ -54,7 +54,7 @@ class StudentsMail(object):
         :type course: students.model.base.Course
         """
         subject = u"У вас новая медаль!"
-        message = u"Уважаемый, %s, поздравляем вас с новым медалем \"%s\"! Перейдите по ссылке чтобы просмотреть свои медали %s " % \
+        message = u"Уважаемый, %s, поздравляем вас с новой медалью \"%s\"! Перейдите по ссылке чтобы просмотреть свои медали %s " % \
                   (student.user.get_full_name(), medal.name, unicode(request.META["HTTP_ORIGIN"]+reverse('marks', kwargs={'id': course.id})))
         recipients = [student.user.email]
         self.save_mail(subject, message, message, recipients)

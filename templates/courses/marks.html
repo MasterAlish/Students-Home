@@ -27,7 +27,14 @@
                         {% for student in group.students.all %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ student.user.get_full_name }}</td>
+                                <td>
+                                    {{ student.user.get_full_name }}
+                                    {% if user|is_teacher %}
+                                        <a href="{% url 'activity' %}?user_id={{ student.user_id }}" title="{% trans 'Посещения' %}">
+                                            <span class="fa fa-calendar"></span>
+                                        </a>
+                                    {% endif %}
+                                </td>
                                 {% for task in tasks %}
                                     {% best_solution_of resolutions_map|resolutions_for_task:task student as best_resolution %}
                                     <td class="mark" style="

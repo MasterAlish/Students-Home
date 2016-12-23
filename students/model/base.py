@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import ugettext as _
 from polymorphic.models import PolymorphicModel
-
+from students.model.checks import *
 from image.color import random_bright_color
 from image.processing import image_is_big, make_image_small
 
@@ -206,6 +206,28 @@ class ChatMessage(models.Model):
         verbose_name_plural = u"Сообщения чата"
 
 
+class LastReadMessage(models.Model):
+    course = models.ForeignKey(Course, verbose_name=_(u"Чат какого курса"))
+    user = models.ForeignKey(get_user_model(), verbose_name=_(u"Пользователь"), null=True, on_delete=models.SET_NULL)
+    last_read_message_id = models.IntegerField(blank=True, verbose_name=_(u"Последнее прочитанное сообщение"), default=0)
+
+    @staticmethod
+    def register_last_message(course, user, last_message_id):
+        register = LastReadMessage(course=course, user=user)
+        try:
+            register = LastReadMessage.objects.get(user=user, course=course)
+        except: pass
+        register.last_read_message_id = last_message_id
+        register.save()
+
+    @staticmethod
+    def get_unread_messages_count(course, user):
+        last_read_message_id = 0
+        if LastReadMessage.objects.filter(user=user, course=course).count() > 0:
+            last_read_message_id = LastReadMessage.objects.get(user=user, course=course).last_read_message_id
+        return ChatMessage.objects.filter(course=course, pk__gt=last_read_message_id).count()
+
+
 class Medal(models.Model):
     image = models.ImageField(verbose_name=_(u"Изображение"))
     name = models.CharField(max_length=255, verbose_name=_(u"Название"))
@@ -240,3 +262,21 @@ class Mail(models.Model):
     class Meta:
         verbose_name = u"Почта"
         verbose_name_plural = u"Почты"
+
+
+class UserActivity(models.Model):
+    month = models.IntegerField(verbose_name=u"Месяц")
+    year = models.IntegerField(verbose_name=u"Год")
+    user = models.ForeignKey(get_user_model(), verbose_name=u"Пользователь")
+    activity = models.CharField(verbose_name=u"Активность", max_length=1000)
+
+    @staticmethod
+    def get_for_month(user, year, month):
+        try:
+            return UserActivity.objects.get(user=user, month=month, year=year)
+        except:
+            activity = UserActivity(user=user, month=month, year=year)
+            activity.activity = "0" * 31 * 24
+            return activity
+
+

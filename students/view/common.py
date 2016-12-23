@@ -1,12 +1,13 @@
 # coding=utf-8
 import traceback
-
 import sys
+
+import datetime
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 from django.utils.translation import ugettext_lazy as _
-from students.model.base import Teacher, Student, Group
+from students.model.base import Teacher, Student, Group, UserActivity, LastReadMessage
 
 
 def is_teacher(user):
@@ -27,18 +28,37 @@ def user_authenticated_to_group(user, group):
             or (is_teacher(user) and group in reduce(lambda i, c: i + list(c.groups.all()), user.teacher.courses.all(), []))
 
 
-class TeachersView(TemplateView):
+class UserView(TemplateView):
+    def register_user_activity(self, user):
+        now = datetime.datetime.now()
+        month = now.month
+        year = now.year
+        current_hour_index = (now.day - 1) * 24 + now.hour
+        activity = UserActivity.get_for_month(user, year, month)
+        weight = int(activity.activity[current_hour_index])
+        weight = weight+1 if weight < 9 else 9
+        activity.activity = activity.activity[:current_hour_index] \
+                            + str(weight) \
+                            + activity.activity[current_hour_index+1:]
+        activity.save()
+
+    def get_context_data(self, **kwargs):
+        return {}
+
+
+class TeachersView(UserView):
     teacher = None
     context = {}
 
     def dispatch(self, request, *args, **kwargs):
-        self.context = {}
+        self.context = self.get_context_data(**kwargs)
         self.teacher = None
 
         if is_teacher(request.user):
             self.teacher = request.user.teacher
             self.context['teacher'] = self.teacher
             try:
+                self.register_user_activity(self.teacher.user)
                 return self.handle(request, *args, **kwargs)
             except Exception as e:
                 exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -50,18 +70,19 @@ class TeachersView(TemplateView):
         return super(TeachersView, self).dispatch(request, *args, **kwargs)
 
 
-class StudentsView(TemplateView):
+class StudentsView(UserView):
     student = None
     context = {}
 
     def dispatch(self, request, *args, **kwargs):
-        self.context = {}
+        self.context = self.get_context_data(**kwargs)
         self.student = None
 
         if is_student(request.user):
             self.student = request.user.student
             self.context['student'] = self.student
             try:
+                self.register_user_activity(self.student.user)
                 return self.handle(request, *args, **kwargs)
             except Exception as e:
                 exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -73,22 +94,24 @@ class StudentsView(TemplateView):
         return super(StudentsView, self).dispatch(request, *args, **kwargs)
 
 
-class StudentsAndTeachersView(TemplateView):
+class StudentsAndTeachersView(UserView):
     student = None
     teacher = None
     context = {}
 
     def dispatch(self, request, *args, **kwargs):
-        self.context = {}
+        self.context = self.get_context_data(**kwargs)
         self.teacher = None
         self.student = None
 
         if is_student(request.user):
             self.student = request.user.student
             self.context['student'] = self.student
+            self.register_user_activity(self.student.user)
         if is_teacher(request.user):
             self.teacher = request.user.teacher
             self.context['teacher'] = self.teacher
+            self.register_user_activity(self.teacher.user)
         if self.teacher or self.student:
             try:
                 return self.handle(request, *args, **kwargs)

@@ -8,7 +8,7 @@ from django.conf import settings
 from django.utils import translation
 from html2text import html2text
 
-from students.model.base import Student, Teacher, FileResolution, Resolution
+from students.model.base import Student, Teacher, FileResolution, Resolution, LastReadMessage
 
 register = template.Library()
 
@@ -110,3 +110,35 @@ def medals_of(medals_by_students, student):
         return medals_by_students[student.id]
     else:
         return []
+
+
+@register.assignment_tag
+def get_unread_chats(user):
+    courses = []
+    if is_student(user):
+        courses = user.student.group.courses.all()
+    elif is_teacher(user):
+        courses = user.teacher.courses.all()
+    total = 0
+    course_chats = []
+    for course in courses:
+        count = LastReadMessage.get_unread_messages_count(course=course, user=user)
+        course_chats.append({
+            'id': course.id,
+            'name': course.name,
+            'unread_count': "50+" if count > 50 else (count or '')
+        })
+        total += count
+    return {
+        'total': "50+" if total > 50 else (total or ''),
+        'courses': course_chats
+    }
+
+
+@register.filter
+def min_length(data, req_length):
+    length = len(str(data))
+    if length < req_length:
+        return "0" * (req_length - length) + str(data)
+    else:
+        return data
