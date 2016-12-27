@@ -1,6 +1,6 @@
 {% extends 'students/base.html' %}
 
-{% load staticfiles my_tags i18n %}
+{% load staticfiles my_tags i18n humanize %}
 {% block content %}
     <div class="container">
         <h1>{{ course.name }}</h1>
@@ -35,7 +35,13 @@
                                         </a>
                                     {% endif %}
                                     <br>
-                                    <span class="last-seen">Был(а): {{ student.user.last_seen }}</span>
+                                    <span class="last-seen">Был(а):
+                                        {% if student.user.last_seen %}
+                                            {{ student.user.last_seen|timesince }} назад
+                                        {% else %}
+                                            {% trans 'никогда' %}
+                                        {% endif %}
+                                    </span>
                                 </td>
                                 {% for task in tasks %}
                                     {% best_solution_of resolutions_map|resolutions_for_task:task student as best_resolution %}
