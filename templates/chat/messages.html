@@ -1,20 +1,28 @@
 {% for message in messages %}
-    {% if message.user.id == current_user.id %}
-        <div class="message my-message" data-id="{{ message.id }}">
-            <div class="text">
-                {{ message.body }}
-                <div class="time">{{ message.datetime|date:"H:i" }}</div>
+    {% if message.user %}
+        {% if message.user.id == current_user.id %}
+            <div class="message my-message" data-id="{{ message.id }}">
+                <div class="text">
+                    {{ message.body }}
+                    <div class="time">{{ message.datetime|date:"d.m.Y H:i" }}</div>
+                </div>
             </div>
-        </div>
-        <div class="clearfix"></div>
+            <div class="clearfix"></div>
+        {% else %}
+            <div class="message others-message" data-id="{{ message.id }}">
+                <div class="name" style="color: {{ message.color }};">{{ message.user.get_full_name }}</div>
+                <div class="text">
+                    {{ message.body }}
+                    <div class="time">{{ message.datetime|date:"d.m.Y H:i" }}</div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        {% endif %}
     {% else %}
-        <div class="message others-message" data-id="{{ message.id }}">
-            <div class="name" style="color: {{ message.color }};">{{ message.user.get_full_name }}</div>
+        <div class="message date-bubble">
             <div class="text">
-                {{ message.body }}
-                <div class="time">{{ message.datetime|date:"H:i" }}</div>
+                {{ message }}
             </div>
         </div>
-        <div class="clearfix"></div>
     {% endif %}
 {% endfor %}
