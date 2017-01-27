@@ -5,6 +5,7 @@
 var Chat = {
     messagesList: null,
     courseId: null,
+    postMessageInProgress: false,
     lastMessageId: 0,
     lastMessageDiv: null,
     messageInput: null,
@@ -17,7 +18,7 @@ var Chat = {
         this.lastMessageDiv = $(".padding");
         this.messageInput = $("#message-input");
         this.startTimer();
-        $("#new-message-submit").on("click", function(){
+        $("#new-message-submit").on("click", function () {
             var message = Chat.messageInput.val();
             Chat.postMessage(message);
             Chat.messageInput.val("")
@@ -36,29 +37,34 @@ var Chat = {
     },
 
     updateMessages: function () {
-        $.ajax({
-            url: "/chat/new-messages/",
-            data:{
-                course_id: Chat.courseId,
-                last_message_id: Chat.lastMessageId
-            }
-        }).done(function (data) {
-            Chat.lastMessageId = data.last_message_id;
-            Chat.lastMessageDiv.before(data.new_messages);
-            if(data.new_messages.length > 0){
-                Chat.scrollToBottom();
-                Chat.playSound();
-            }
-        }).fail(function (e) {
-            console.log(e);
-        });
+        if (!Chat.postMessageInProgress) {
+            $.ajax({
+                url: "/chat/new-messages/",
+                data: {
+                    course_id: Chat.courseId,
+                    last_message_id: Chat.lastMessageId
+                }
+            }).done(function (data) {
+                if (!Chat.postMessageInProgress) {
+                    Chat.lastMessageId = data.last_message_id;
+                    Chat.lastMessageDiv.before(data.new_messages);
+                    if (data.new_messages.length > 0) {
+                        Chat.scrollToBottom();
+                        Chat.playSound();
+                    }
+                }
+            }).fail(function (e) {
+                console.log(e);
+            });
+        }
     },
 
-    postMessage: function(message){
+    postMessage: function (message) {
+        Chat.postMessageInProgress = true;
         $.ajax({
             method: 'POST',
             url: "/chat/post/",
-            data:{
+            data: {
                 course_id: Chat.courseId,
                 last_message_id: Chat.lastMessageId,
                 message: message
@@ -68,14 +74,16 @@ var Chat = {
             Chat.lastMessageDiv.before(data.new_messages);
             Chat.scrollToBottom();
             Chat.playSound();
+            Chat.postMessageInProgress = false;
         }).fail(function (e) {
             console.log(e);
+            Chat.postMessageInProgress = false;
         });
     },
 
     scrollToBottom: function () {
         var scrollTop = Chat.messagesList.prop("scrollHeight") - Chat.messagesList.height();
-        console.log("scroll: "+scrollTop);
+        console.log("scroll: " + scrollTop);
         Chat.messagesList.animate({scrollTop: scrollTop}, "fast");
     }
 };

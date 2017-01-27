@@ -14,7 +14,10 @@ from students.view.common import StudentsAndTeachersView, user_authenticated_to_
 
 class ChatDateMixin(object):
     def add_dates(self, messages, last_message_id=None):
-        prev_message = ChatMessage.objects.get(pk=last_message_id) if last_message_id else None
+        try:
+            prev_message = ChatMessage.objects.get(pk=last_message_id)
+        except:
+            prev_message = None
         messages_with_dates = []
         for message in messages:
             if prev_message is None or prev_message and prev_message.datetime.date() < message.datetime.date():
@@ -57,7 +60,7 @@ class NewMessagesView(StudentsAndTeachersView, ChatDateMixin):
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=request.GET.get("course_id"))
         if user_authenticated_to_course(request.user, course):
-            last_message_id = request.GET.get("last_message_id")
+            last_message_id = request.GET.get("last_message_id") or 0
             messages = ChatMessage.objects.filter(course=course, pk__gt=last_message_id).order_by("datetime")
             self.context['messages'] = self.add_dates(messages, last_message_id)
             self.context['current_user'] = request.user
@@ -80,7 +83,7 @@ class PostMessageView(StudentsAndTeachersView, ChatDateMixin):
             if len(message) > 0:
                 message = ChatMessage(body=message, user=request.user, course=course)
                 message.save()
-            last_message_id = request.POST.get("last_message_id")
+            last_message_id = request.POST.get("last_message_id") or 0
             messages = ChatMessage.objects.filter(course=course, pk__gt=last_message_id).order_by("datetime")
             self.context['messages'] = self.add_dates(messages, last_message_id)
             self.context['current_user'] = request.user
