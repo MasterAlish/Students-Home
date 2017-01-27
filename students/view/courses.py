@@ -228,7 +228,7 @@ class SetMarksView(TeachersView):
         if user_authenticated_to_course(request.user, course):
             self.context['task'] = task
             self.context['course'] = course
-            group_forms = map(lambda g: GroupStudentsInputForm(g), course.groups.all())
+            group_forms = map(lambda g: GroupStudentsInputForm(g, task), course.groups.all())
             if request.method == 'POST':
                 has_error = False
                 student_values = {}

@@ -5,7 +5,7 @@ from ckeditor.fields import RichTextFormField
 from django import forms
 from django.forms import ModelForm, Form
 
-from students.model.base import Medal, FileResolution
+from students.model.base import Medal, FileResolution, Resolution
 
 
 class FileResolutionUploadForm(ModelForm):
@@ -61,14 +61,15 @@ class StudentException(Exception):
 
 
 class GroupStudentsInputForm(Form):
-    def __init__(self, group):
+    def __init__(self, group, task):
         super(GroupStudentsInputForm, self).__init__()
         self.group = group
         for student in group.students.all():
-            self.fields[self.field_name(student)] = forms.CharField(label=student.name, required=False)
+            field = forms.CharField(label=student.name, required=False)
+            field.initial = self.get_mark_for(student, task)
+            self.fields[self.field_name(student)] = field
 
     def set_vals(self, DATA):
-        values = {}
         for student in self.group.students.all():
             field_name = self.field_name(student)
             value = DATA.get(field_name, None)
@@ -92,4 +93,10 @@ class GroupStudentsInputForm(Form):
 
     def add_error(self, field, error):
         self.errors[field] = error
+
+    def get_mark_for(self, student, task):
+        resolutions = Resolution.objects.filter(student=student, task=task).order_by("-mark")
+        if resolutions.count() == 0:
+            return ""
+        return resolutions[0].mark
 
