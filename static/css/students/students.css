@@ -4,7 +4,6 @@
 body {
     padding-top: 20px;
     padding-bottom: 20px;
-    background-color: #d4d4d4 !important;
 }
 
 .navbar {
@@ -36,15 +35,15 @@ body {
     max-height: 256px;
 }
 
-.django-ckeditor-widget{
+.django-ckeditor-widget {
     display: block !important;
 }
 
-.medal{
+.medal {
     display: inline-block;
 }
 
-.medal img{
+.medal img {
     width: 40px;
     height: 40px;
 }
@@ -58,24 +57,57 @@ body {
     border-radius: 1em !important;
 }
 
-.last-seen{
+.last-seen {
     font-size: 11px;
     color: grey;
     font-style: italic;
 }
 
-.christmas-tree{
-    width: 200px;
-    position: fixed;
-    bottom: 10px;
-    right:50px;
-    -webkit-transition: opacity 400ms;
-    -moz-transition: opacity 400ms;
-    -ms-transition: opacity 400ms;
-    -o-transition: opacity 400ms;
-    transition: opacity 400ms;
+.long-view {
+    overflow: scroll !important;
 }
 
-.christmas-tree:hover{
-    opacity: 0.2;
+.article{
+    margin-bottom: 30px;
+}
+
+.article .article-date {
+    display: inline-block;
+    vertical-align: baseline;
+    color: #7e7e7e;
+    font-size: 11px;
+    margin-bottom: 2px
+}
+
+.article .article-title{
+    margin-bottom: 10px;
+}
+
+.article .article-title, .article .article-title a {
+    font-family: 'Fira Sans', sans-serif;
+    line-height: 34px;
+    font-size: 28px;
+    color: #47738d
+}
+
+.article .article-preview{
+    margin-top: 10px;
+}
+
+.article .article-data{
+    color: #8e8e8e;
+    margin-top: 10px;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 5px;
+    border: 1px solid #c5c5c5;
+}
+
+.article img{
+    max-width: 100%;
+}
+
+.tab{
+    display: inline-block;
+    width: 20px;
 }

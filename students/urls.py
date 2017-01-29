@@ -9,6 +9,7 @@ from django.contrib.auth.views import login
 from django.views.decorators.csrf import csrf_exempt
 
 from students.view.activity import ActivityView
+from students.view.articles import ArticleView
 from students.view.chat import ChatView, NewMessagesView, PostMessageView
 from students.view.courses import CourseView, LectureView, MyGroupView, GroupView, LabTaskView, \
     EmailToCourseStudentsView, MarksView, GiveMedalsView, SetMarksView
@@ -51,6 +52,8 @@ urlpatterns = [
     url(r'^student/(?P<id>\d+)/$', login_required(StudentView.as_view()), name='student'),
     url(r'^groups/(?P<id>\d+)$', login_required(GroupView.as_view()), name='group'),
     url(r'^activity/$', login_required(ActivityView.as_view()), name='activity'),
+
+    url(r'^article/(?P<id>\d+)$', ArticleView.as_view(), name='article'),
 
     url(r'^error/$', on_error, name='error500'),
     url(r'^not-found/$', on_not_found, name='error404'),

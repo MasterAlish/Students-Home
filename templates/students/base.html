@@ -1,6 +1,7 @@
 {% load staticfiles i18n my_tags %}
 <html>
 <head>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta charset="utf-8">
     <link rel="shortcut icon" href="{% static 'ico/favicon.ico' %}">
     <title>{% trans 'Универские курсы' %}</title>
@@ -8,7 +9,6 @@
     <meta name="description" content="{% trans 'Универские курсы' %}">
     <script src="{% static 'js/students/jquery.min.js' %}"></script>
     <script src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-    <script async src="{% static 'js/snowstorm-min.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/students/students.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/students/font-awesome.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}" type="text/css">
@@ -19,7 +19,6 @@
     {% include "blocks/analytics.html" %}
 </head>
 <body>
-<img src="{% static 'img/christmas_tree.png' %}" class="christmas-tree"/>
 <div class="container">
     <nav class="navbar navbar-default">
         <div class="container-fluid">

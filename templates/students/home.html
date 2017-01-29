@@ -6,19 +6,45 @@
     <div class="jumbotron">
         <h1>Добро пожаловать!</h1>
         <p>
-            На этом сайте вы будете получать лекции, лабораторные работы, проходить тесты, следить за своими результатами и задавать вопросы преподавателю.
+            На этом сайте вы будете получать лекции, лабораторные работы, проходить тесты, следить за своими
+            результатами и задавать вопросы преподавателю.
         </p>
         <p>
-            С наступающим Новым Годом! <span class="fa fa-tree"></span>
+            С Новым Годом! <span class="fa fa-tree"></span>
         </p>
         <p>
             {% if user.is_authenticated %}
-                <a class="btn btn-lg btn-primary" href="/" role="button" onclick="this.innerHTML='Ок, иди, учись!'; return false;">Идем учиться »</a>
+                <a class="btn btn-lg btn-primary" href="/" role="button"
+                   onclick="this.innerHTML='Ок, иди, учись!'; return false;">Идем учиться »</a>
             {% else %}
                 <a class="btn btn-lg btn-primary" href="{% url 'login' %}" role="button">Войти</a>
                 <a class="btn btn-lg btn-info" href="{% url 'register' %}" role="button">Регистрация</a>
             {% endif %}
         </p>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>Последние статьи</h3>
+            {% for article in articles %}
+                <div class="article">
+                    <div class="article-date">{{ article.datetime|timesince }} назад</div>
+                    <div class="article-title">
+                        {% if article.course %}
+                            <a href="{% url 'course' article.course.id %}">{{ article.course.name }}</a> →
+                        {% endif %}
+                        <a href="{% url 'article' article.id %}">{{ article.title }}</a>
+                    </div>
+                    <div class="article-preview">{{ article.preview|safe }}</div>
+                    <a href="{% url 'article' article.id %}" class="btn btn-default btn-sm">Читать дальше →</a>
+                    <div class="clearfix"></div>
+                    <div class="article-data">
+                        <span class="fa fa-eye"></span> {{ article.viewed }} <span class="tab"></span>
+                        <span class="fa fa-user"></span> {{ article.author.get_full_name }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 
 {% endblock %}

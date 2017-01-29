@@ -6,6 +6,7 @@ from django.contrib.auth.models import Group as UserGroup
 
 from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture, ChatMessage, \
     Medal, StudentMedal, LabTask, Task, Resolution, FileResolution, UserActivity
+from students.model.blog import Article
 from students.model.checks import FileSizeConstraint, FileNameConstraint, ZipContainsFileConstraint, ZipFileConstraint
 from students.models import MyUser, UserChangeForm, UserCreationForm
 
@@ -81,4 +82,5 @@ admin.site.register(FileNameConstraint)
 admin.site.register(ZipFileConstraint)
 admin.site.register(ZipContainsFileConstraint)
 admin.site.register(UserActivity)
+admin.site.register(Article)
 

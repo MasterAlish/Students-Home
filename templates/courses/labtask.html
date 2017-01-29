@@ -2,14 +2,15 @@
 
 {% load staticfiles my_tags i18n %}
 {% block content %}
-    <div class="container">
-        <h1>Лабораторная работа: {{ labtask.title }}</h1>
-        <div class="lead">
-            {{ course }} <br>
-            Дедлайн: {{ labtask.deadline|date:"d.m.Y H:i" }}<br>
-            {% if user|is_student %}
-                <a id="upload-form-expand" class="btn btn-sm btn-default" href="#">Загрузить решение</a>
-                <div style="{% if not form.errors %} display: none; {% endif %} margin-top: 10px; width: 700px;" id="upload-form" class="panel panel-default">
+    <h1>Лабораторная работа: {{ labtask.title }}</h1>
+    <div class="lead">
+        {{ course }} <br>
+        Дедлайн: {{ labtask.deadline|date:"d.m.Y H:i" }}<br>
+        {% if user|is_student %}
+            <a id="upload-form-expand" class="btn btn-sm btn-default" href="#">Загрузить решение</a>
+            <div style="overflow: scroll;">
+                <div style="{% if not form.errors %} display: none; {% endif %} margin-top: 10px; width: 700px;"
+                     id="upload-form" class="panel panel-default">
                     <div class="panel-body">
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
@@ -29,16 +30,17 @@
                         </form>
                     </div>
                 </div>
-            {% endif %}
-        </div>
-        <div>
-            {{ labtask.body|safe }}
-        </div>
+            </div>
+        {% endif %}
+    </div>
+    <div>
+        {{ labtask.body|safe }}
     </div>
     <script>
         $(document).ready(function () {
             $("#upload-form-expand").on("click", function () {
                 $("#upload-form").show();
+                $(this).hide();
             });
         })
     </script>

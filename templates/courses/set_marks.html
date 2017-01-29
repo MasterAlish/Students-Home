@@ -2,30 +2,28 @@
 
 {% load staticfiles my_tags i18n %}
 {% block content %}
-    <div class="container">
-        <h1>Выставить оценка за "{{ task }}"</h1>
-        <div class="lead">
-            {% trans 'Курс' %}: {{ course.name }}
-        </div>
-        <div style="margin-top: 10px;" class="panel panel-default">
-            <div class="panel-body">
-                <form method="post" enctype="multipart/form-data" id="this-form">
-                    {% csrf_token %}
-                    {% for form in group_forms %}
-                        <h4>{{ form.group.name }}</h4>
-                        {% for field  in form %}
-                            <div>
-                                {{ field }}
-                                {% if field.errors %}
-                                    <span class="text-danger">{{ field.errors }}</span>
-                                {% endif %}
-                                <label for="id_{{ field.name }}">{{ field.label }}</label>
-                            </div>
-                        {% endfor %}
+    <h1>Выставить оценка за "{{ task }}"</h1>
+    <div class="lead">
+        {% trans 'Курс' %}: {{ course.name }}
+    </div>
+    <div style="margin-top: 10px;" class="panel panel-default">
+        <div class="panel-body">
+            <form method="post" enctype="multipart/form-data" id="this-form">
+                {% csrf_token %}
+                {% for form in group_forms %}
+                    <h4>{{ form.group.name }}</h4>
+                    {% for field  in form %}
+                        <div>
+                            {{ field }}
+                            {% if field.errors %}
+                                <span class="text-danger">{{ field.errors }}</span>
+                            {% endif %}
+                            <label for="id_{{ field.name }}">{{ field.label }}</label>
+                        </div>
                     {% endfor %}
-                    <input type="submit" class="btn btn-sm btn-default" value="Выставить оценки">
-                </form>
-            </div>
+                {% endfor %}
+                <input type="submit" class="btn btn-sm btn-default" value="Выставить оценки">
+            </form>
         </div>
     </div>
 

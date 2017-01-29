@@ -2,39 +2,37 @@
 
 {% load staticfiles my_tags i18n %}
 {% block content %}
-    <div class="container">
-        <h1>Выдать медаль</h1>
-        <div class="lead">
-            {% trans 'Курс' %}: {{ course.name }}
-        </div>
-        <div style="margin-top: 10px;" class="panel panel-default">
-            <div class="panel-body">
-                <form method="post" enctype="multipart/form-data" id="this-form">
-                    {% csrf_token %}
-                    {% for form in group_forms %}
-                        <h4>{{ form.group.name }} {{ form.select_all_button|safe }}</h4>
-                        {% for field  in form %}
-                            <div>
-                                {{ field }}
-                                <label for="id_{{ field.name }}">{{ field.label }}</label>
-                            </div>
-                        {% endfor %}
-                    {% endfor %}
-
-                    {% for field in medal_form %}
-                        <div class="form-group {% if field.errors %}has-error{% endif %} ">
-                            {% if field.errors %}
-                                <div class="help-block">
-                                    {{ field.errors.0 }}
-                                </div>
-                            {% endif %}
-                            {{ field.label_tag }}
+    <h1>Выдать медаль</h1>
+    <div class="lead">
+        {% trans 'Курс' %}: {{ course.name }}
+    </div>
+    <div style="margin-top: 10px;" class="panel panel-default">
+        <div class="panel-body">
+            <form method="post" enctype="multipart/form-data" id="this-form">
+                {% csrf_token %}
+                {% for form in group_forms %}
+                    <h4>{{ form.group.name }} {{ form.select_all_button|safe }}</h4>
+                    {% for field  in form %}
+                        <div>
                             {{ field }}
+                            <label for="id_{{ field.name }}">{{ field.label }}</label>
                         </div>
                     {% endfor %}
-                    <input type="submit" class="btn btn-sm btn-default" value="Выдать">
-                </form>
-            </div>
+                {% endfor %}
+
+                {% for field in medal_form %}
+                    <div class="form-group {% if field.errors %}has-error{% endif %} ">
+                        {% if field.errors %}
+                            <div class="help-block">
+                                {{ field.errors.0 }}
+                            </div>
+                        {% endif %}
+                        {{ field.label_tag }}
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <input type="submit" class="btn btn-sm btn-default" value="Выдать">
+            </form>
         </div>
     </div>
 

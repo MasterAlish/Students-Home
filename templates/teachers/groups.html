@@ -2,45 +2,43 @@
 
 {% load staticfiles my_tags i18n %}
 {% block content %}
-    <div class="container">
-        <h1>{{ group.name }}</h1>
+    <h1>{{ group.name }}</h1>
 
-        <div>
-            <h3>Мои группы</h3>
-            {% if courses.count > 0 %}
-                <table class="table table-bordered table-responsive table-striped table-hover">
-                    <thead>
+    <div>
+        <h3>Мои группы</h3>
+        {% if courses.count > 0 %}
+            <table class="table table-bordered table-responsive table-striped table-hover">
+                <thead>
+                <tr>
+                    <th colspan="5">Курс</th>
+                </tr>
+                <tr>
+                    <th>#</th>
+                    <th>Группы</th>
+                    <th>Кол-во студентов</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for course in courses.all %}
+                    <tr>
+                        <th colspan="5">{{ course.name }}</th>
+                    </tr>
+                    {% for group in course.groups.all %}
                         <tr>
-                            <th colspan="5">Курс</th>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <a href="{% url 'group' group.id %}">
+                                    {{ group.name }}
+                                </a>
+                            </td>
+                            <td>{{ group.students.count }}</td>
                         </tr>
-                        <tr>
-                            <th>#</th>
-                            <th>Группы</th>
-                            <th>Кол-во студентов</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for course in courses.all %}
-                            <tr>
-                                <th colspan="5">{{ course.name }}</th>
-                            </tr>
-                            {% for group in course.groups.all %}
-                                <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>
-                                         <a href="{% url 'group' group.id %}">
-                                            {{ group.name }}
-                                         </a>
-                                    </td>
-                                    <td>{{ group.students.count }}</td>
-                                </tr>
-                            {% endfor %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                У вас нет никаких курсов
-            {% endif %}
-        </div>
+                    {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            У вас нет никаких курсов
+        {% endif %}
     </div>
 {% endblock %}

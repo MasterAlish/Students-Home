@@ -2,89 +2,107 @@
 
 {% load staticfiles my_tags i18n %}
 {% block content %}
-    <div class="container">
-        <h1>{{ course.name }}</h1>
-        <div class="lead">
-            {{ course.get_semester_display }} семестр {{ course.year }} года <br>
-            Преподаватели:
-            {% for teacher in course.teachers.all %}
-                <a href="{% url 'teacher' teacher.id %}">
-                    {{ teacher.user.get_full_name }}
-                </a>
-                {% if not forloop.last %},{% endif %}
-            {% endfor %}
-            <br>
-            {% if user|is_teacher %}
-                <a class="btn btn-sm btn-info" href="{% url 'email-course' course.id %}">Написать студентам курса</a>
-                <a class="btn btn-sm btn-info" href="{% url 'give-medals' course.id %}">Выдать медаль</a>
-            {% endif %}
-            <a class="btn btn-sm btn-default" href="{% url 'chat' course.id %}">Открыть чат</a>
-            <a class="btn btn-sm btn-default" href="{% url 'marks' course.id %}">Оценки</a>
-        </div>
-        <div>
-            {{ course.description|safe }}
-        </div>
+    <h1>{{ course.name }}</h1>
+    <div class="lead">
+        {{ course.get_semester_display }} семестр {{ course.year }} года <br>
+        Преподаватели:
+        {% for teacher in course.teachers.all %}
+            <a href="{% url 'teacher' teacher.id %}">
+                {{ teacher.user.get_full_name }}
+            </a>
+            {% if not forloop.last %},{% endif %}
+        {% endfor %}
+        <br>
+        {% if user|is_teacher %}
+            <a class="btn btn-sm btn-info" href="{% url 'email-course' course.id %}">Написать студентам курса</a>
+            <a class="btn btn-sm btn-info" href="{% url 'give-medals' course.id %}">Выдать медаль</a>
+        {% endif %}
+        <a class="btn btn-sm btn-default" href="{% url 'chat' course.id %}">Открыть чат</a>
+        <a class="btn btn-sm btn-default" href="{% url 'marks' course.id %}">Оценки</a>
+    </div>
+    <div>
+        {{ course.description|safe }}
+    </div>
 
-        <div>
-            <h3>Лекции</h3>
-            {% if course.lectures.count > 0 %}
+    <div>
+        <h3>Лекции</h3>
+        {% if course.lectures.count > 0 %}
+            <ol>
+                {% for lecture in course.lectures.all %}
+                    <li><a href="{% url 'lecture' lecture.id %}">{{ lecture }}</a></li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            Пока лекций нет
+        {% endif %}
+    </div>
+
+    <div>
+        <h3>Лабораторные работы</h3>
+        {% if user|is_teacher %}
+            {% if course.all_labtasks.count > 0 %}
                 <ol>
-                    {% for lecture in course.lectures.all %}
-                        <li><a href="{% url 'lecture' lecture.id %}">{{ lecture }}</a></li>
-                    {% endfor %}
-                </ol>
-            {% else %}
-                Пока лекций нет
-            {% endif %}
-        </div>
-
-        <div>
-            <h3>Лабораторные работы</h3>
-            {% if user|is_teacher %}
-                {% if course.all_labtasks.count > 0 %}
-                    <ol>
-                        {% for labtask in course.all_labtasks.all %}
-                            <li>
-                                <a href="{% url 'labtask' labtask.id %}">{{ labtask }}</a>
-                                {% if not labtask.active %}
-                                    (Не активен)
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ol>
-                {% else %}
-                    Пока лабораторных работ нет
-                {% endif %}
-            {% else %}
-                {% if course.active_labtasks.count > 0 %}
-                    <ol>
-                        {% for labtask in course.active_labtasks.all %}
-                            <li><a href="{% url 'labtask' labtask.id %}">{{ labtask }}</a></li>
-                        {% endfor %}
-                    </ol>
-                {% else %}
-                    Пока лабораторных работ нет
-                {% endif %}
-            {% endif %}
-        </div>
-
-        <div>
-            <h3>Другие задания</h3>
-            {% if course.non_labtasks.count > 0 %}
-                <ol>
-                    {% for task in course.non_labtasks.all %}
+                    {% for labtask in course.all_labtasks.all %}
                         <li>
-                            {{ task.title }}
-                            {% if user|is_teacher %}
-                                <a href="{% url 'set-marks' task.id %}">{% trans 'Выставить оценки' %}</a>
+                            <a href="{% url 'labtask' labtask.id %}">{{ labtask }}</a>
+                            {% if not labtask.active %}
+                                (Не активен)
                             {% endif %}
                         </li>
                     {% endfor %}
                 </ol>
             {% else %}
-                Пока других заданий нет
+                Пока лабораторных работ нет
             {% endif %}
+        {% else %}
+            {% if course.active_labtasks.count > 0 %}
+                <ol>
+                    {% for labtask in course.active_labtasks.all %}
+                        <li><a href="{% url 'labtask' labtask.id %}">{{ labtask }}</a></li>
+                    {% endfor %}
+                </ol>
+            {% else %}
+                Пока лабораторных работ нет
+            {% endif %}
+        {% endif %}
+    </div>
 
+    <div>
+        <h3>Другие задания</h3>
+        {% if course.non_labtasks.count > 0 %}
+            <ol>
+                {% for task in course.non_labtasks.all %}
+                    <li>
+                        {{ task.title }}
+                        {% if user|is_teacher %}
+                            <a href="{% url 'set-marks' task.id %}">{% trans 'Выставить оценки' %}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            Пока других заданий нет
+        {% endif %}
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>Последние статьи</h3>
+            {% for article in course.articles.all %}
+                <div class="article">
+                    <div class="article-date">{{ article.datetime|timesince }} назад</div>
+                    <div class="article-title">
+                        <a href="{% url 'article' article.id %}">{{ article.title }}</a>
+                    </div>
+                    <div class="article-preview">{{ article.preview|safe }}</div>
+                    <a href="{% url 'article' article.id %}" class="btn btn-default btn-sm">Читать дальше →</a>
+                    <div class="clearfix"></div>
+                    <div class="article-data">
+                        <span class="fa fa-eye"></span> {{ article.viewed }} <span class="tab"></span>
+                        <span class="fa fa-user"></span> {{ article.author.get_full_name }}
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

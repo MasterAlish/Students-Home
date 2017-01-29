@@ -13,6 +13,7 @@ from django.views.generic import TemplateView, View
 
 from students.mail import StudentsMail
 from students.model.base import Student
+from students.model.blog import Article
 from students.models import MyUser
 from students.view.common import is_student, is_teacher
 
@@ -127,7 +128,7 @@ class HomeView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         context = {
-
+            'articles': Article.objects.all()
         }
 
         return render(request, self.template_name, context)

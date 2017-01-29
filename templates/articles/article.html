@@ -1,0 +1,40 @@
+{% extends 'students/base.html' %}
+{% load staticfiles %}
+{% block head %}
+    <link rel="stylesheet"
+          href="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/styles/default.css' %}"/>
+    <script src="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/highlight.pack.js' %}"></script>
+    <style>
+        code {
+            overflow: scroll;
+            white-space: inherit !important;
+            word-wrap: normal !important;
+        }
+
+        pre {
+            padding: 0px !important;
+            background-color: transparent !important;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="article">
+        <div class="article-date">{{ article.datetime|timesince }} назад</div>
+        <div class="article-title">
+            {% if article.course %}
+                <a href="{% url 'course' article.course.id %}">{{ article.course.name }}</a> →
+            {% endif %}
+            {{ article.title }}
+        </div>
+        {{ article.preview|safe }}
+        {{ article.body|safe }}
+        <div class="clearfix"></div>
+        <div class="article-data">
+            <span class="fa fa-eye"></span> {{ article.viewed }} <span class="tab"></span>
+            <span class="fa fa-user"></span> {{ article.author.get_full_name }}
+        </div>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </div>
+{% endblock %}
+

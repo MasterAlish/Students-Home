@@ -120,6 +120,19 @@ CKEDITOR_CONFIGS = {
         'width': '100%',
         'toolbarCanCollapse': False,
     },
+    'article': {
+        'toolbar': [['Smiley', 'Bold', 'Italic', 'Underline', 'Strike'], ['Link', 'Unlink'], ['CodeSnippet', 'Source']],
+        'height': 150,
+        'width': 800,
+        'toolbarCanCollapse': False,
+        'extraAllowedContent': 'script  [*]',
+        'extraPlugins': ','.join(
+            [
+                'codesnippet',
+                'widget',
+                'dialog',
+            ]),
+    },
     'short': {
         'toolbar': [['Font', 'FontSize', 'TextColor', 'BGColor'], ['Bold', 'Italic', 'Underline', 'Strike'],
                     ['NumberedList', 'BulletedList'],

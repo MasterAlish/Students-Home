@@ -7,7 +7,7 @@
         <div class="lead">
             Оценки студентов <br>
         </div>
-        <div>
+        <div class="long-view" style="overflow: scroll;">
             <table class="table table-bordered table-condensed table-hover">
                 <thead>
                     <tr>
@@ -64,7 +64,7 @@
                                         {% endif %}
                                     </td>
                                 {% endfor %}
-                                <td>
+                                <td style="min-width: 300px;">
                                     {% for medal in medals_by_students|medals_of:student %}
                                         <div class="medal">
                                             <img src="{{ medal.medal.image.url }}" title="{{ medal.medal.name }}">
