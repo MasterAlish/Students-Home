@@ -24,10 +24,10 @@ class StudentsMail(object):
 
     def inform_students_of_course(self, course, subject, html_text):
         """
-        :type teacher: students.model.base.Course
+        :type course: students.model.base.Course
         """
         recipients = []
-        for group in course.groups.all():
+        for group in course.groups_with_extra():
             for student in group.students.all():
                 recipients.append(student.user.email)
         self.save_mail(subject, html_text, html_text, recipients)

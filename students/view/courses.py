@@ -11,7 +11,8 @@ from django.urls import reverse
 from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalForm, GroupStudentsSelectForm, \
     GroupStudentsInputForm, StudentException
 from students.mail import StudentsMail
-from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution, Resolution, Task
+from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution, Resolution, Task, \
+    GroupMock
 from students.model.checks import ZipContainsFileConstraint
 from students.view.common import StudentsView, user_authenticated_to_course, StudentsAndTeachersView, \
     user_authenticated_to_group, TeachersView
@@ -122,6 +123,18 @@ class GroupView(StudentsAndTeachersView):
         raise Exception(u"Smth went wrong")
 
 
+class ExtraGroupView(StudentsAndTeachersView):
+    template_name = "courses/group.html"
+
+    def handle(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['course_id'])
+        group = GroupMock(u"Доп. группа: "+course.name, course, list(course.extra_students.all()))
+        if user_authenticated_to_course(request.user, course):
+            self.context['group'] = group
+            return render(request, self.template_name, self.context)
+        raise Exception(u"Smth went wrong")
+
+
 class MarksView(StudentsAndTeachersView):
     template_name = "courses/marks.html"
 
@@ -197,7 +210,7 @@ class GiveMedalsView(TeachersView):
         if user_authenticated_to_course(request.user, course):
             self.context['course'] = course
             medal_form = MedalForm()
-            group_forms = map(lambda g: GroupStudentsSelectForm(g), course.groups.all())
+            group_forms = map(lambda g: GroupStudentsSelectForm(g), course.groups_with_extra())
             if request.method == 'POST':
                 medal_form = MedalForm(request.POST)
                 selected_students = []
@@ -228,7 +241,7 @@ class SetMarksView(TeachersView):
         if user_authenticated_to_course(request.user, course):
             self.context['task'] = task
             self.context['course'] = course
-            group_forms = map(lambda g: GroupStudentsInputForm(g, task), course.groups.all())
+            group_forms = map(lambda g: GroupStudentsInputForm(g, task), course.groups_with_extra())
             if request.method == 'POST':
                 has_error = False
                 student_values = {}

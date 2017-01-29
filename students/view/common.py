@@ -19,7 +19,7 @@ def is_student(user):
 
 
 def user_authenticated_to_course(user, course):
-    return (is_student(user) and course in user.student.group.courses.all()) \
+    return (is_student(user) and (course in user.student.group.courses.all()) or user.student in course.extra_students.all()) \
             or (is_teacher(user) and course in user.teacher.courses.all())
 
 

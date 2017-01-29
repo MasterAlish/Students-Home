@@ -34,6 +34,17 @@
                             <td>{{ group.students.count }}</td>
                         </tr>
                     {% endfor %}
+                    {% if course.extra_students.count > 0 %}
+                        <tr>
+                            <td>{{ course.groups.count|add:1 }}</td>
+                            <td>
+                                <a href="{% url 'extra_group' course.id %}">
+                                    {% trans 'Дополнительная группа' %}
+                                </a>
+                            </td>
+                            <td>{{ course.extra_students.count }}</td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
                 </tbody>
             </table>

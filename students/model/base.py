@@ -77,6 +77,12 @@ class Course(models.Model):
         verbose_name = u"Курс"
         verbose_name_plural = u"Курсы"
 
+    def groups_with_extra(self):
+        groups = list(self.groups.all())
+        extra_group = GroupMock(u"Дополнительная группа", self, list(self.extra_students.all()))
+        groups.append(extra_group)
+        return groups
+
 
 class Lecture(models.Model):
     course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name='lectures')
@@ -136,6 +142,25 @@ class Group(models.Model):
         verbose_name_plural = u"Группы"
 
 
+class ModelManagerMock(object):
+    def __init__(self, data):
+        self.data = data
+
+    def all(self):
+        return self.data
+
+    def count(self):
+        return len(self.data)
+
+
+class GroupMock:
+    def __init__(self, name, course, extra_students):
+        self.id = 0
+        self.name = name
+        self.courses = ModelManagerMock([course])
+        self.students = ModelManagerMock(map(lambda es: es.student, extra_students))
+
+
 class Student(models.Model, AvatarMixin):
     avatar = models.FileField(verbose_name=_(u"Аватар"), null=True, blank=True, upload_to="avatars/")
     user = models.OneToOneField(get_user_model(), related_name="student")
@@ -162,6 +187,18 @@ class Student(models.Model, AvatarMixin):
     class Meta:
         verbose_name = u"Студент"
         verbose_name_plural = u"Студенты"
+
+
+class ExtraStudent(models.Model):
+    student = models.ForeignKey(Student, verbose_name=u"Студент")
+    course = models.ForeignKey(Course, verbose_name=u"Курс", related_name="extra_students")
+
+    def __unicode__(self):
+        return u"%s: %s" % (self.course.name, self.student)
+
+    class Meta:
+        verbose_name = u"Студент записавшийся не на свой курс"
+        verbose_name_plural = u"Студенты записавшиеся не на свои курсы"
 
 
 class Resolution(PolymorphicModel):
