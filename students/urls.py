@@ -58,6 +58,7 @@ urlpatterns = [
 
     url(r'^error/$', on_error, name='error500'),
     url(r'^not-found/$', on_not_found, name='error404'),
+    url(r'^api/', include('students.api.urls')),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/',  include(admin.site.urls)),

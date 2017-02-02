@@ -42,7 +42,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                                aria-expanded="false">Мои курсы <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                {% for course in user.student.group.courses.all %}
+                                {% for course in user.student.courses %}
                                     <li><a href="{% url 'course' course.id %}">{{ course }}</a></li>
                                 {% endfor %}
                             </ul>
@@ -76,7 +76,7 @@
                                 {% endfor %}
                             </ul>
                         </li>
-                        <li><a href="{% url 'profile' %}">{{ user.get_full_name }}</a></li>
+                        <li><a href="{% url 'profile' %}" id="user-id">{{ user.get_full_name }}</a></li>
                         <li><a href="{% url 'logout' %}">Выйти</a></li>
                     {% else %}
                         <li><a href="{% url 'login' %}">Войти</a></li>

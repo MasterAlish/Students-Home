@@ -1,6 +1,22 @@
 {% extends 'students/base.html' %}
 
 {% load staticfiles my_tags i18n %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/styles/monokai.css' %}"/>
+    <script src="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/highlight.pack.js' %}"></script>
+    <style>
+        code {
+            overflow: scroll;
+            white-space: inherit !important;
+            word-wrap: normal !important;
+        }
+
+        pre {
+            padding: 0px !important;
+            background-color: transparent !important;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     <h1>{{ course.name }}</h1>
     <div class="lead">
@@ -88,7 +104,7 @@
     <div class="row">
         <div class="col-xs-12">
             <h3>Последние статьи</h3>
-            {% for article in course.articles.all %}
+            {% for article in course.active_articles.all %}
                 <div class="article">
                     <div class="article-date">{{ article.datetime|timesince }} назад</div>
                     <div class="article-title">
@@ -99,10 +115,12 @@
                     <div class="clearfix"></div>
                     <div class="article-data">
                         <span class="fa fa-eye"></span> {{ article.viewed }} <span class="tab"></span>
+                        <span class="fa fa-mobile"></span> {{ article.viewed_mobile }} <span class="tab"></span>
                         <span class="fa fa-user"></span> {{ article.author.get_full_name }}
                     </div>
                 </div>
             {% endfor %}
         </div>
     </div>
+    <script>hljs.initHighlightingOnLoad();</script>
 {% endblock %}

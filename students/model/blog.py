@@ -15,6 +15,7 @@ class Article(models.Model):
     datetime = models.DateTimeField(auto_now_add=True, verbose_name=u"Дата создания")
     published = models.BooleanField(default=True, verbose_name=u"Опубликован")
     viewed = models.IntegerField(default=0, verbose_name=u"Просмотрено")
+    viewed_mobile = models.IntegerField(default=0, verbose_name=u"Просмотрено через приложение")
 
     def __unicode__(self):
         return self.title

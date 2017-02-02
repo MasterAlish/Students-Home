@@ -73,13 +73,20 @@ class Course(models.Model):
     def non_labtasks(self):
         return self.tasks.not_instance_of(LabTask).order_by("created_at").all()
 
+    def active_articles(self):
+        return self.articles.filter(published=True).order_by("-datetime")
+
+    @property
+    def extra_students(self):
+        return map(lambda es: es.student, self.extra_students_rel.all())
+
     class Meta:
         verbose_name = u"Курс"
         verbose_name_plural = u"Курсы"
 
     def groups_with_extra(self):
         groups = list(self.groups.all())
-        extra_group = GroupMock(u"Дополнительная группа", self, list(self.extra_students.all()))
+        extra_group = GroupMock(u"Дополнительная группа", self, self.extra_students)
         groups.append(extra_group)
         return groups
 
@@ -154,11 +161,11 @@ class ModelManagerMock(object):
 
 
 class GroupMock:
-    def __init__(self, name, course, extra_students):
+    def __init__(self, name, course, students):
         self.id = 0
         self.name = name
         self.courses = ModelManagerMock([course])
-        self.students = ModelManagerMock(map(lambda es: es.student, extra_students))
+        self.students = ModelManagerMock(students)
 
 
 class Student(models.Model, AvatarMixin):
@@ -177,6 +184,10 @@ class Student(models.Model, AvatarMixin):
     def get_short_name(self):
         return self.user.email[:self.user.email.index("@")]
 
+    @property
+    def courses(self):
+        return list(self.group.courses.all()) + map(lambda ec: ec.course, list(self.extra_courses_rel.all()))
+
     def save(self, **kwargs):
         super(Student, self).save(**kwargs)
         if self.avatar.name and image_is_big(self.avatar.name):
@@ -190,8 +201,8 @@ class Student(models.Model, AvatarMixin):
 
 
 class ExtraStudent(models.Model):
-    student = models.ForeignKey(Student, verbose_name=u"Студент")
-    course = models.ForeignKey(Course, verbose_name=u"Курс", related_name="extra_students")
+    student = models.ForeignKey(Student, verbose_name=u"Студент", related_name="extra_courses_rel")
+    course = models.ForeignKey(Course, verbose_name=u"Курс", related_name="extra_students_rel")
 
     def __unicode__(self):
         return u"%s: %s" % (self.course.name, self.student)

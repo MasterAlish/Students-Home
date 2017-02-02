@@ -128,7 +128,7 @@ class ExtraGroupView(StudentsAndTeachersView):
 
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=kwargs['course_id'])
-        group = GroupMock(u"Доп. группа: "+course.name, course, list(course.extra_students.all()))
+        group = GroupMock(u"Доп. группа: "+course.name, course, course.extra_students)
         if user_authenticated_to_course(request.user, course):
             self.context['group'] = group
             return render(request, self.template_name, self.context)

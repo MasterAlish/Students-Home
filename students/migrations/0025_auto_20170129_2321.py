@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='ExtraStudent',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='extra_students', to='students.Course', verbose_name='\u041a\u0443\u0440\u0441')),
+                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='extra_students_rel', to='students.Course', verbose_name='\u041a\u0443\u0440\u0441')),
                 ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='students.Student', verbose_name='\u0421\u0442\u0443\u0434\u0435\u043d\u0442')),
             ],
             options={

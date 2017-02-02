@@ -34,7 +34,7 @@
                             <td>{{ group.students.count }}</td>
                         </tr>
                     {% endfor %}
-                    {% if course.extra_students.count > 0 %}
+                    {% if course.extra_students|length > 0 %}
                         <tr>
                             <td>{{ course.groups.count|add:1 }}</td>
                             <td>
@@ -42,7 +42,7 @@
                                     {% trans 'Дополнительная группа' %}
                                 </a>
                             </td>
-                            <td>{{ course.extra_students.count }}</td>
+                            <td>{{ course.extra_students|length }}</td>
                         </tr>
                     {% endif %}
                 {% endfor %}

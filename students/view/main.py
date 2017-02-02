@@ -128,7 +128,7 @@ class HomeView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         context = {
-            'articles': Article.objects.all()
+            'articles': Article.objects.filter(published=True).order_by("-datetime")
         }
 
         return render(request, self.template_name, context)
