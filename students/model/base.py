@@ -200,6 +200,14 @@ class Student(models.Model, AvatarMixin):
         verbose_name_plural = u"Студенты"
 
 
+class Todo(models.Model):
+    text = models.CharField(verbose_name=_(u"Текст"), max_length=255)
+    user = models.ForeignKey(get_user_model(), verbose_name=_(u"Пользователь"), related_name="todos")
+    datetime = models.DateTimeField(auto_now=True, verbose_name=_(u"Время"))
+    color = models.CharField(verbose_name=_(u"Цвет"), max_length=20, default="#FFFFFF")
+    done = models.BooleanField(verbose_name=_(u"Достигнуто"), default=False)
+
+
 class ExtraStudent(models.Model):
     student = models.ForeignKey(Student, verbose_name=u"Студент", related_name="extra_courses_rel")
     course = models.ForeignKey(Course, verbose_name=u"Курс", related_name="extra_students_rel")

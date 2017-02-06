@@ -1,51 +1,128 @@
 {% extends 'students/base.html' %}
-
 {% load staticfiles my_tags i18n %}
-{% block content %}
-    <div class="container">
-        <h1>{{ user.fullname }}</h1>
+{% block head %}
+    <script src="{% static 'js/todo.js' %}" type="application/javascript"></script>
+{% endblock %}
 
-        <div>
-            <div class="big-student-avatar">
-                {% if user|is_student %}
-                    <img src="{{ user.student.avatar_url }}">
-                {% elif user|is_teacher %}
-                    <img src="{{ user.teacher.avatar_url }}">
-                {% else %}
-                    <img src="{{ user.email|gravatar }}">
-                {% endif %}
-            </div>
-            <div>
-                <table class="table" style="width: auto;">
-                    {% if user|is_student %}
-                        <tr>
-                            <th>Моя группа:</th>
-                            <td>{{ user.student.group.name }}</td>
-                        </tr>
-                    {% endif %}
-                    <tr>
-                        <th>Мой email:</th>
-                        <td>
-                            <span class="fa fa-envelope"></span>
-                            {{ user.email }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Мой тел:</th>
-                        <td>{{ user.phone }}</td>
-                    </tr>
-                    <tr>
-                        <th>Моя дата рождения:</th>
-                        <td>{{ user.date_of_birth }}</td>
-                    </tr>
-                </table>
-            </div>
+{% block content %}
+    <h1>Я - {{ user.fullname }}</h1>
+
+    <div>
+        <div class="big-student-avatar">
+            {% if user|is_student %}
+                <img src="{{ user.student.avatar_url }}">
+            {% elif user|is_teacher %}
+                <img src="{{ user.teacher.avatar_url }}">
+            {% else %}
+                <img src="{{ user.email|gravatar }}">
+            {% endif %}
         </div>
-        <div class="clearfix"></div>
         <div>
+            <table class="table" style="width: auto;">
+                {% if user|is_student %}
+                    <tr>
+                        <th>Моя группа:</th>
+                        <td>{{ user.student.group.name }}</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <th>Мой email:</th>
+                    <td>
+                        <span class="fa fa-envelope"></span>
+                        {{ user.email }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Мой тел:</th>
+                    <td>{{ user.phone }}</td>
+                </tr>
+                <tr>
+                    <th>Моя дата рождения:</th>
+                    <td>{{ user.date_of_birth }}</td>
+                </tr>
+            </table>
             <a class="btn btn-default" href="{% url 'change_password' %}">Изменить пароль</a>
             <a class="btn btn-default" href="{% url 'change_user_data' %}">Изменить данные</a>
         </div>
-
     </div>
+    <div class="clearfix"></div>
+    <style>
+        .todo {
+            display: block;
+            background-color: #f8f8f8;
+            padding: 5px 10px;
+            border-bottom: 1px solid rgb(222, 215, 233);
+        }
+
+        .todo-check {
+            display: inline-block;
+            float: left;
+            margin-right: 10px !important;
+        }
+
+        .todo-delete {
+            display: inline-block;
+            float: right;
+            margin-left: 10px !important;
+            cursor: pointer;
+            color: gray;
+        }
+
+        .todo-text {
+            display: block;
+            color: rgb(72, 73, 73);
+            width: 100%;
+        }
+    </style>
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <h4>{% trans 'Мои планы' %}</h4>
+            {% for todo in user.todos.all %}
+                {% if not todo.done %}
+                    <div class="todo">
+                        <input class="todo-check" type="checkbox" data-id="{{ todo.id }}">
+                        <span class="todo-delete fa fa-remove" data-id="{{ todo.id }}"></span>
+                        <div class="todo-text">{{ todo.text }}</div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <form id="todo_form" class="todo" method="post" action="{% url 'todo_act' %}">
+                {% csrf_token %}
+                <div style="width:100%; display:table">
+                    <input id="todo_form_id" type="hidden" name="id" value=""/>
+                    <input id="todo_form_action"  type="hidden" name="action" value="add"/>
+                    <input type="hidden" name="type" value="todo"/>
+                    <input type="text" name="text" style="display:table-cell; width:100%;"/>
+                    <div style="display:table-cell; width:1px; padding-left: 10px;">
+                        <input  id="todo_form_submit" type="submit" class="btn btn-default btn-sm" value="Добавить"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 col-xs-12">
+            <h4>{% trans 'Мои достижения' %}</h4>
+            {% for todo in user.todos.all %}
+                {% if todo.done %}
+                    <div class="todo">
+                        <input class="todo-check" type="checkbox" checked data-id="{{ todo.id }}">
+                        <span class="todo-delete fa fa-remove" data-id="{{ todo.id }}"></span>
+                        <div class="todo-text">{{ todo.text }}</div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <form id="achievement_form" class="todo" method="post" action="{% url 'todo_act' %}">
+                {% csrf_token %}
+                <div style="width:100%; display:table">
+                    <input type="hidden" name="id" value=""/>
+                    <input type="hidden" name="action" value="add"/>
+                    <input type="hidden" name="type" value="achievement"/>
+                    <input type="text" name="text" style="display:table-cell; width:100%;"/>
+                    <div style="display:table-cell; width:1px; padding-left: 10px;">
+                        <input type="submit" class="btn btn-default btn-sm" value="Добавить"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 {% endblock %}

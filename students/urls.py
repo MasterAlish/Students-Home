@@ -16,6 +16,7 @@ from students.view.courses import CourseView, LectureView, MyGroupView, GroupVie
 from students.view.teachers import TeacherGroupsView, TeacherView, StudentView
 from students.view.main import HomeView,on_error, on_not_found, auth_logout, \
     auth_profile, auth_register, password_change, user_change, reset_password
+from students.view.todo import TodoActView
 
 handler500 = 'students.view.main.on_error'
 handler404 = 'students.view.main.on_not_found'
@@ -55,6 +56,8 @@ urlpatterns = [
     url(r'^activity/$', login_required(ActivityView.as_view()), name='activity'),
 
     url(r'^article/(?P<id>\d+)$', ArticleView.as_view(), name='article'),
+
+    url(r'^todo/act/$', TodoActView.as_view(), name='todo_act'),
 
     url(r'^error/$', on_error, name='error500'),
     url(r'^not-found/$', on_not_found, name='error404'),
