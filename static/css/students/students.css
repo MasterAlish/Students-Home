@@ -64,7 +64,7 @@ body {
     overflow: scroll !important;
 }
 
-.article{
+.article {
     margin-bottom: 30px;
 }
 
@@ -76,7 +76,7 @@ body {
     margin-bottom: 2px
 }
 
-.article .article-title{
+.article .article-title {
     margin-bottom: 10px;
 }
 
@@ -87,11 +87,11 @@ body {
     color: #47738d
 }
 
-.article .article-preview{
+.article .article-preview {
     margin-top: 10px;
 }
 
-.article .article-data{
+.article .article-data {
     color: #8e8e8e;
     margin-top: 10px;
     display: inline-block;
@@ -100,11 +100,40 @@ body {
     border: 1px solid #c5c5c5;
 }
 
-.article img{
+.article img {
     max-width: 100%;
 }
 
-.tab{
+.tab {
     display: inline-block;
     width: 20px;
+}
+
+.todo {
+    display: block;
+    background-color: #f8f8f8;
+    padding: 5px 10px;
+    border-bottom: 1px solid rgb(222, 215, 233);
+}
+
+.todo-check {
+    padding-top: 4px;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    margin-right: 10px !important;
+}
+
+.todo-delete {
+    display: inline-block;
+    float: right;
+    margin-left: 10px !important;
+    cursor: pointer;
+    color: gray;
+}
+
+.todo-text {
+    display: block;
+    color: rgb(72, 73, 73);
+    width: 100%;
 }
