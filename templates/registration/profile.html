@@ -51,7 +51,7 @@
             <h4>{% trans 'Мои планы' %}</h4>
             {% for todo in user.todos.all %}
                 {% if not todo.done %}
-                    <div class="todo">
+                    <div class="todo" id="todo_{{ todo.id }}">
                         <span class="todo-check fa fa-square-o" data-id="{{ todo.id }}"></span>
                         <span class="todo-delete fa fa-remove" data-id="{{ todo.id }}"></span>
                         <div class="todo-text">{{ todo.text }}</div>
@@ -75,7 +75,7 @@
             <h4>{% trans 'Мои достижения' %}</h4>
             {% for todo in user.todos.all %}
                 {% if todo.done %}
-                    <div class="todo">
+                    <div class="todo" id="todo_{{ todo.id }}">
                         <span class="todo-check fa fa-check-square-o" data-id="{{ todo.id }}"></span>
                         <span class="todo-delete fa fa-remove" data-id="{{ todo.id }}"></span>
                         <div class="todo-text">{{ todo.text }}</div>

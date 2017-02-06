@@ -14,12 +14,16 @@ class TodoActView(View):
         if action == 'add' and text and type in ['achievement', 'todo']:
             todo = Todo(user=request.user, text=text, done=(type == 'achievement'))
             todo.save()
+            return redirect(reverse("profile")+("#%s_form" % type ))
         elif action == 'delete' and id:
             Todo.objects.filter(pk=id).delete()
         elif action == 'toggle' and id:
-            for todo in Todo.objects.filter(pk=id):
+            try:
+                todo = Todo.objects.get(pk=id)
                 todo.done = not todo.done
                 todo.save()
+                return redirect(reverse("profile")+("#todo_%d" % todo.id))
+            except: pass
 
         return redirect(reverse("profile"))
 
