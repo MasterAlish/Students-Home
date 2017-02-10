@@ -237,6 +237,7 @@ class Resolution(PolymorphicModel):
 
 class FileResolution(Resolution):
     file = models.FileField(verbose_name=_(u"Файл"))
+    index_file = models.CharField(verbose_name=_(u"Файл index.html"), null=True, blank=True, max_length=500)
 
     class Meta:
         verbose_name = u"Решение с файлом"

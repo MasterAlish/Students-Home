@@ -67,7 +67,9 @@ class LabTaskView(StudentsAndTeachersView):
                     valid, message = self.validate_file(form.instance, labtask)
                     if valid:
                         if self.has_html_index_file(labtask):
-                            self.unpack_resolution_to_public_dir(form.instance)
+                            lab_url = self.unpack_resolution_to_public_dir(form.instance)
+                            form.instance.index_file = lab_url
+                            form.instance.save()
                         StudentsMail().report_new__file_resolution_uploaded(request, form.instance)
                         messages.success(request, u"Решение успешно сохранено")
                         return redirect(reverse("labtask", kwargs={'id': labtask.id}))
@@ -103,7 +105,8 @@ class LabTaskView(StudentsAndTeachersView):
             zip_ref.close()
         except Exception as e:
             print "Error: "+repr(e)
-        return labpath
+        lab_url = os.path.join(settings.MEDIA_URL, "sites", labname, username, "index.html")
+        return lab_url
 
     def has_html_index_file(self, labtask):
         for constraint in labtask.constraints.instance_of(ZipContainsFileConstraint):
