@@ -115,10 +115,10 @@ def medals_of(medals_by_students, student):
 @register.assignment_tag
 def get_unread_chats(user):
     courses = []
-    if is_student(user):
-        courses = user.student.group.courses.all()
-    elif is_teacher(user):
+    if is_teacher(user):
         courses = user.teacher.courses.all()
+    elif is_student(user):
+        courses = user.student.courses
     total = 0
     course_chats = []
     for course in courses:
