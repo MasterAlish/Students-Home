@@ -10,31 +10,46 @@
         <div class="long-view" style="overflow: scroll;">
             <table class="table table-bordered table-condensed table-hover">
                 <thead>
-                    <tr>
-                        <th>№</th>
-                        <th>ФИО</th>
-                        {% for task in tasks %}
-                            <th>{{ task.short_name }}</th>
-                        {% endfor %}
-                        <th>Медали</th>
-                    </tr>
+                <tr>
+                    <th>№</th>
+                    <th>ФИО</th>
+                    {% for task in tasks %}
+                        <th>{{ task.short_name }}</th>
+                    {% endfor %}
+                    <th>Медали</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {% for group in course.groups_with_extra %}
+                <style>
+                    .xp-sign {
+                        font-style: italic;
+                        font-size: 12px;
+                        color: rgb(66, 174, 208);
+                    }
+
+                    .xp {
+                        font-style: italic;
+                        font-size: 14px;
+                        color: rgb(4, 120, 198);
+                    }
+                </style>
+                {% for group in course.groups_with_extra %}
+                    <tr>
+                        <th colspan="{{ 3|add:tasks.count }}">{{ group.name }}</th>
+                    </tr>
+                    {% for student in group.students.all %}
                         <tr>
-                            <th colspan="{{ 3|add:tasks.count }}">{{ group.name }}</th>
-                        </tr>
-                        {% for student in group.students.all %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>
-                                    {{ student.user.get_full_name }}
-                                    {% if user|is_teacher %}
-                                        <a href="{% url 'activity' %}?user_id={{ student.user_id }}" title="{% trans 'Посещения' %}">
-                                            <span class="fa fa-calendar"></span>
-                                        </a>
-                                    {% endif %}
-                                    <br>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                {{ student.user.get_full_name }}
+                                <a class="xp" href="#">{{ xp_by_students|get:student.id|default_if_none:0 }}</a><span class="xp-sign">xp</span>
+                                {% if user|is_teacher %}
+                                    <a href="{% url 'activity' %}?user_id={{ student.user_id }}"
+                                       title="{% trans 'Посещения' %}">
+                                        <span class="fa fa-calendar"></span>
+                                    </a>
+                                {% endif %}
+                                <br>
                                     <span class="last-seen">Был(а):
                                         {% if student.user.last_seen %}
                                             {{ student.user.last_seen|timesince }} назад
@@ -42,49 +57,52 @@
                                             {% trans 'никогда' %}
                                         {% endif %}
                                     </span>
-                                </td>
-                                {% for task in tasks %}
-                                    {% best_solution_of resolutions_map|resolutions_for_task:task student as best_resolution %}
-                                    <td class="mark" style="
-                                            {% if task.important %}font-weight: bold;{% endif %}
-                                            {% if best_resolution.mark > 1 %}background-color: {{ task.color }};{% endif %}
-                                            ">
-                                        {{ best_resolution.mark }}
-                                        {% if best_resolution %}
-                                            {% if best_resolution.index_file %}
-                                                <a target="_blank" title="{% trans 'Посмотреть работу' %}" href="{{ best_resolution.index_file }}"><span class="fa fa-external-link"></span></a>
-                                            {% endif %}
-                                            {% if best_resolution.comment %}
-                                                <span class="fa fa-quote-right note" data-toggle="popover" role="button" title="{% trans 'Комментарий' %}">
+                            </td>
+                            {% for task in tasks %}
+                                {% best_solution_of resolutions_map|resolutions_for_task:task student as best_resolution %}
+                                <td class="mark" style="
+                                        {% if task.important %}font-weight: bold;{% endif %}
+                                        {% if best_resolution.mark > 1 %}background-color: {{ task.color }};{% endif %}
+                                        ">
+                                    {{ best_resolution.mark }}
+                                    {% if best_resolution %}
+                                        {% if best_resolution.index_file %}
+                                            <a target="_blank" title="{% trans 'Посмотреть работу' %}"
+                                               href="{{ best_resolution.index_file }}"><span
+                                                    class="fa fa-external-link"></span></a>
+                                        {% endif %}
+                                        {% if best_resolution.comment %}
+                                            <span class="fa fa-quote-right note" data-toggle="popover" role="button"
+                                                  title="{% trans 'Комментарий' %}">
                                                     <div style="display:none;" class="content">
                                                         {{ best_resolution.comment|safe }}
                                                     </div>
                                                 </span>
-                                            {% endif %}
                                         {% endif %}
-                                    </td>
-                                {% endfor %}
-                                <td style="min-width: 300px;">
-                                    {% for medal in medals_by_students|medals_of:student %}
-                                        <div class="medal">
-                                            <img src="{{ medal.medal.image.url }}" title="{{ medal.medal.name }}">
-                                        </div>
-                                    {% endfor %}
+                                    {% endif %}
                                 </td>
-                            </tr>
-                        {% endfor %}
+                            {% endfor %}
+                            <td style="min-width: 300px;">
+                                {% for medal in medals_by_students|medals_of:student %}
+                                    <div class="medal">
+                                        <img src="{{ medal.medal.image.url }}" title="{{ medal.medal.name }}">
+                                    </div>
+                                {% endfor %}
+                            </td>
+                        </tr>
                     {% endfor %}
+                {% endfor %}
                 </tbody>
             </table>
         </div>
 
     </div>
     <script>
-        function get_content(){
+        function get_content() {
             return $(this).find(".content").html();
         }
 
-        $(document).ready(function(){
+        $(document).ready(function () {
             $('.note').popover({
                 'html': true,
                 'trigger': 'click',

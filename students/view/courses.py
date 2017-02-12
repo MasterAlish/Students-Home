@@ -5,6 +5,7 @@ import zipfile
 
 from django.conf import settings
 from django.contrib import messages
+from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
@@ -12,7 +13,7 @@ from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalFor
     GroupStudentsInputForm, StudentException
 from students.mail import StudentsMail
 from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution, Resolution, Task, \
-    GroupMock
+    GroupMock, Point
 from students.model.checks import ZipContainsFileConstraint
 from students.view.common import StudentsView, user_authenticated_to_course, StudentsAndTeachersView, \
     user_authenticated_to_group, TeachersView
@@ -149,6 +150,7 @@ class MarksView(StudentsAndTeachersView):
             self.context['tasks'] = tasks
             self.context['resolutions_map'] = self.map_resolutions(Resolution.objects.filter(task__in=tasks))
             self.context['medals_by_students'] = self.get_medals_by_students(course)
+            self.context['xp_by_students'] = self.get_xp_by_students(course)
 
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
@@ -182,6 +184,13 @@ class MarksView(StudentsAndTeachersView):
             student_medals.append(medal)
             medals_by_students[medal.student_id] = student_medals
         return medals_by_students
+
+    def get_xp_by_students(self, course):
+        xp_by_students = {}
+        points_map = Point.objects.filter(course=course).values("student").annotate(xp=Sum("points"))
+        for points in points_map:
+            xp_by_students[points['student']] = points['xp']
+        return xp_by_students
 
 
 class EmailToCourseStudentsView(TeachersView):

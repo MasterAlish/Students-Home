@@ -208,6 +208,18 @@ class Todo(models.Model):
     done = models.BooleanField(verbose_name=_(u"Достигнуто"), default=False)
 
 
+class Point(models.Model):
+    reason = models.CharField(verbose_name=_(u"За что"), max_length=255)
+    student = models.ForeignKey(Student, verbose_name=_(u"Студент"), related_name="points", on_delete=models.CASCADE)
+    datetime = models.DateTimeField(auto_now_add=True, verbose_name=_(u"Время"))
+    points = models.IntegerField(default=0, verbose_name=_(u"Очки"))
+    course = models.ForeignKey(Course, verbose_name=_(u"Курс"), on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = u"Очки опыта"
+        verbose_name_plural = u"Очки опыта"
+
+
 class ExtraStudent(models.Model):
     student = models.ForeignKey(Student, verbose_name=u"Студент", related_name="extra_courses_rel")
     course = models.ForeignKey(Course, verbose_name=u"Курс", related_name="extra_students_rel")

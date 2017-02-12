@@ -142,3 +142,10 @@ def min_length(data, req_length):
         return "0" * (req_length - length) + str(data)
     else:
         return data
+
+
+@register.filter
+def get(collection, index):
+    if index in collection:
+        return collection[index]
+    return None
