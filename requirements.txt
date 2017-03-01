@@ -9,3 +9,5 @@ django-ckeditor
 awesome-slugify
 html2text
 django-polymorphic
+requests==2.13.0
+lxml==3.7.2

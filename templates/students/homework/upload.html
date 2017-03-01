@@ -1,0 +1,31 @@
+{% extends 'students/base.html' %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12 col-md-8">
+            <h2>Загрузить Домашнее задание</h2>
+            <div class="lead">{{ course.name }}</div>
+            <style>
+                input[type="text"]{
+                    width: 100%;;
+                }
+            </style>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.media }}
+                {% for field in form %}
+                    <div class="form-group {% if field.errors %}has-error{% endif %} ">
+                        {{ field.label_tag }}<br>
+                        {{ field }}
+                        <div style="font-size: 12px; color: grey;">{{ field.help_text }}</div>
+                        {% if field.errors %}
+                            <div class="help-block">
+                                {{ field.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <input type="submit" value="Загрузить" class="btn btn-sm btn-primary">
+            </form>
+        </div>
+    </div>
+{% endblock %}

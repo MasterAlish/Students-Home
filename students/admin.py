@@ -5,9 +5,11 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group as UserGroup
 
 from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture, ChatMessage, \
-    Medal, StudentMedal, LabTask, Task, Resolution, FileResolution, UserActivity, ExtraStudent, Todo, Point
+    Medal, StudentMedal, LabTask, Task, Resolution, FileResolution, UserActivity, ExtraStudent, Todo, Point, \
+    HomeWorkSolution
 from students.model.blog import Article
 from students.model.checks import FileSizeConstraint, FileNameConstraint, ZipContainsFileConstraint, ZipFileConstraint
+from students.model.extra import Feedback
 from students.models import MyUser, UserChangeForm, UserCreationForm
 
 
@@ -62,16 +64,32 @@ class TaskAdmin(ModelAdmin):
     ordering = ['-created_at']
 
 
+class LabTaskAdmin(ModelAdmin):
+    list_display = ['title', 'short_name', 'course', 'created_at', 'active', 'deadline']
+    ordering = ['-created_at']
+
+
 class MessageAdmin(ModelAdmin):
     list_display = ['datetime', 'user', 'body', 'course']
     ordering = ['-datetime']
+
+
+class HomeWorkSolutionAdmin(ModelAdmin):
+    list_display = ['student', 'task', 'comment']
+    ordering = ['-datetime']
+
+
+class FeedbackAdmin(ModelAdmin):
+    list_display = ['datetime', 'text', 'mobile', 'data']
+    ordering = ['-datetime']
+
 
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Course)
 admin.site.register(StudentGroup)
 admin.site.register(Lecture)
 admin.site.register(Task, TaskAdmin)
-admin.site.register(LabTask, TaskAdmin)
+admin.site.register(LabTask, LabTaskAdmin)
 admin.site.register(Resolution)
 admin.site.register(FileResolution, ResolutionAdmin)
 admin.site.register(Medal)
@@ -86,4 +104,6 @@ admin.site.register(Article)
 admin.site.register(ExtraStudent)
 admin.site.register(Todo)
 admin.site.register(Point)
+admin.site.register(HomeWorkSolution, HomeWorkSolutionAdmin)
+admin.site.register(Feedback, FeedbackAdmin)
 

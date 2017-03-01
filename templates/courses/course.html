@@ -33,8 +33,9 @@
             <a class="btn btn-sm btn-info" href="{% url 'email-course' course.id %}">Написать студентам курса</a>
             <a class="btn btn-sm btn-info" href="{% url 'give-medals' course.id %}">Выдать медаль</a>
         {% endif %}
-        <a class="btn btn-sm btn-default" href="{% url 'chat' course.id %}">Открыть чат</a>
-        <a class="btn btn-sm btn-default" href="{% url 'marks' course.id %}">Оценки</a>
+        <a class="btn btn-sm btn-default" href="{% url 'chat' course.id %}"><span class="fa fa-comments"></span> Чат</a>
+        <a class="btn btn-sm btn-default" href="{% url 'marks' course.id %}"><span class="fa fa-trophy"></span> Оценки</a>
+        <a class="btn btn-sm btn-primary" href="{% url 'homework' course.id %}"><span class="fa fa-upload"></span> Сдать домашку</a>
     </div>
     <div>
         {{ course.description|safe }}

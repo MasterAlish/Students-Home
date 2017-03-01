@@ -11,7 +11,7 @@ from students.model.base import Mail
 class StudentsMail(object):
     def report_new__file_resolution_uploaded(self, request, file_resolution):
         """
-        :type teacher: students.model.base.Teacher
+        :type file_resolution: students.model.base.FileResolution
         """
         subject = u"Новая лабораторка от %s" % unicode(file_resolution.student)
         message = u"Новая лабораторка от %s\n\n\"%s\"\n\nПерейдите по ссылке чтобы скачать решение %s" % \
@@ -20,6 +20,19 @@ class StudentsMail(object):
                        u"<a href=\"%s\">Перейти</a>"  % \
                   (file_resolution.student, file_resolution.comment, unicode(request.META["HTTP_ORIGIN"] + "/admin/students/fileresolution/" + str(file_resolution.id)))
         recipients = map(lambda t:t.user.email, file_resolution.task.course.teachers.all())
+        self.save_mail(subject, message, message_html, recipients)
+
+    def report_homework_uploaded(self, request, homework):
+        """
+        :type homework: students.model.base.HomeworkSolution
+        """
+        subject = u"Домашнее задание от %s" % unicode(homework.student)
+        message = u"Домашнее задание от %s\n\n\"%s\"\n\nПерейдите по ссылке чтобы скачать решение %s" % \
+                  (homework.student, homework.comment, unicode(request.META["HTTP_ORIGIN"] + "/admin/students/homeworksolution/" + str(homework.id)))
+        message_html = u"Домашнее задание от %s<br><br>\"%s\"<br><br>Перейдите по ссылке чтобы скачать решение " \
+                       u"<a href=\"%s\">Перейти</a>"  % \
+                  (homework.student, homework.comment, unicode(request.META["HTTP_ORIGIN"] + "/admin/students/homeworksolution/" + str(homework.id)))
+        recipients = map(lambda t:t.user.email, homework.course.teachers.all())
         self.save_mail(subject, message, message_html, recipients)
 
     def inform_students_of_course(self, course, subject, html_text):

@@ -1,7 +1,7 @@
 {% load staticfiles i18n my_tags %}
 <html>
 <head>
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
     <meta charset="utf-8">
     <link rel="shortcut icon" href="{% static 'ico/favicon.ico' %}">
     <title>{% trans 'Универские курсы' %}</title>
@@ -34,12 +34,23 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="/">Главная</a></li>
-                    <li><a href="#">О сайте</a></li>
-                    {% if user.is_authenticated and user|is_student %}
+                    {% if user.is_authenticated and user|is_teacher %}
+                        <li><a href="{% url 'teacher_groups' %}">Мои группы</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false">Мои курсы <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                {% for course in user.teacher.courses.all %}
+                                    <li><a href="{% url 'course' course.id %}">{{ course }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% elif user.is_authenticated and user|is_student %}
                         <li><a href="{% url 'my_group' %}">Моя группа</a></li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true"
                                aria-expanded="false">Мои курсы <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 {% for course in user.student.courses %}
@@ -48,25 +59,17 @@
                             </ul>
                         </li>
                     {% endif %}
-                    {% if user.is_authenticated and user|is_teacher %}
-                        <li><a href="{% url 'teacher_groups' %}">Мои группы</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                               aria-expanded="false">Мои курсы <span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                {% for course in user.teacher.courses.all %}
-                                    <li><a href="{% url 'course' course.id %}">{{ course }}</a></li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                    {% endif %}
+{#                    <li><a href="{% url 'contest' %}">Контест</a></li>#}
+
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
                         {% get_unread_chats user as unread_chats %}
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                               aria-expanded="false"><span class="fa fa-comments"></span> <span class="label label-danger label-as-badge">{{ unread_chats.total }}</span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false"><span class="fa fa-comments"></span> <span
+                                    class="label label-danger label-as-badge">{{ unread_chats.total }}</span></a>
                             <ul class="dropdown-menu">
                                 {% for course in unread_chats.courses %}
                                     <li><a href="{% url 'chat' course.id %}">
@@ -91,7 +94,8 @@
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-dismissible {{ message.tags|bootstrapize:'alert-' }}" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
                     {{ message }}
                 </div>
             {% endfor %}
@@ -102,5 +106,11 @@
         {% endblock %}
     </main>
 </div>
+<footer class="footer">
+    <div class="container">
+        <p style="float: left;">Designed and built for students by Alisher</p>
+        <p style="float: right;"><a href="https://freedns.afraid.org/">Free DNS</a></p>
+    </div>
+</footer>
 </body>
 </html>

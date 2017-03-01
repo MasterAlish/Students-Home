@@ -13,6 +13,7 @@ from students.view.articles import ArticleView
 from students.view.chat import ChatView, NewMessagesView, PostMessageView
 from students.view.courses import CourseView, LectureView, MyGroupView, GroupView, LabTaskView, \
     EmailToCourseStudentsView, MarksView, GiveMedalsView, SetMarksView, ExtraGroupView
+from students.view.homework import UploadHomeWorkView
 from students.view.teachers import TeacherGroupsView, TeacherView, StudentView
 from students.view.main import HomeView,on_error, on_not_found, auth_logout, \
     auth_profile, auth_register, password_change, user_change, reset_password
@@ -43,6 +44,7 @@ urlpatterns = [
     url(r'^course/(?P<id>\d+)/give_medals/$', login_required(GiveMedalsView.as_view()), name='give-medals'),
     url(r'^course/(?P<id>\d+)/chat/$', login_required(csrf_exempt(ChatView.as_view())), name='chat'),
     url(r'^course/(?P<id>\d+)/marks/$', login_required(MarksView.as_view()), name='marks'),
+    url(r'^course/(?P<id>\d+)/homework/$', login_required(UploadHomeWorkView.as_view()), name='homework'),
 
     url(r'^chat/new-messages/$', login_required(NewMessagesView.as_view())),
     url(r'^chat/post/$', login_required(csrf_exempt(PostMessageView.as_view()))),
@@ -61,6 +63,7 @@ urlpatterns = [
 
     url(r'^error/$', on_error, name='error500'),
     url(r'^not-found/$', on_not_found, name='error404'),
+    url(r'^contest/', include('contest.urls')),
     url(r'^api/', include('students.api.urls')),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^grappelli/', include('grappelli.urls')),

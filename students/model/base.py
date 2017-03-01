@@ -7,6 +7,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from polymorphic.models import PolymorphicModel
 from students.model.checks import *
+from students.model.extra import *
 from image.color import random_bright_color
 from image.processing import image_is_big, make_image_small
 
@@ -29,6 +30,14 @@ class Teacher(models.Model, AvatarMixin):
 
     def __unicode__(self):
         return unicode(self.user)
+
+    def to_dict(self):
+        return {
+            'name': self.user.get_full_name(),
+            'avatar': self.avatar_url(),
+            'email': self.user.email,
+            'id': self.user.id,
+        }
 
     def save(self, **kwargs):
         super(Teacher, self).save(**kwargs)
@@ -57,6 +66,16 @@ class Course(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'year': self.year,
+            'semester': self.get_semester_display(),
+            'teachers': [t.to_dict() for t in self.teachers.all()]
+        }
 
     def active_tasks(self):
         return self.tasks.filter(active=True).order_by("created_at").all()
@@ -100,6 +119,15 @@ class Lecture(models.Model):
     def __unicode__(self):
         return unicode(self.title)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'course': self.course.name,
+            'title': self.title,
+            'body': self.body,
+            'file': self.pptx.url
+        }
+
     class Meta:
         verbose_name = u"Лекция"
         verbose_name_plural = u"Лекции"
@@ -123,6 +151,19 @@ class Task(PolymorphicModel):
     def __unicode__(self):
         return unicode(self.title)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'created': self.created_at.strftime("%d.%m.%Y %H:%M"),
+            'course': self.course.name,
+            'active': self.active,
+            'title': self.title,
+            'short_name': self.short_name,
+            'body': self.body,
+            'color': self.color,
+            'important':self.important
+        }
+
     class Meta:
         verbose_name = u"Задание"
         verbose_name_plural = u"Задания"
@@ -131,6 +172,12 @@ class Task(PolymorphicModel):
 class LabTask(Task):
     number = models.IntegerField(verbose_name=u"Номер", default=0)
     deadline = models.DateTimeField(verbose_name=_(u"Крайний срок сдачи"))
+
+    def to_dict(self):
+        data = super(LabTask, self).to_dict()
+        data['number'] = self.number
+        data['deadline'] = self.deadline.strftime("%d.%m.%Y %H:%M")
+        return data
 
     class Meta:
         verbose_name = u"Лабораторная работа"
@@ -254,6 +301,19 @@ class FileResolution(Resolution):
     class Meta:
         verbose_name = u"Решение с файлом"
         verbose_name_plural = u"Решения с файлом"
+
+
+class HomeWorkSolution(models.Model):
+    course = models.ForeignKey(Course, verbose_name=_(u"Курс"))
+    student = models.ForeignKey(Student, verbose_name=_(u"Студент"), related_name='homeworks')
+    task = models.CharField(max_length=255, verbose_name=_(u"Задание"), help_text=_(u"Какое было задание?"))
+    comment = RichTextField(verbose_name=_(u"Комментарий"), config_name="default", help_text=u"Опишите как вы решили, что использовали и т.п.")
+    datetime = models.DateTimeField(verbose_name=_(u"Время"), auto_now_add=True)
+    file = models.FileField(verbose_name=_(u"Файл"))
+
+    class Meta:
+        verbose_name = u"Решение ДЗ"
+        verbose_name_plural = u"Решения ДЗ"
 
 
 class ChatMessage(models.Model):

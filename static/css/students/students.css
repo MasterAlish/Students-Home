@@ -1,10 +1,22 @@
 body {
     padding-top: 20px;
-    padding-bottom: 20px;
 }
 
 .navbar {
     margin-bottom: 20px;
+}
+
+.footer {
+    padding-top: 30px;
+    padding-bottom: 30px;
+    margin-top: 80px;
+    color: #646466;
+    text-align: left;
+    background-color: #e3e1e5
+}
+
+.footer a{
+    color: #646466 !important;
 }
 
 .mini-student-avatar {
@@ -136,4 +148,12 @@ body {
     display: block;
     color: rgb(72, 73, 73);
     width: 100%;
+}
+
+.errorlist {
+    color: red;
+    list-style: none;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-left: 0;
 }
