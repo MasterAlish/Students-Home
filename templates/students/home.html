@@ -17,6 +17,20 @@
     </style>
 {% endblock %}
 {% block content %}
+    {% if is_mobile %}
+        <div class="row">
+            <div class="col-sm-12 " style="text-align: center; margin-bottom: 20px;" >
+                <div style="font-size: 16px; color: #003377; margin-bottom: 10px;">Скачайте мобильное приложение для сайта! </div>
+                <a style="width: 40%; display: inline-block;" href="https://play.google.com/store/apps/details?id=ma.apps.students">
+                    <img style="width: 100%;" src="{% static 'img/google-play.png' %}">
+                </a>
+                <a style="width: 40%; display: inline-block;" href="https://play.google.com/store/apps/details?id=ma.apps.students">
+                    <img style="width: 100%;" src="{% static 'img/google-play.png' %}">
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
 
     <div class="jumbotron">
         <h1>Добро пожаловать!</h1>
