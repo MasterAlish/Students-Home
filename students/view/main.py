@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView, View
 
 from students.mail import StudentsMail
+from students.mobile import is_mobile
 from students.model.base import Student
 from students.model.blog import Article
 from students.models import MyUser
@@ -128,7 +129,8 @@ class HomeView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         context = {
-            'articles': Article.objects.filter(published=True).order_by("-datetime")
+            'articles': Article.objects.filter(published=True).order_by("-datetime"),
+            'is_mobile': is_mobile(request)
         }
 
         return render(request, self.template_name, context)

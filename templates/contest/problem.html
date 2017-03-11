@@ -1,0 +1,36 @@
+{% extends 'students/base.html' %}
+{% load i18n %}
+{% block content %}
+    <style>
+        td {
+            vertical-align: top;
+            border: 1px solid black;
+        }
+
+        pre {
+            background-color: transparent;
+            border: none;
+        }
+
+        table {
+            margin-bottom: 10px;
+        }
+    </style>
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>{{ problem.title }}</h3>
+            <div style="margin-bottom: 20px;">
+                {{ problem.limits|safe }}
+            </div>
+            <div>
+                {{ problem.body|safe }}
+            </div>
+            <div style="font-weight: bold; margin-top: 20px;">
+                Сложность: {{ problem.difficulty }}
+            </div>
+            <div style="margin-top: 10px;">
+                <a href="{% url 'submit_problem' problem.id %}" class="btn btn-sm btn-default">Отправить на проверку</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

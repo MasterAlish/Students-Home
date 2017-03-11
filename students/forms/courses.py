@@ -4,6 +4,7 @@ import zipfile
 
 from ckeditor.fields import RichTextFormField
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm, Form
 
 from students.model.base import Medal, FileResolution, Resolution, HomeWorkSolution
@@ -25,12 +26,14 @@ class HomeWorkForm(ModelForm):
         exclude = ['course', 'student']
         model = HomeWorkSolution
 
-    def is_valid(self):
-        self.check_size()
-        return super(HomeWorkForm, self).is_valid()
-
-    def check_size(self):
-        pass
+    def clean_file(self):
+        hw_file = self.cleaned_data.get('file', False)
+        if hw_file:
+            if hw_file._size > 5 * 1024 * 1024:
+                raise ValidationError("Размер файла не должен превышать 5 МБ")
+            return hw_file
+        else:
+            raise ValidationError("Файл не указан")
 
 
 class MedalForm(Form):
@@ -113,4 +116,3 @@ class GroupStudentsInputForm(Form):
         if resolutions.count() == 0:
             return ""
         return resolutions[0].mark
-

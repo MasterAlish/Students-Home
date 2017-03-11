@@ -4,6 +4,7 @@ from ckeditor.fields import RichTextField
 from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils import timesince
 from django.utils.translation import ugettext as _
 from polymorphic.models import PolymorphicModel
 from students.model.checks import *
@@ -242,6 +243,13 @@ class Student(models.Model, AvatarMixin):
         self.color = random_bright_color()
         return super(Student, self).save(**kwargs)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.user.get_full_name(),
+            'last_seen': u"Был(а): "+(timesince.timesince(self.user.last_seen)+u" назад" if self.user.last_seen else u"Никогда")
+        }
+
     class Meta:
         verbose_name = u"Студент"
         verbose_name_plural = u"Студенты"
@@ -289,6 +297,15 @@ class Resolution(PolymorphicModel):
     def __unicode__(self):
         return u"Решение '%s' от %s" % (self.task, unicode(self.student))
 
+    def to_dict(self):
+        return {
+            'comment': self.comment,
+            'student': self.student.user.get_full_name(),
+            'task': self.task.short_name,
+            'datetime': self.datetime.strftime("%d.%m.%Y %H:%M"),
+            'mark': self.mark
+        }
+
     class Meta:
         verbose_name = u"Решение"
         verbose_name_plural = u"Решения"
@@ -297,6 +314,11 @@ class Resolution(PolymorphicModel):
 class FileResolution(Resolution):
     file = models.FileField(verbose_name=_(u"Файл"))
     index_file = models.CharField(verbose_name=_(u"Файл index.html"), null=True, blank=True, max_length=500)
+
+    def to_dict(self):
+        data = super(FileResolution, self).to_dict()
+        data['index_file'] = self.index_file
+        return data
 
     class Meta:
         verbose_name = u"Решение с файлом"
@@ -376,6 +398,12 @@ class StudentMedal(models.Model):
 
     def __unicode__(self):
         return unicode(self.student) + u" "+unicode(self.medal)
+
+    def to_dict(self):
+        return {
+            'name': self.medal.name,
+            'image': self.medal.image.url,
+        }
 
     class Meta:
         verbose_name = u"Медаль"

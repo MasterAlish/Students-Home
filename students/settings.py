@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'ckeditor',
     'students',
+    'contest',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -125,7 +126,7 @@ CKEDITOR_CONFIGS = {
         'height': 150,
         'width': 800,
         'toolbarCanCollapse': False,
-        'extraAllowedContent': 'script  [*]',
+        'extraAllowedContent': '*[*]; table[*]; tr[*]; td[*]; th[*]; h3[*]; h4[*]',
         'extraPlugins': ','.join(
             [
                 'codesnippet',

@@ -75,6 +75,10 @@ class LabTaskView(StudentsAndTeachersView):
                         messages.success(request, u"Решение успешно сохранено")
                         return redirect(reverse("labtask", kwargs={'id': labtask.id}))
                     else:
+                        try:
+                            os.remove(form.instance.file.path)
+                            form.instance.delete()
+                        except:pass
                         form.add_error("file", message)
 
             self.context['form'] = form
@@ -139,21 +143,7 @@ class ExtraGroupView(StudentsAndTeachersView):
         raise Exception(u"Smth went wrong")
 
 
-class MarksView(StudentsAndTeachersView):
-    template_name = "courses/marks.html"
-
-    def handle(self, request, *args, **kwargs):
-        course = Course.objects.get(pk=kwargs['id'])
-        if user_authenticated_to_course(request.user, course):
-            self.context['course'] = course
-            tasks = course.active_tasks()
-            self.context['tasks'] = tasks
-            self.context['resolutions_map'] = self.map_resolutions(Resolution.objects.filter(task__in=tasks))
-            self.context['medals_by_students'] = self.get_medals_by_students(course)
-            self.context['xp_by_students'] = self.get_xp_by_students(course)
-
-            return render(request, self.template_name, self.context)
-        raise Exception(u"User is not authenticated")
+class MarksMixin(object):
 
     def map_resolutions(self, resolutions):
         """
@@ -191,6 +181,24 @@ class MarksView(StudentsAndTeachersView):
         for points in points_map:
             xp_by_students[points['student']] = points['xp']
         return xp_by_students
+
+
+class MarksView(StudentsAndTeachersView, MarksMixin):
+    template_name = "courses/marks.html"
+
+    def handle(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['id'])
+        if user_authenticated_to_course(request.user, course):
+            self.context['course'] = course
+            tasks = course.active_tasks()
+            self.context['tasks'] = tasks
+            self.context['resolutions_map'] = self.map_resolutions(Resolution.objects.filter(task__in=tasks))
+            self.context['medals_by_students'] = self.get_medals_by_students(course)
+            self.context['xp_by_students'] = self.get_xp_by_students(course)
+
+            return render(request, self.template_name, self.context)
+        raise Exception(u"User is not authenticated")
+
 
 
 class EmailToCourseStudentsView(TeachersView):

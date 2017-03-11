@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from students.api.articles import GetArticlesApi, ReadArticleApi, GetArticleApi
 from students.api.auth import LoginApi
-from students.api.courses import CoursesApi
+from students.api.courses import CoursesApi, MarksApi
 from students.api.feedback import FeedbackApi
 
 urlpatterns = [
@@ -14,5 +14,6 @@ urlpatterns = [
     url(r'^article$', ReadArticleApi.as_view()),
     url(r'^login$', csrf_exempt(LoginApi.as_view())),
     url(r'^courses$', CoursesApi.as_view()),
+    url(r'^marks$', MarksApi.as_view()),
     url(r'^feedback$', csrf_exempt(FeedbackApi.as_view())),
 ]

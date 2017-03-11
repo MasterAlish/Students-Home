@@ -1,0 +1,40 @@
+{% extends "students/base.html" %}
+{% load i18n %}
+{% block content %}
+    <div style="width: 100%; text-align: center; ">
+        <div style="width: 100%; max-width: 400px; display: inline-block;">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="row">
+                        <p>
+                            Введите свой JUDGE_ID с сайта acm.timus.ru. Если вы еще не были зарегистрированы на этом
+                            сайте, то перейдите по ссылке <a target="_blank" href="http://acm.timus.ru">acm.timus.ru</a> и
+                            зарегистрируйтесь.
+                        </p>
+                        <div style="padding: 0 20px;">
+                            <h3 class="m-t-none m-b">{% trans 'Регистрация аккаунта ACM' %}</h3>
+                            {% if form.judge_id.errors %}
+                                <p class="errorlist"> {{ form.judge_id.errors.0 }}</p>
+                            {% endif %}
+
+                            <form role="form" style="text-align: left; " method="post">
+                                <div class="form-group">
+                                    <label>{% trans 'Мой' %} JUDGE_ID:</label>
+                                    <input id="id_judge_id" maxlength="254" name="judge_id" type="text"
+                                           class="form-control" value="{{ judge_id }}">
+                                </div>
+
+                                <div>
+                                    <button class="form-control button-link" type="submit">
+                                        <strong>{% trans 'Сохранить' %}</strong>
+                                    </button>
+                                </div>
+                                {% csrf_token %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

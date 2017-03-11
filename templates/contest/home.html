@@ -1,0 +1,20 @@
+{% extends 'students/base.html' %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12 col-md-8">
+            <h3>Добро пожаловать в раздел олимпиадных задач по программированию</h3>
+            <p>
+                Здесь вы можете участвовать в локальных соревнованиях по программированию, решать олимпиадные задачи и
+                сразу отправлять их на проверку. Раздел основан на системе
+                <a href="http://acm.timus.ru" target="_blank">Timus Online Judge</a>, которая является крупнейшим в
+                России архивом задач по программированию с автоматической проверяющей системой.
+            </p>
+            <p>
+                Перед участием, вам обязательно нужно зарегистрироваться на сайте Timus Online Judge и указать ваш
+                JUDGE_ID <a href="{% url 'register_acm' %}">в этой форме</a>.
+            </p>
+            <a href="{% url 'all_problems' %}" class="btn btn-lg btn-info">Все задачи</a>
+            <a href="{% url 'submits' %}" class="btn btn-lg btn-info">Результаты проверки</a>
+        </div>
+    </div>
+{% endblock %}

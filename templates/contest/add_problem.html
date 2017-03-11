@@ -1,0 +1,33 @@
+{% extends 'students/base.html' %}
+{% load i18n %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {% if form.problem_url.errors %}
+                        <div class="help-block" style="color:red;">
+                            {% trans 'Ошибка добавления задачи' %}
+                            <button class="btn btn-default btn-xs" type="button" data-toggle="collapse"
+                                    data-target="#collapseExample" aria-expanded="false"
+                                    aria-controls="collapseExample">
+                                Показать ошибку
+                            </button>
+                            <div class="collapse" id="collapseExample">
+                                <br>
+                                <div class="well">
+                                    {{ form.problem_url.errors.0 }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <label for="id_problem_url">Ссылка на задачу на сайте acm.timus.ru</label>
+                    <input type="url" name="problem_url" class="form-control" id="id_problem_url">
+                </div>
+
+                <input class="btn btn-sm btn-default" type="submit" value="Добавить">
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'students/base.html' %}
+{% load i18n %}
+{% block content %}
+    <style>
+    td, td>a{
+        font-size: 12px;
+    }
+    </style>
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Результаты проверки решений</h3>
+            <table class="table table-condensed table-bordered" style="margin-top: 10px;">
+                <tr>
+                    <th>ID</th>
+                    <th>Дата</th>
+                    <th>Автор</th>
+                    <th>Задача</th>
+                    <th>Язык</th>
+                    <th>Результат</th>
+                    <th>№ теста</th>
+                    <th>Время</th>
+                    <th>Память</th>
+                </tr>
+
+                {% for solution in solutions %}
+                    <tr>
+                        <td>{{ solution.acm_id }}</td>
+                        <td>{{ solution.datetime|date:"d.m.Y H:i" }}</td>
+                        <td>{{ solution.contestant.user.get_full_name }}</td>
+                        <td><a href="{% url 'problem' solution.problem_id %}">{{ solution.problem.title }}</a></td>
+                        <td>{{ solution.language }}</td>
+                        {% if solution.success %}
+                            <td style="color: green;">{{ solution.check_result }}</td>
+                        {% else %}
+                            <td style="color: red;">{{ solution.check_result }}</td>
+                        {% endif %}
+                        <td>{{ solution.test_number|default_if_none:"" }}</td>
+                        <td>{{ solution.time|default_if_none:"" }}</td>
+                        <td>{{ solution.memory|default_if_none:"" }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

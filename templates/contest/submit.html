@@ -1,0 +1,18 @@
+{% extends 'students/base.html' %}
+{% load i18n %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>{{ problem.title }}</h3>
+            <div style="margin-bottom: 20px;">
+                <b>Отправка решения на проверку</b><br>
+                {{ problem.limits|safe }}
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input class="btn btn-sm btn-default" type="submit" value="Отправить">
+            </form>
+        </div>
+    </div>
+{% endblock %}

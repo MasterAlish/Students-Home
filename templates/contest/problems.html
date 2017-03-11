@@ -1,0 +1,32 @@
+{% extends 'students/base.html' %}
+{% load i18n %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Все задачи</h3>
+            <a class="btn btn-sm btn-success" href="{% url 'add_problem' %}">Добавить задачу</a>
+
+            <table class="table table-condensed table-bordered" style="margin-top: 10px;">
+                <tr>
+                    <th></th>
+                    <th>№</th>
+                    <th>Название</th>
+                    <th>Сложность</th>
+                    <th>Действия</th>
+                </tr>
+
+                {% for problem in problems %}
+                    <tr>
+                        <td></td>
+                        <td>{{ problem.acm_id }}</td>
+                        <td><a href="{% url 'problem' problem.id %}">{{ problem.title }}</a></td>
+                        <td>{{ problem.difficulty }}</td>
+                        <td>
+                            <a href="{% url 'submit_problem' problem.id %}" class="btn btn-xs btn-default">Отправить</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}
