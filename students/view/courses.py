@@ -15,8 +15,9 @@ from students.mail import StudentsMail
 from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution, Resolution, Task, \
     GroupMock, Point
 from students.model.checks import ZipContainsFileConstraint
-from students.view.common import StudentsView, user_authenticated_to_course, StudentsAndTeachersView, \
-    user_authenticated_to_group, TeachersView
+from students.view.common import StudentsView, user_authorized_to_course, StudentsAndTeachersView, \
+    user_authorized_to_group, TeachersView
+from students.view.util import remove_file
 
 
 class MyGroupView(StudentsView):
@@ -32,7 +33,7 @@ class CourseView(StudentsAndTeachersView):
 
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=kwargs['id'])
-        if user_authenticated_to_course(request.user, course):
+        if user_authorized_to_course(request.user, course):
             self.context['course'] = course
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
@@ -43,7 +44,7 @@ class LectureView(StudentsAndTeachersView):
 
     def handle(self, request, *args, **kwargs):
         lecture = Lecture.objects.get(pk=kwargs['id'])
-        if user_authenticated_to_course(request.user, lecture.course):
+        if user_authorized_to_course(request.user, lecture.course):
             self.context['lecture'] = lecture
             self.context['course'] = lecture.course
             return render(request, self.template_name, self.context)
@@ -55,7 +56,7 @@ class LabTaskView(StudentsAndTeachersView):
 
     def handle(self, request, *args, **kwargs):
         labtask = LabTask.objects.get(pk=kwargs['id'])
-        if user_authenticated_to_course(request.user, labtask.course):
+        if user_authorized_to_course(request.user, labtask.course):
             self.context['labtask'] = labtask
             self.context['course'] = labtask.course
             form = FileResolutionUploadForm()
@@ -76,7 +77,7 @@ class LabTaskView(StudentsAndTeachersView):
                         return redirect(reverse("labtask", kwargs={'id': labtask.id}))
                     else:
                         try:
-                            os.remove(form.instance.file.path)
+                            remove_file(form.instance.file.path)
                             form.instance.delete()
                         except:pass
                         form.add_error("file", message)
@@ -125,7 +126,7 @@ class GroupView(StudentsAndTeachersView):
 
     def handle(self, request, *args, **kwargs):
         group = Group.objects.get(pk=kwargs['id'])
-        if user_authenticated_to_group(request.user, group):
+        if user_authorized_to_group(request.user, group):
             self.context['group'] = group
             return render(request, self.template_name, self.context)
         raise Exception(u"Smth went wrong")
@@ -137,7 +138,7 @@ class ExtraGroupView(StudentsAndTeachersView):
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=kwargs['course_id'])
         group = GroupMock(u"Доп. группа: "+course.name, course, course.extra_students)
-        if user_authenticated_to_course(request.user, course):
+        if user_authorized_to_course(request.user, course):
             self.context['group'] = group
             return render(request, self.template_name, self.context)
         raise Exception(u"Smth went wrong")
@@ -188,7 +189,7 @@ class MarksView(StudentsAndTeachersView, MarksMixin):
 
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=kwargs['id'])
-        if user_authenticated_to_course(request.user, course):
+        if user_authorized_to_course(request.user, course):
             self.context['course'] = course
             tasks = course.active_tasks()
             self.context['tasks'] = tasks
@@ -206,7 +207,7 @@ class EmailToCourseStudentsView(TeachersView):
 
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=kwargs['id'])
-        if user_authenticated_to_course(request.user, course):
+        if user_authorized_to_course(request.user, course):
             self.context['course'] = course
             form = EmailForm()
             if request.method == 'POST':
@@ -227,7 +228,7 @@ class GiveMedalsView(TeachersView):
 
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=kwargs['id'])
-        if user_authenticated_to_course(request.user, course):
+        if user_authorized_to_course(request.user, course):
             self.context['course'] = course
             medal_form = MedalForm()
             group_forms = map(lambda g: GroupStudentsSelectForm(g), course.groups_with_extra())
@@ -258,7 +259,7 @@ class SetMarksView(TeachersView):
     def handle(self, request, *args, **kwargs):
         task = Task.objects.get(pk=kwargs['id'])
         course = task.course
-        if user_authenticated_to_course(request.user, course):
+        if user_authorized_to_course(request.user, course):
             self.context['task'] = task
             self.context['course'] = course
             group_forms = map(lambda g: GroupStudentsInputForm(g, task), course.groups_with_extra())

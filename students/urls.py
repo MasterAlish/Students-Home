@@ -14,9 +14,11 @@ from students.view.chat import ChatView, NewMessagesView, PostMessageView
 from students.view.courses import CourseView, LectureView, MyGroupView, GroupView, LabTaskView, \
     EmailToCourseStudentsView, MarksView, GiveMedalsView, SetMarksView, ExtraGroupView
 from students.view.homework import UploadHomeWorkView
-from students.view.teachers import TeacherGroupsView, TeacherView, StudentView
-from students.view.main import HomeView,on_error, on_not_found, auth_logout, \
+from students.view.profile import TeacherGroupsView, TeacherView, StudentView
+from students.view.auth import HomeView,on_error, on_not_found, auth_logout, \
     auth_profile, auth_register, password_change, user_change, reset_password
+from students.view.teaching import LectureFormView, LectureActionView, LabTaskFormView, LabTaskActionView, \
+    TaskActionView, TaskFormView
 from students.view.todo import TodoActView
 
 handler500 = 'students.view.main.on_error'
@@ -45,6 +47,18 @@ urlpatterns = [
     url(r'^course/(?P<id>\d+)/chat/$', login_required(csrf_exempt(ChatView.as_view())), name='chat'),
     url(r'^course/(?P<id>\d+)/marks/$', login_required(MarksView.as_view()), name='marks'),
     url(r'^course/(?P<id>\d+)/homework/$', login_required(UploadHomeWorkView.as_view()), name='homework'),
+
+    url(r'^course/(?P<id>\d+)/lectures/new$', login_required(LectureFormView.as_view()), name='add_lecture'),
+    url(r'^lectures/(?P<lecture_id>\d+)/edit$', login_required(LectureFormView.as_view()), name='edit_lecture'),
+    url(r'^lectures/(?P<id>\d+)/action', login_required(LectureActionView.as_view()), name='lecture_action'),
+
+    url(r'^course/(?P<id>\d+)/labtasks/new$', login_required(LabTaskFormView.as_view()), name='add_labtask'),
+    url(r'^labtasks/(?P<labtask_id>\d+)/edit$', login_required(LabTaskFormView.as_view()), name='edit_labtask'),
+    url(r'^labtasks/(?P<id>\d+)/action', login_required(LabTaskActionView.as_view()), name='labtask_action'),
+
+    url(r'^course/(?P<id>\d+)/tasks/new$', login_required(TaskFormView.as_view()), name='add_task'),
+    url(r'^tasks/(?P<task_id>\d+)/edit$', login_required(TaskFormView.as_view()), name='edit_task'),
+    url(r'^tasks/(?P<id>\d+)/action', login_required(TaskActionView.as_view()), name='task_action'),
 
     url(r'^chat/new-messages/$', login_required(NewMessagesView.as_view())),
     url(r'^chat/post/$', login_required(csrf_exempt(PostMessageView.as_view()))),

@@ -5,7 +5,9 @@ from django import template
 from hashlib import md5
 
 from django.conf import settings
+from django.template.base import Node
 from django.utils import translation
+from django.utils.safestring import mark_safe
 from html2text import html2text
 
 from students.model.base import Student, Teacher, FileResolution, Resolution, LastReadMessage
@@ -149,3 +151,8 @@ def get(collection, index):
     if index in collection:
         return collection[index]
     return None
+
+
+@register.filter
+def fa(name):
+    return mark_safe("<span class='fa fa-%s'></span>" % name)

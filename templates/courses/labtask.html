@@ -33,6 +33,17 @@
             </div>
         {% endif %}
     </div>
+    {% if user|is_teacher %}
+        <form method="post" action="{% url 'labtask_action' labtask.id %}">
+            {% csrf_token %}
+            <button name="action" value="edit" class="btn btn-sm btn-info">
+                {{ 'pencil'|fa }} Изменить лабу
+            </button>
+            <button name="action" value="delete"  class="btn btn-sm btn-danger delete-button">
+                {{ 'remove'|fa }} Удалить лабу
+            </button>
+        </form>
+    {% endif %}
     <div>
         {{ labtask.body|safe }}
     </div>

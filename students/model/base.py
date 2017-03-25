@@ -1,7 +1,6 @@
 # coding=utf-8
 from hashlib import md5
 from ckeditor.fields import RichTextField
-from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timesince
@@ -115,7 +114,8 @@ class Lecture(models.Model):
     course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name='lectures')
     title = models.CharField(max_length=255, verbose_name=_(u"Тема"))
     body = RichTextField(verbose_name=_(u"Текст"), config_name="long")
-    pptx = models.FileField(verbose_name=_(u"Презентация"))
+    pptx = models.FileField(verbose_name=_(u"Презентация"), null=True, blank=True)
+    url = models.URLField(verbose_name=_(u"Ссылка на материал"), null=True, blank=True)
 
     def __unicode__(self):
         return unicode(self.title)
@@ -126,7 +126,8 @@ class Lecture(models.Model):
             'course': self.course.name,
             'title': self.title,
             'body': self.body,
-            'file': self.pptx.url
+            'file': self.pptx.url,
+            'url': self.url
         }
 
     class Meta:

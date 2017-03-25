@@ -6,9 +6,24 @@
     <div class="lead">
         {{ course }} <br>
         {% if lecture.pptx.name %}
-            Файл презентации: <a href="{{ lecture.pptx.url }}" download>Скачать</a>
+            Файл презентации: <a href="{{ lecture.pptx.url }}" download>Скачать</a><br>
+        {% endif %}
+        {% if lecture.url %}
+            Материал к чтению: <a target="_blank" href="{{ lecture.url }}">Перейти</a>
         {% endif %}
     </div>
+
+    {% if user|is_teacher %}
+        <form method="post" action="{% url 'lecture_action' lecture.id %}">
+            {% csrf_token %}
+            <button name="action" value="edit" class="btn btn-sm btn-info">
+                {{ 'pencil'|fa }} Изменить лекцию
+            </button>
+            <button name="action" value="delete"  class="btn btn-sm btn-danger delete-button">
+                {{ 'remove'|fa }} Удалить лекцию
+            </button>
+        </form>
+    {% endif %}
 
     <div>
         {{ lecture.body|safe }}

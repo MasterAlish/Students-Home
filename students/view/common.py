@@ -18,12 +18,12 @@ def is_student(user):
     return Student.objects.filter(user=user).count() > 0
 
 
-def user_authenticated_to_course(user, course):
+def user_authorized_to_course(user, course):
     return (is_student(user) and course in user.student.courses) \
             or (is_teacher(user) and course in user.teacher.courses.all())
 
 
-def user_authenticated_to_group(user, group):
+def user_authorized_to_group(user, group):
     return (is_student(user) and group.id == user.student.group.id) \
             or (is_teacher(user) and group in reduce(lambda i, c: i + list(c.groups.all()), user.teacher.courses.all(), []))
 

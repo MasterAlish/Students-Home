@@ -2,7 +2,7 @@
 from django.shortcuts import render
 
 from students.model.base import Group, Teacher, Student
-from students.view.common import TeachersView, StudentsAndTeachersView, user_authenticated_to_group
+from students.view.common import TeachersView, StudentsAndTeachersView, user_authorized_to_group
 
 
 class TeacherGroupsView(TeachersView):

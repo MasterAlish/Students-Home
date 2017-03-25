@@ -1,6 +1,11 @@
 {% extends 'students/base.html' %}
-
 {% load staticfiles my_tags i18n %}
+{% block head %}
+    <script src="{% static 'js/form_controls.js' %}"></script>
+    <script>
+        addClassToInputs("this-form");
+    </script>
+{% endblock %}
 {% block content %}
     <h1>{{ title }}</h1>
     <div class="lead">
@@ -26,14 +31,4 @@
             </div>
         </div>
     </div>
-    <script>
-        $(document).ready(function () {
-            $("#this-form").find("input").each(function () {
-                $(this).addClass("form-control");
-            });
-            $("#this-form").find("select").each(function () {
-                $(this).addClass("form-control");
-            });
-        })
-    </script>
 {% endblock %}

@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from students.mobile import is_mobile
 from students.model.base import Course, ChatMessage, LastReadMessage
-from students.view.common import StudentsAndTeachersView, user_authenticated_to_course
+from students.view.common import StudentsAndTeachersView, user_authorized_to_course
 
 
 class ChatDateMixin(object):
@@ -34,7 +34,7 @@ class ChatView(StudentsAndTeachersView, ChatDateMixin):
 
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=kwargs['id'])
-        if user_authenticated_to_course(request.user, course):
+        if user_authorized_to_course(request.user, course):
             self.context['course'] = course
             if request.method == 'POST':
                 message = request.POST.get("message", "").strip()
@@ -59,7 +59,7 @@ class NewMessagesView(StudentsAndTeachersView, ChatDateMixin):
 
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=request.GET.get("course_id"))
-        if user_authenticated_to_course(request.user, course):
+        if user_authorized_to_course(request.user, course):
             last_message_id = request.GET.get("last_message_id") or 0
             messages = ChatMessage.objects.filter(course=course, pk__gt=last_message_id).order_by("datetime")
             self.context['messages'] = self.add_dates(messages, last_message_id)
@@ -78,7 +78,7 @@ class PostMessageView(StudentsAndTeachersView, ChatDateMixin):
 
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=request.POST.get("course_id"))
-        if user_authenticated_to_course(request.user, course):
+        if user_authorized_to_course(request.user, course):
             message = request.POST.get("message", "").strip()
             if len(message) > 0:
                 message = ChatMessage(body=message, user=request.user, course=course)

@@ -42,7 +42,11 @@
     </div>
 
     <div>
-        <h3>Лекции</h3>
+        <h3>Лекции
+            {% if user|is_teacher %}
+                <a class="btn btn-xs btn-info" href="{% url 'add_lecture' course.id %}">{{ 'plus'|fa }}</a>
+            {% endif %}
+        </h3>
         {% if course.lectures.count > 0 %}
             <ol>
                 {% for lecture in course.lectures.all %}
@@ -55,7 +59,12 @@
     </div>
 
     <div>
-        <h3>Лабораторные работы</h3>
+        <h3>
+            Лабораторные работы
+            {% if user|is_teacher %}
+                <a class="btn btn-xs btn-info" href="{% url 'add_labtask' course.id %}">{{ 'plus'|fa }}</a>
+            {% endif %}
+        </h3>
         {% if user|is_teacher %}
             {% if course.all_labtasks.count > 0 %}
                 <ol>
@@ -85,14 +94,28 @@
     </div>
 
     <div>
-        <h3>Другие задания</h3>
+        <h3>
+            Другие задания
+            {% if user|is_teacher %}
+                <a class="btn btn-xs btn-info" href="{% url 'add_task' course.id %}">{{ 'plus'|fa }}</a>
+            {% endif %}
+        </h3>
         {% if course.non_labtasks.count > 0 %}
             <ol>
                 {% for task in course.non_labtasks.all %}
                     <li>
                         {{ task.title }}
                         {% if user|is_teacher %}
-                            <a href="{% url 'set-marks' task.id %}">{% trans 'Выставить оценки' %}</a>
+                            <a title="Выставить оценки" class="btn btn-xs btn-success" href="{% url 'set-marks' task.id %}">{{ 'trophy'|fa }}</a>
+                            <form method="post" action="{% url 'task_action' task.id %}" style="display: inline-block;">
+                                {% csrf_token %}
+                                <button name="action" value="edit" class="btn btn-xs btn-default">
+                                    {{ 'pencil'|fa }}
+                                </button>
+                                <button name="action" value="delete" class="btn btn-xs btn-danger delete-button">
+                                    {{ 'remove'|fa }}
+                                </button>
+                            </form>
                         {% endif %}
                     </li>
                 {% endfor %}

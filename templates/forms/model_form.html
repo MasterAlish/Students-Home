@@ -1,0 +1,42 @@
+{% extends 'students/base.html' %}
+{% load staticfiles my_tags i18n %}
+{% block head %}
+    <script type="text/javascript" src="/static/ckeditor/ckeditor-init.js"></script>
+    <script type="text/javascript" src="/static/ckeditor/ckeditor/ckeditor.js"></script>
+    <script src="{% static 'js/form_controls.js' %}"></script>
+    <script>
+        addClassToInputs("this-form");
+        addDatePicker(["id_created_at", "id_deadline"]);
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>{{ course.name }}</h1>
+    <div class="lead">
+        {{ course.get_semester_display }} семестр {{ course.year }} года <br>
+        Преподаватели:
+        {% for teacher in course.teachers.all %}
+            <a href="{% url 'teacher' teacher.id %}">
+                {{ teacher.user.get_full_name }}
+            </a>
+            {% if not forloop.last %},{% endif %}
+        {% endfor %}
+    </div>
+    <div>
+        {% if instance %}
+            <h3>Изменить {{ model }}</h3>
+        {% else %}
+            <h3>Добавить {{ model }}</h3>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data" id="this-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if instance %}
+                <input type="submit" class="btn btn-sm btn-default" value="Сохранить">
+            {% else %}
+                <input type="submit" class="btn btn-sm btn-default" value="Добавить">
+            {% endif %}
+        </form>
+    </div>
+
+{% endblock %}
