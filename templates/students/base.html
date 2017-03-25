@@ -46,6 +46,7 @@
                                aria-haspopup="true"
                                aria-expanded="false">Мои курсы <span class="caret"></span></a>
                             <ul class="dropdown-menu">
+                                <li><a href="{% url 'all_courses' %}">{{ 'university'|fa }} Все курсы</a></li>
                                 {% for course in user.teacher.courses.all %}
                                     <li><a href="{% url 'course' course.id %}">{{ course }}</a></li>
                                 {% endfor %}

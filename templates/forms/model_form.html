@@ -11,17 +11,20 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ course.name }}</h1>
-    <div class="lead">
-        {{ course.get_semester_display }} семестр {{ course.year }} года <br>
-        Преподаватели:
-        {% for teacher in course.teachers.all %}
-            <a href="{% url 'teacher' teacher.id %}">
-                {{ teacher.user.get_full_name }}
-            </a>
-            {% if not forloop.last %},{% endif %}
-        {% endfor %}
-    </div>
+    {% if course %}
+        <h1>{{ course.name }}</h1>
+        <div class="lead">
+            {{ course.get_semester_display }} семестр {{ course.year }} года <br>
+            Преподаватели:
+            {% for teacher in course.teachers.all %}
+                <a href="{% url 'teacher' teacher.id %}">
+                    {{ teacher.user.get_full_name }}
+                </a>
+                {% if not forloop.last %},{% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <div>
         {% if instance %}
             <h3>Изменить {{ model }}</h3>

@@ -1,0 +1,30 @@
+{% extends 'students/base.html' %}
+{% load i18n my_tags %}
+{% block content %}
+    <h1>
+        Список курсов
+        {% if is_teacher %}
+            <a class="btn btn-xs btn-info" href="{% url 'add_course' %}">{{ 'plus'|fa }}</a>
+        {% endif %}
+    </h1>
+    <ol>
+        {% for course in courses %}
+            <li>
+                <a href="{% url 'course' course.id %}">{{ course.name }} ({{ course.get_semester_display }}
+                    семестр {{ course.year }} года)</a>
+                {% if is_teacher %}
+                    <form method="post" action="{% url 'course_action' course.id %}" style="display: inline-block;">
+                        {% csrf_token %}
+                        <button name="action" value="edit" class="btn btn-xs btn-default">
+                            {{ 'pencil'|fa }}
+                        </button>
+                        <button name="action" value="delete" class="btn btn-xs btn-danger delete-button"
+                                data-delete-text="Все связанные лабораторки, лекции и другие данные  также будут удалены.">
+                            {{ 'remove'|fa }}
+                        </button>
+                    </form>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ol>
+{% endblock %}

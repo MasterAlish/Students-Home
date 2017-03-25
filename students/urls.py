@@ -18,7 +18,7 @@ from students.view.profile import TeacherGroupsView, TeacherView, StudentView
 from students.view.auth import HomeView,on_error, on_not_found, auth_logout, \
     auth_profile, register_student, password_change, user_change, reset_password, register_teacher
 from students.view.teaching import LectureFormView, LectureActionView, LabTaskFormView, LabTaskActionView, \
-    TaskActionView, TaskFormView
+    TaskActionView, TaskFormView, CoursesListView, CourseFormView, CourseActionView
 from students.view.todo import TodoActView
 
 handler500 = 'students.view.main.on_error'
@@ -48,6 +48,11 @@ urlpatterns = [
     url(r'^course/(?P<id>\d+)/chat/$', login_required(csrf_exempt(ChatView.as_view())), name='chat'),
     url(r'^course/(?P<id>\d+)/marks/$', login_required(MarksView.as_view()), name='marks'),
     url(r'^course/(?P<id>\d+)/homework/$', login_required(UploadHomeWorkView.as_view()), name='homework'),
+
+    url(r'^courses/$', login_required(CoursesListView.as_view()), name='all_courses'),
+    url(r'^courses/new$', login_required(CourseFormView.as_view()), name='add_course'),
+    url(r'^courses/(?P<course_id>\d+)/edit$', login_required(CourseFormView.as_view()), name='edit_course'),
+    url(r'^courses/(?P<id>\d+)/action', login_required(CourseActionView.as_view()), name='course_action'),
 
     url(r'^course/(?P<id>\d+)/lectures/new$', login_required(LectureFormView.as_view()), name='add_lecture'),
     url(r'^lectures/(?P<lecture_id>\d+)/edit$', login_required(LectureFormView.as_view()), name='edit_lecture'),

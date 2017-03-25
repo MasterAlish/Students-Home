@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from students.model.base import Lecture, LabTask, Task
+from students.model.base import Lecture, LabTask, Task, Course
 
 
 class LectureForm(ModelForm):
@@ -7,6 +7,13 @@ class LectureForm(ModelForm):
     class Meta:
         model = Lecture
         exclude = ['course']
+
+
+class CourseForm(ModelForm):
+
+    class Meta:
+        model = Course
+        exclude = ['teachers']
 
 
 class LabTaskForm(ModelForm):

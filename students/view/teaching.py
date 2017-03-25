@@ -5,10 +5,61 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from students.forms.teaching import LectureForm, LabTaskForm, TaskForm
+from students.forms.teaching import LectureForm, LabTaskForm, TaskForm, CourseForm
 from students.model.base import Course, Lecture, LabTask, Task
 from students.view.common import TeachersView, user_authorized_to_course
 from students.view.util import remove_file
+
+
+class CoursesListView(TeachersView):
+    template_name = "courses/courses_list.html"
+
+    def handle(self, request, *args, **kwargs):
+        return render(request, self.template_name, {
+            'courses': self.teacher.courses.order_by("-year").all()
+        })
+
+
+class CourseActionView(TeachersView):
+    def handle(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['id'])
+        if request.method == 'POST' and user_authorized_to_course(request.user, course):
+            action = request.POST.get("action")
+            if action == "edit":
+                return redirect(reverse("edit_course", kwargs={'course_id': course.id}))
+            elif action == 'delete':
+                course.delete()
+                messages.success(request, u"Курс удален успешно!")
+            return redirect(reverse("all_courses"))
+        raise Exception(u"User is not authorized")
+
+
+class CourseFormView(TeachersView):
+    template_name = "forms/model_form.html"
+    model = u"курс"
+
+    def handle(self, request, *args, **kwargs):
+        course = None
+        if 'course_id' in kwargs:
+            course = Course.objects.get(pk=kwargs['course_id'])
+        if course and not user_authorized_to_course(request.user, course):
+            raise Exception(u"User is not authorized")
+        else:
+            form = CourseForm(instance=course)
+            if request.method == 'POST':
+                form = CourseForm(request.POST, request.FILES, instance=course)
+                if form.is_valid():
+                    form.instance.save()
+                    form.instance.teachers.add(self.teacher)
+                    form.instance.save()
+                    if course:
+                        messages.success(request, u"Курс изменен успешно!")
+                    else:
+                        course = form.instance
+                        messages.success(request, u"Курс добавлен успешно!")
+                    return redirect(reverse("course", kwargs={'id': course.id}))
+            return render(request, self.template_name, {'form': form, 'instance': course, 'model': self.model})
+
 
 
 class LectureFormView(TeachersView):
