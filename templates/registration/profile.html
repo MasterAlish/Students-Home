@@ -9,9 +9,9 @@
 
     <div>
         <div class="big-student-avatar">
-            {% if user|is_student %}
+            {% if is_student %}
                 <img src="{{ user.student.avatar_url }}">
-            {% elif user|is_teacher %}
+            {% elif is_teacher %}
                 <img src="{{ user.teacher.avatar_url }}">
             {% else %}
                 <img src="{{ user.email|gravatar }}">
@@ -19,7 +19,7 @@
         </div>
         <div>
             <table class="table" style="width: auto;">
-                {% if user|is_student %}
+                {% if is_student %}
                     <tr>
                         <th>Моя группа:</th>
                         <td>{{ user.student.group.name }}</td>

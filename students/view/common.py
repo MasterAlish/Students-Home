@@ -11,11 +11,11 @@ from students.model.base import Teacher, Student, Group, UserActivity, LastReadM
 
 
 def is_teacher(user):
-    return Teacher.objects.filter(user=user).count() > 0
+    return user and user.is_authenticated() and Teacher.objects.filter(user=user).count() > 0
 
 
 def is_student(user):
-    return Student.objects.filter(user=user).count() > 0
+    return user and user.is_authenticated() and Student.objects.filter(user=user).count() > 0
 
 
 def user_authorized_to_course(user, course):

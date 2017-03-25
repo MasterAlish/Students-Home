@@ -29,7 +29,7 @@
             {% if not forloop.last %},{% endif %}
         {% endfor %}
         <br>
-        {% if user|is_teacher %}
+        {% if is_teacher %}
             <a class="btn btn-sm btn-info" href="{% url 'email-course' course.id %}">Написать студентам курса</a>
             <a class="btn btn-sm btn-info" href="{% url 'give-medals' course.id %}">Выдать медаль</a>
         {% endif %}
@@ -43,7 +43,7 @@
 
     <div>
         <h3>Лекции
-            {% if user|is_teacher %}
+            {% if is_teacher %}
                 <a class="btn btn-xs btn-info" href="{% url 'add_lecture' course.id %}">{{ 'plus'|fa }}</a>
             {% endif %}
         </h3>
@@ -61,11 +61,11 @@
     <div>
         <h3>
             Лабораторные работы
-            {% if user|is_teacher %}
+            {% if is_teacher %}
                 <a class="btn btn-xs btn-info" href="{% url 'add_labtask' course.id %}">{{ 'plus'|fa }}</a>
             {% endif %}
         </h3>
-        {% if user|is_teacher %}
+        {% if is_teacher %}
             {% if course.all_labtasks.count > 0 %}
                 <ol>
                     {% for labtask in course.all_labtasks.all %}
@@ -96,7 +96,7 @@
     <div>
         <h3>
             Другие задания
-            {% if user|is_teacher %}
+            {% if is_teacher %}
                 <a class="btn btn-xs btn-info" href="{% url 'add_task' course.id %}">{{ 'plus'|fa }}</a>
             {% endif %}
         </h3>
@@ -105,7 +105,7 @@
                 {% for task in course.non_labtasks.all %}
                     <li>
                         {{ task.title }}
-                        {% if user|is_teacher %}
+                        {% if is_teacher %}
                             <a title="Выставить оценки" class="btn btn-xs btn-success" href="{% url 'set-marks' task.id %}">{{ 'trophy'|fa }}</a>
                             <form method="post" action="{% url 'task_action' task.id %}" style="display: inline-block;">
                                 {% csrf_token %}

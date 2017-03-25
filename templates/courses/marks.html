@@ -43,7 +43,7 @@
                             <td>
                                 {{ student.user.get_full_name }}
                                 <a class="xp" href="#">{{ xp_by_students|get:student.id|default_if_none:0 }}</a><span class="xp-sign">xp</span>
-                                {% if user|is_teacher %}
+                                {% if is_teacher %}
                                     <a href="{% url 'activity' %}?user_id={{ student.user_id }}"
                                        title="{% trans 'Посещения' %}">
                                         <span class="fa fa-calendar"></span>

@@ -11,6 +11,7 @@ from django.utils.safestring import mark_safe
 from html2text import html2text
 
 from students.model.base import Student, Teacher, FileResolution, Resolution, LastReadMessage
+from students.view.common import is_teacher, is_student
 
 register = template.Library()
 
@@ -50,22 +51,6 @@ def bootstrapize(tags, prefix=""):
     else:
         result += prefix + convert_tag(tags)
     return result
-
-
-@register.filter
-def is_student(user):
-    try:
-        return Student.objects.filter(user=user).count() > 0
-    except:
-        return False
-
-
-@register.filter
-def is_teacher(user):
-    try:
-        return Teacher.objects.filter(user=user).count() > 0
-    except:
-        return False
 
 
 @register.filter
