@@ -15,7 +15,6 @@ class UserCreateForm(forms.Form):
     email = forms.EmailField(label=_(u"Email"))
     birthdate = forms.DateField(label=_(u"Дата рождения"), widget=MyDateInput)
     phone = forms.CharField(label=_(u"Номер телефона"))
-    group = forms.ModelChoiceField(queryset=Group.objects.all(), label=_(u"Группа"))
     password = forms.CharField(min_length=4, widget=forms.PasswordInput, label=_(u"Пароль"), required=False)
     password2 = forms.CharField(min_length=4, widget=forms.PasswordInput, label=_(u"Пароль (еще раз)"), required=False)
     captcha = MathCaptchaField(label=_(u"Проверка адекватности"))
@@ -43,6 +42,10 @@ class UserCreateForm(forms.Form):
             email = self.cleaned_data['email']
             if User.objects.filter(email=email).count() > 0:
                 self.add_error("email", _(u"Такой email уже зарегистрирован в системе"))
+
+
+class StudentCreateForm(UserCreateForm):
+    group = forms.ModelChoiceField(queryset=Group.objects.all(), label=_(u"Группа"))
 
 
 class UserChangeForm(forms.ModelForm):

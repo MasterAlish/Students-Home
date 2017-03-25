@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
 from django.core.mail import send_mail
 
-from students.forms.users import UserCreateForm, UserChangeForm
+from students.forms.users import UserCreateForm, UserChangeForm, StudentCreateForm
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.core.urlresolvers import reverse
@@ -13,7 +13,7 @@ from django.views.generic import TemplateView, View
 
 from students.mail import StudentsMail
 from students.mobile import is_mobile
-from students.model.base import Student
+from students.model.base import Student, Teacher
 from students.model.blog import Article
 from students.models import MyUser
 from students.view.common import is_student, is_teacher
@@ -51,16 +51,46 @@ def create_student(form):
     return student
 
 
-def auth_register(request):
-    template_name = "registration/register.html"
+def create_teacher(form):
+    email = form.cleaned_data['email']
+    password = form.cleaned_data['password']
+    user = MyUser.objects.create_user(email, password)
+    user.fullname = form.cleaned_data['name']
+    user.phone = form.cleaned_data['phone']
+    user.date_of_birth = form.cleaned_data['birthdate']
+    user.is_active = False
+    user.save()
+    teacher = Teacher(user=user)
+    teacher.save()
+    return teacher
+
+
+def register_student(request):
+    template_name = "registration/register_student.html"
+    context = {}
+    form = StudentCreateForm()
+    if request.method == "POST":
+        form = StudentCreateForm(request.POST)
+        if form.is_valid():
+            student = create_student(form)
+            messages.success(request, _(u"Регистрация прошла успешно! После проверки ваш аккаунт станет доступным."))
+            StudentsMail().student_registered(request, student)
+            return redirect(reverse("home"))
+
+    context['form'] = form
+    return render(request, template_name, context=context)
+
+
+def register_teacher(request):
+    template_name = "registration/register_teacher.html"
     context = {}
     form = UserCreateForm()
     if request.method == "POST":
         form = UserCreateForm(request.POST)
         if form.is_valid():
-            student = create_student(form)
+            teacher = create_teacher(form)
             messages.success(request, _(u"Регистрация прошла успешно! После проверки ваш аккаунт станет доступным."))
-            StudentsMail().student_registered(request, student)
+            StudentsMail().teacher_registered(request, teacher)
             return redirect(reverse("home"))
 
     context['form'] = form

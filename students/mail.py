@@ -60,6 +60,12 @@ class StudentsMail(object):
         recipients = [settings.EMAIL_ADMIN_EMAIL]
         self.save_mail(subject, message, message, recipients)
 
+    def teacher_registered(self, request, teacher):
+        subject = u"Зарегистрировался новый учитель: %s" % unicode(teacher)
+        message = u"Перейдите по ссылку чтобы активировать аккаунт учителя %s " % unicode(request.META["HTTP_ORIGIN"]+"/admin/students/myuser/"+str(teacher.user.id))
+        recipients = [settings.EMAIL_ADMIN_EMAIL]
+        self.save_mail(subject, message, message, recipients)
+
     def inform_about_new_medal(self, student, medal, course, request):
         """
         :type student: students.model.base.Student

@@ -16,7 +16,7 @@ from students.view.courses import CourseView, LectureView, MyGroupView, GroupVie
 from students.view.homework import UploadHomeWorkView
 from students.view.profile import TeacherGroupsView, TeacherView, StudentView
 from students.view.auth import HomeView,on_error, on_not_found, auth_logout, \
-    auth_profile, auth_register, password_change, user_change, reset_password
+    auth_profile, register_student, password_change, user_change, reset_password, register_teacher
 from students.view.teaching import LectureFormView, LectureActionView, LabTaskFormView, LabTaskActionView, \
     TaskActionView, TaskFormView
 from students.view.todo import TodoActView
@@ -28,7 +28,8 @@ urlpatterns = [
     url(r'^accounts/login/$', login, name="login"),
     url(r'^accounts/logout/$', auth_logout, name="logout"),
     url(r'^accounts/profile/$', login_required(auth_profile), name="profile"),
-    url(r'^accounts/register/$', auth_register, name="register"),
+    url(r'^accounts/register/student/$', register_student, name="register_student"),
+    url(r'^accounts/register/teacher/$', register_teacher, name="register_teacher"),
     url(r'^accounts/password/reset/$', reset_password, name="reset_password"),
     url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.password_reset_confirm, name='password_reset_confirm'),

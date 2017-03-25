@@ -9,7 +9,11 @@
 {% block content %}
     <div style="width: 100%; max-width: 800px;  margin-right: auto; margin-left: auto; text-align: center; ">
         <div class="row">
-            <form id="this-form" role="form" style="text-align: left; " method="post" action="{% url 'register' %}">
+            <ul class="nav nav-pills">
+                <li role="presentation"><a href="{% url 'register_student' %}">Я студент</a></li>
+                <li role="presentation" class="active"><a href="#">Я преподаватель</a></li>
+            </ul>
+            <form id="this-form" role="form" style="text-align: left; " method="post" action="{% url 'register_teacher' %}">
                 <div style="padding: 0 20px;">
                     <h3 class="m-t-none m-b">{% trans 'Регистрация' %}</h3>
                     <div class="col-md-6">
@@ -19,9 +23,9 @@
                                     {{ field.label_tag }}
                                     {{ field }}
                                     {% if field.errors %}
-                                         <div class="help-block">
+                                        <div class="help-block">
                                             {{ field.errors.0 }}
-                                         </div>
+                                        </div>
                                     {% endif %}
                                 </div>
                             {% endif %}
@@ -35,9 +39,9 @@
                                     {{ field.label_tag }}
                                     {{ field }}
                                     {% if field.errors %}
-                                         <div class="help-block">
+                                        <div class="help-block">
                                             {{ field.errors.0 }}
-                                         </div>
+                                        </div>
                                     {% endif %}
                                 </div>
                             {% endif %}
