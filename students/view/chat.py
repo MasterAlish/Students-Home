@@ -68,7 +68,7 @@ class NewMessagesView(StudentsAndTeachersView, ChatDateMixin):
             LastReadMessage.register_last_message(course, request.user, last_message_id)
             return HttpResponse(content=json.dumps({
                 'last_message_id': last_message_id,
-                'new_messages': render_to_string(self.template_name, self.context)
+                'new_messages': render_to_string(self.template_name, self.context) if len(messages) > 0 else ""
             }), content_type="application/json")
         raise Exception(u"User is not authenticated")
 

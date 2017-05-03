@@ -17,6 +17,17 @@ register = template.Library()
 
 
 @register.filter
+def avatar(user):
+    if hasattr(user, "student"):
+        return user.student.avatar_url()
+    if hasattr(user, "teacher"):
+        return user.teacher.avatar_url()
+    if hasattr(user, "email"):
+        return gravatar(user.email)
+    return gravatar("unknown")
+
+
+@register.filter
 def l6e(instance, attr):
     if not instance:
         return ""

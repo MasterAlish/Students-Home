@@ -53,6 +53,7 @@ html {
 }
 
 .message {
+    max-width: 375px;
     box-shadow: 0 1px 1px 0px #949494;
     padding: 7px 9px;
     border-radius: 10px;
@@ -66,6 +67,7 @@ html {
 .message .text {
     margin: 0;
     padding: 0;
+    word-break: break-word;
 }
 
 .date-bubble {
@@ -75,6 +77,21 @@ html {
     font-size: 13px;
     margin: 10px auto;
     width: 100px;
+}
+
+.message-line{
+    padding-left: 40px;
+}
+
+.chat-avatar {
+    box-shadow: 0 1px 1px 0 #949494;
+    margin-top: 5px;
+    float: left;
+    margin-left: 10px;
+    margin-right: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
 }
 
 .others-message {
