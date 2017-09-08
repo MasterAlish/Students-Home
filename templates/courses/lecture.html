@@ -7,9 +7,13 @@
         {{ course }} <br>
         {% if lecture.pptx.name %}
             Файл презентации: <a href="{{ lecture.pptx.url }}" download>Скачать</a><br>
+        {% elif lecture.copy_from.pptx.name %}
+            Файл презентации: <a href="{{ lecture.copy_from.pptx.url }}" download>Скачать</a><br>
         {% endif %}
         {% if lecture.url %}
             Материал к чтению: <a target="_blank" href="{{ lecture.url }}">Перейти</a>
+        {% elif lecture.copy_from.url %}
+            Материал к чтению: <a target="_blank" href="{{ lecture.copy_from.url }}" >Перейти</a>
         {% endif %}
     </div>
 
@@ -26,6 +30,10 @@
     {% endif %}
 
     <div>
-        {{ lecture.body|safe }}
+        {% if lecture.body %}
+            {{ lecture.body|safe }}
+        {% elif lecture.copy_from.body %}
+            {{ lecture.copy_from.body|safe }}
+        {% endif %}
     </div>
 {% endblock %}

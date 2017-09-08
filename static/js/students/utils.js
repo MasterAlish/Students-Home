@@ -1,5 +1,9 @@
 $(document).ready(function(){
     $(".delete-button").on("click", function () {
-        return confirm($(this).data("delete-text")+"\nВы уверены что хотите удалить?");
+        if($(this).data("delete-text") != undefined){
+            return confirm($(this).data("delete-text")+"\nВы уверены что хотите удалить?");
+        }else{
+            return confirm("Вы уверены что хотите удалить?");
+        }
     })
 });

@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.contrib.auth import get_user_model
+from django.forms import TextInput
 
 from students.model.base import Group
 from students.models import MyUser
@@ -13,7 +14,7 @@ from students.simplemathcaptcha.widgets import MyDateInput
 class UserCreateForm(forms.Form):
     name = forms.CharField(min_length=4, label=_(u"ФИО"))
     email = forms.EmailField(label=_(u"Email"))
-    birthdate = forms.DateField(label=_(u"Дата рождения"), widget=MyDateInput)
+    birthdate = forms.DateField(label=_(u"Дата рождения"), widget=TextInput)
     phone = forms.CharField(label=_(u"Номер телефона"))
     password = forms.CharField(min_length=4, widget=forms.PasswordInput, label=_(u"Пароль"), required=False)
     password2 = forms.CharField(min_length=4, widget=forms.PasswordInput, label=_(u"Пароль (еще раз)"), required=False)

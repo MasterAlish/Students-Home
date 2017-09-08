@@ -61,7 +61,6 @@ class CourseFormView(TeachersView):
             return render(request, self.template_name, {'form': form, 'instance': course, 'model': self.model})
 
 
-
 class LectureFormView(TeachersView):
     template_name = "forms/model_form.html"
     model = u"лекцию"
@@ -100,7 +99,8 @@ class LectureActionView(TeachersView):
             if action == "edit":
                 return redirect(reverse("edit_lecture", kwargs={'lecture_id': lecture.id}))
             elif action == 'delete':
-                remove_file(lecture.pptx)
+                if lecture.copies.count() == 0:
+                    remove_file(lecture.pptx)
                 lecture.delete()
                 messages.success(request, u"Лекция удалена успешно!")
             return redirect(reverse("course", kwargs={'id': course.id}))

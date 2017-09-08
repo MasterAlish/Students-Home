@@ -51,8 +51,27 @@ class Teacher(models.Model, AvatarMixin):
         verbose_name_plural = u"Преподаватели"
 
 
+class University(models.Model):
+    name = models.CharField(max_length=255, verbose_name=_(u"Название"))
+    description = models.TextField(verbose_name=_(u"Описание"), null=True, blank=True)
+    location = models.CharField(max_length=255, verbose_name=_(u"Местоположение"), null=True, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Department(models.Model):
+    name = models.CharField(max_length=255, verbose_name=_(u"Название"))
+    description = models.TextField(verbose_name=_(u"Описание"), null=True, blank=True)
+    university = models.ForeignKey(University, verbose_name=_(u"Университет"))
+    teachers = models.ManyToManyField(Teacher, related_name="departments", blank=True, verbose_name=_(u"Преподаватели"))
+
+    def __unicode__(self):
+        return u"%s: %s" % (self.university, self.name)
+
+
 class Course(models.Model):
-    SEMESTER_CHOICES=(
+    SEMESTER_CHOICES = (
         ('spring', _(u"Весенний")),
         ('summer', _(u"Летний")),
         ('fall', _(u'Осенний')),
@@ -63,9 +82,10 @@ class Course(models.Model):
     teachers = models.ManyToManyField(Teacher, blank=True, verbose_name=_(u"Преподаватели"), related_name="courses")
     year = models.IntegerField(verbose_name=_(u"Год"), default=2016)
     semester = models.CharField(max_length=10, verbose_name=_(u"Семестр"), choices=SEMESTER_CHOICES)
+    archived = models.BooleanField(default=False, verbose_name=_(u"Завершен"))
 
     def __unicode__(self):
-        return unicode(self.name)
+        return unicode(self.name) + u" ("+self.get_semester_display()+u", "+str(self.year)+u")"
 
     def to_dict(self):
         return {
@@ -102,6 +122,7 @@ class Course(models.Model):
     class Meta:
         verbose_name = u"Курс"
         verbose_name_plural = u"Курсы"
+        ordering = ["-id"]
 
     def groups_with_extra(self):
         groups = list(self.groups.all())
@@ -112,10 +133,34 @@ class Course(models.Model):
 
 class Lecture(models.Model):
     course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name='lectures')
-    title = models.CharField(max_length=255, verbose_name=_(u"Тема"))
-    body = RichTextField(verbose_name=_(u"Текст"), config_name="long")
+    title = models.CharField(max_length=255, verbose_name=_(u"Тема"), null=True, blank=True)
+    body = RichTextField(verbose_name=_(u"Текст"), config_name="long", null=True, blank=True)
     pptx = models.FileField(verbose_name=_(u"Презентация"), null=True, blank=True)
     url = models.URLField(verbose_name=_(u"Ссылка на материал"), null=True, blank=True)
+    copy_from = models.ForeignKey("self", verbose_name=u"Копия лекции", null=True, blank=True,
+                                  on_delete=models.SET_NULL, related_name="copies")
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if not self.title and self.copy_from:
+            self.title = self.copy_from.title
+        assert self.id != self.copy_from_id
+        return super(Lecture, self).save(force_insert, force_update, using, update_fields)
+
+    def delete(self, using=None, keep_parents=False):
+        if self.copies.count() > 0:
+            new_original = self.copies.all()[0]
+            if not new_original.body:
+                new_original.body = self.body
+            if not new_original.pptx.name:
+                new_original.pptx.name = self.pptx.name
+            if not new_original.url:
+                new_original.url = self.url
+            new_original.save()
+
+            for copy in self.copies.all()[1:]:
+                copy.copy_from = new_original
+                copy.save()
+        return super(Lecture, self).delete(using, keep_parents)
 
     def __unicode__(self):
         return unicode(self.title)
@@ -125,9 +170,9 @@ class Lecture(models.Model):
             'id': self.id,
             'course': self.course.name,
             'title': self.title,
-            'body': self.body,
-            'file': self.pptx.url,
-            'url': self.url
+            'body': self.copy_from.body if not self.body and self.copy_from else self.body,
+            'file': self.copy_from.pptx.url if not self.pptx.name and self.copy_from else self.pptx.url,
+            'url': self.copy_from.url if not self.url and self.copy_from else self.url
         }
 
     class Meta:
@@ -163,7 +208,7 @@ class Task(PolymorphicModel):
             'short_name': self.short_name,
             'body': self.body,
             'color': self.color,
-            'important':self.important
+            'important': self.important
         }
 
     class Meta:
@@ -189,6 +234,7 @@ class LabTask(Task):
 class Group(models.Model):
     name = models.CharField(max_length=100, verbose_name=_(u"Название"))
     courses = models.ManyToManyField(Course, blank=True, verbose_name=_(u"Курсы"), related_name="groups")
+    department = models.ForeignKey(Department, verbose_name=_(u"Факультет"), null=True, blank=True)
 
     def __unicode__(self):
         return unicode(self.name)
@@ -196,6 +242,7 @@ class Group(models.Model):
     class Meta:
         verbose_name = u"Группа"
         verbose_name_plural = u"Группы"
+        ordering = ["-id"]
 
 
 class ModelManagerMock(object):
@@ -224,7 +271,7 @@ class Student(models.Model, AvatarMixin):
     color = models.CharField(max_length=20, verbose_name=_(u"Цвет"), default="#ff1493")
 
     def __unicode__(self):
-        return self.user.get_full_name()+u" "+unicode(self.group)
+        return self.user.get_full_name() + u" " + unicode(self.group)
 
     @property
     def name(self):
@@ -248,7 +295,8 @@ class Student(models.Model, AvatarMixin):
         return {
             'id': self.id,
             'name': self.user.get_full_name(),
-            'last_seen': u"Был(а): "+(timesince.timesince(self.user.last_seen)+u" назад" if self.user.last_seen else u"Никогда")
+            'last_seen': u"Был(а): " + (
+            timesince.timesince(self.user.last_seen) + u" назад" if self.user.last_seen else u"Никогда")
         }
 
     class Meta:
@@ -330,7 +378,8 @@ class HomeWorkSolution(models.Model):
     course = models.ForeignKey(Course, verbose_name=_(u"Курс"))
     student = models.ForeignKey(Student, verbose_name=_(u"Студент"), related_name='homeworks')
     task = models.CharField(max_length=255, verbose_name=_(u"Задание"), help_text=_(u"Какое было задание?"))
-    comment = RichTextField(verbose_name=_(u"Комментарий"), config_name="default", help_text=u"Опишите как вы решили, что использовали и т.п.")
+    comment = RichTextField(verbose_name=_(u"Комментарий"), config_name="default",
+                            help_text=u"Опишите как вы решили, что использовали и т.п.")
     datetime = models.DateTimeField(verbose_name=_(u"Время"), auto_now_add=True)
     file = models.FileField(verbose_name=_(u"Файл"))
 
@@ -361,14 +410,16 @@ class ChatMessage(models.Model):
 class LastReadMessage(models.Model):
     course = models.ForeignKey(Course, verbose_name=_(u"Чат какого курса"))
     user = models.ForeignKey(get_user_model(), verbose_name=_(u"Пользователь"), null=True, on_delete=models.SET_NULL)
-    last_read_message_id = models.IntegerField(blank=True, verbose_name=_(u"Последнее прочитанное сообщение"), default=0)
+    last_read_message_id = models.IntegerField(blank=True, verbose_name=_(u"Последнее прочитанное сообщение"),
+                                               default=0)
 
     @staticmethod
     def register_last_message(course, user, last_message_id):
         register = LastReadMessage(course=course, user=user)
         try:
             register = LastReadMessage.objects.get(user=user, course=course)
-        except: pass
+        except:
+            pass
         register.last_read_message_id = last_message_id
         register.save()
 
@@ -398,7 +449,7 @@ class StudentMedal(models.Model):
     course = models.ForeignKey(Course, verbose_name=_(u"За курс"), null=True, blank=True, on_delete=models.SET_NULL)
 
     def __unicode__(self):
-        return unicode(self.student) + u" "+unicode(self.medal)
+        return unicode(self.student) + u" " + unicode(self.medal)
 
     def to_dict(self):
         return {
@@ -436,5 +487,3 @@ class UserActivity(models.Model):
             activity = UserActivity(user=user, month=month, year=year)
             activity.activity = "0" * 31 * 24
             return activity
-
-

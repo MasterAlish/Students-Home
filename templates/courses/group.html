@@ -20,6 +20,7 @@
                     <th>Дата рождения</th>
                     <th>Email</th>
                     <th>Тел</th>
+                    <th>Действия</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -40,6 +41,13 @@
                             {{ student.user.email }}
                         </td>
                         <td><span class="fa fa-phone"></span> {{ student.user.phone }}</td>
+                        <td>
+                            {% if student.user.is_active %}
+                                <a href="{% url 'activate_student' student.id %}" class="btn btn-xs btn-danger">Деактивировать</a>
+                            {% else %}
+                                <a href="{% url 'activate_student' student.id %}" class="btn btn-xs btn-success">Активировать</a>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

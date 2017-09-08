@@ -12,7 +12,7 @@ from students.view.activity import ActivityView
 from students.view.articles import ArticleView
 from students.view.chat import ChatView, NewMessagesView, PostMessageView
 from students.view.courses import CourseView, LectureView, MyGroupView, GroupView, LabTaskView, \
-    EmailToCourseStudentsView, MarksView, GiveMedalsView, SetMarksView, ExtraGroupView
+    EmailToCourseStudentsView, MarksView, GiveMedalsView, SetMarksView, ExtraGroupView, ActivateStudentView
 from students.view.homework import UploadHomeWorkView
 from students.view.profile import TeacherGroupsView, TeacherView, StudentView
 from students.view.auth import HomeView,on_error, on_not_found, auth_logout, \
@@ -76,6 +76,7 @@ urlpatterns = [
     url(r'^groups/(?P<id>\d+)$', login_required(GroupView.as_view()), name='group'),
     url(r'^extra_group/(?P<course_id>\d+)$', login_required(ExtraGroupView.as_view()), name='extra_group'),
     url(r'^activity/$', login_required(ActivityView.as_view()), name='activity'),
+    url(r'^student/(?P<id>\d+)/activate/$', login_required(ActivateStudentView.as_view()), name='activate_student'),
 
     url(r'^article/(?P<id>\d+)$', ArticleView.as_view(), name='article'),
 

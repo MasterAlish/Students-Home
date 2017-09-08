@@ -78,6 +78,16 @@ class StudentsMail(object):
         recipients = [student.user.email]
         self.save_mail(subject, message, message, recipients)
 
+    def report_account_activated(self, student, request):
+        """
+        :type student: students.model.base.Student
+        """
+        subject = u"Ваш аккаунт активирован!"
+        message = u"Уважаемый, %s, ваш аккаунт на сайте http://%s успешно активирован!" % \
+                  (student.user.get_full_name(), unicode(request.META["HTTP_HOST"]))
+        recipients = [student.user.email]
+        self.save_mail(subject, message, message, recipients)
+
     def save_mail(self, subject, message, message_html, recipients):
         Mail(subject=subject, body_html=message_html, body_txt=message, recipients=json.dumps(recipients)).save()
 

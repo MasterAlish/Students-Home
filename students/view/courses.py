@@ -13,7 +13,7 @@ from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalFor
     GroupStudentsInputForm, StudentException
 from students.mail import StudentsMail
 from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution, Resolution, Task, \
-    GroupMock, Point
+    GroupMock, Point, Student, Teacher
 from students.model.checks import ZipContainsFileConstraint
 from students.view.common import StudentsView, user_authorized_to_course, StudentsAndTeachersView, \
     user_authorized_to_group, TeachersView
@@ -130,6 +130,26 @@ class GroupView(StudentsAndTeachersView):
             self.context['group'] = group
             return render(request, self.template_name, self.context)
         raise Exception(u"Smth went wrong")
+
+
+class ActivateStudentView(TeachersView):
+
+    def handle(self, request, *args, **kwargs):
+        student = Student.objects.get(pk=kwargs['id'])
+        student.user.is_active = not student.user.is_active
+        student.user.save()
+        if student.user.is_active:
+            StudentsMail().report_account_activated(student, request)
+        return redirect(reverse("group", kwargs={'id': student.group_id}))
+
+
+class ActivateTeacherView(TeachersView):
+
+    def handle(self, request, *args, **kwargs):
+        teacher = Teacher.objects.get(pk=kwargs['id'])
+        teacher.user.is_active = not teacher.user.is_active
+        teacher.user.save()
+        return redirect(reverse("group", kwargs={'id': teacher.group_id}))
 
 
 class ExtraGroupView(StudentsAndTeachersView):

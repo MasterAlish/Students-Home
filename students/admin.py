@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group as UserGroup
 
 from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture, ChatMessage, \
     Medal, StudentMedal, LabTask, Task, Resolution, FileResolution, UserActivity, ExtraStudent, Todo, Point, \
-    HomeWorkSolution
+    HomeWorkSolution, University, Department
 from students.model.blog import Article
 from students.model.checks import FileSizeConstraint, FileNameConstraint, ZipContainsFileConstraint, ZipFileConstraint
 from students.model.extra import Feedback
@@ -87,6 +87,8 @@ class FeedbackAdmin(ModelAdmin):
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Course)
 admin.site.register(StudentGroup)
+admin.site.register(University)
+admin.site.register(Department)
 admin.site.register(Lecture)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(LabTask, LabTaskAdmin)

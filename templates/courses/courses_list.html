@@ -1,6 +1,12 @@
 {% extends 'students/base.html' %}
 {% load i18n my_tags %}
 {% block content %}
+    <style>
+        ul li {
+            margin-bottom: 4px;
+            margin-top: 4px;
+        }
+    </style>
     <h1>
         Список курсов
         {% if is_teacher %}
@@ -13,7 +19,8 @@
                 <a href="{% url 'course' course.id %}">{{ course.name }} ({{ course.get_semester_display }}
                     семестр {{ course.year }} года)</a>
                 {% if is_teacher %}
-                    <form method="post" action="{% url 'course_action' course.id %}" style="display: inline-block;">
+                    <form method="post" action="{% url 'course_action' course.id %}"
+                          style="display: inline-block; margin-bottom: 0;">
                         {% csrf_token %}
                         <button name="action" value="edit" class="btn btn-xs btn-default">
                             {{ 'pencil'|fa }}
@@ -24,6 +31,22 @@
                         </button>
                     </form>
                 {% endif %}
+                <ul>
+                    {% for group in course.groups.all %}
+                        <li>
+                            <a href="{% url 'group' group.id %}">{{ group.name }}</a>
+                            {% if is_teacher %}
+                                <form method="post"  style="display: inline-block; margin-bottom: 0;">
+                                    {% csrf_token %}
+                                    <button name="action" value="unbind" class="btn btn-xs btn-danger delete-button">
+                                        {{ 'remove'|fa }}
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                    <li><a class="btn btn-xs btn-info" href="{% url 'home' %}">+ {% trans 'Добавить группу' %}</a></li>
+                </ul>
             </li>
         {% endfor %}
     </ol>

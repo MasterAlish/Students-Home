@@ -2,7 +2,7 @@ body {
     padding-top: 20px;
 }
 
-main{
+main {
     min-height: 70%;
     min-height: -webkit-calc(100% - 186px);
     min-height: -moz-calc(100% - 186px);
@@ -22,7 +22,7 @@ main{
     background-color: #e3e1e5
 }
 
-.footer a{
+.footer a {
     color: #646466 !important;
 }
 
@@ -103,7 +103,7 @@ main{
     font-family: 'Fira Sans', sans-serif;
     line-height: 34px;
     font-size: 28px;
-    color: #47738d
+    color: #25b5d4
 }
 
 .article .article-preview {
