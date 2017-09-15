@@ -1,0 +1,46 @@
+{% extends 'students/base.html' %}
+{% load staticfiles my_tags i18n %}
+{% block head %}
+    <script type="text/javascript" src="/static/ckeditor/ckeditor-init.js"></script>
+    <script type="text/javascript" src="/static/ckeditor/ckeditor/ckeditor.js"></script>
+    <script src="{% static 'js/form_controls.js' %}"></script>
+    <script>
+        addClassToInputs("form1");
+        addClassToInputs("form2");
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>{{ course.name }}</h1>
+    <div class="lead">
+        {{ course.get_semester_display }} семестр {{ course.year }} года <br>
+    </div>
+
+    <div>
+        {% if instance %}
+            <h3>Изменить группу</h3>
+        {% else %}
+            <h3>Добавить группу</h3>
+        {% endif %}
+
+        <ul class="nav nav-pills tab-pills">
+            <li class="active"><a href="#existing-group">Существующая группа</a></li>
+            <li><a href="#new-group">Создать группу</a></li>
+        </ul>
+        <div class="tab-pill-tab active" id="existing-group">
+            <form method="post" enctype="multipart/form-data" id="form1">
+                {% csrf_token %}
+                {{ existing_group_form.as_p }}
+                <input type="submit" name="existing_group" class="btn btn-sm btn-default" value="Добавить">
+            </form>
+        </div>
+        <div class="tab-pill-tab" id="new-group">
+            <form method="post" enctype="multipart/form-data" id="form2">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" name="new_group" class="btn btn-sm btn-default" value="Добавить">
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

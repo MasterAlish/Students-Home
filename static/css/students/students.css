@@ -164,3 +164,15 @@ main {
     margin-left: 0;
     padding-left: 0;
 }
+
+.tab-pills{
+    margin-bottom: 20px;
+}
+
+.tab-pill-tab{
+    display: none;
+}
+
+.tab-pill-tab.active{
+    display: block;
+}

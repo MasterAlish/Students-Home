@@ -1,5 +1,7 @@
-from django.forms import ModelForm
-from students.model.base import Lecture, LabTask, Task, Course
+# coding=utf-8
+from django import forms
+from django.forms import ModelForm, Form
+from students.model.base import Lecture, LabTask, Task, Course, Group
 
 
 class LectureForm(ModelForm):
@@ -14,6 +16,17 @@ class CourseForm(ModelForm):
     class Meta:
         model = Course
         exclude = ['teachers']
+
+
+class SelectGroupForm(Form):
+    group = forms.ModelChoiceField(Group.objects.all(), label=u"Группа")
+
+
+class GroupForm(ModelForm):
+
+    class Meta:
+        model = Group
+        exclude = ['courses']
 
 
 class LabTaskForm(ModelForm):

@@ -11,6 +11,7 @@ from django.urls import reverse
 
 from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalForm, GroupStudentsSelectForm, \
     GroupStudentsInputForm, StudentException
+from students.forms.teaching import GroupForm, SelectGroupForm
 from students.mail import StudentsMail
 from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution, Resolution, Task, \
     GroupMock, Point, Student, Teacher
@@ -305,3 +306,36 @@ class SetMarksView(TeachersView):
             self.context['group_forms'] = group_forms
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
+
+
+class CreateGroupViewView(TeachersView):
+    template_name = "forms/add_group_form.html"
+
+    def handle(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['id'])
+        if course and not user_authorized_to_course(request.user, course):
+            raise Exception(u"User is not authorized")
+        else:
+            existing_group_form = SelectGroupForm()
+            form = GroupForm()
+            if request.method == 'POST':
+                if request.POST.get("existing_group", None):
+                    existing_group_form = SelectGroupForm(request.POST)
+                    if existing_group_form.is_valid():
+                        group = existing_group_form.cleaned_data['group']
+                        group.courses.add(course)
+                        messages.success(request, u"Группа добавлена успешно!")
+                        return redirect(reverse("all_courses"))
+                else:
+                    form = GroupForm(request.POST)
+                    if form.is_valid():
+                        form.instance.save()
+                        form.instance.courses.add(course)
+                        form.instance.save()
+                        messages.success(request, u"Группа добавлена успешно!")
+                        return redirect(reverse("all_courses"))
+            return render(request, self.template_name, {
+                'form': form,
+                'existing_group_form': existing_group_form,
+                'course': course
+            })

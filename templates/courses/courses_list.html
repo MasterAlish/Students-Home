@@ -38,6 +38,8 @@
                             {% if is_teacher %}
                                 <form method="post"  style="display: inline-block; margin-bottom: 0;">
                                     {% csrf_token %}
+                                    <input type="hidden" name="group" value="{{ group.id }}">
+                                    <input type="hidden" name="course" value="{{ course.id }}">
                                     <button name="action" value="unbind" class="btn btn-xs btn-danger delete-button">
                                         {{ 'remove'|fa }}
                                     </button>
@@ -45,7 +47,7 @@
                             {% endif %}
                         </li>
                     {% endfor %}
-                    <li><a class="btn btn-xs btn-info" href="{% url 'home' %}">+ {% trans 'Добавить группу' %}</a></li>
+                    <li><a class="btn btn-xs btn-info" href="{% url 'add_group' course.id %}">+ {% trans 'Добавить группу' %}</a></li>
                 </ul>
             </li>
         {% endfor %}

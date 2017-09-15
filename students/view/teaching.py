@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from students.forms.teaching import LectureForm, LabTaskForm, TaskForm, CourseForm
-from students.model.base import Course, Lecture, LabTask, Task
+from students.model.base import Course, Lecture, LabTask, Task, Group
 from students.view.common import TeachersView, user_authorized_to_course
 from students.view.util import remove_file
 
@@ -15,6 +15,13 @@ class CoursesListView(TeachersView):
     template_name = "courses/courses_list.html"
 
     def handle(self, request, *args, **kwargs):
+        action = request.POST.get("action", None)
+        if action == "unbind":
+            group_id = request.POST.get("group", None)
+            course_id = request.POST.get("course", None)
+            if group_id and course_id:
+                course = Course.objects.get(pk=course_id)
+                Group.objects.get(pk=group_id).courses.remove(course)
         return render(request, self.template_name, {
             'courses': self.teacher.courses.order_by("-year").all()
         })
