@@ -5,8 +5,9 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from students.forms.teaching import LectureForm, LabTaskForm, TaskForm, CourseForm
+from students.forms.teaching import LectureForm, LabTaskForm, TaskForm, CourseForm, ArticleForm
 from students.model.base import Course, Lecture, LabTask, Task, Group
+from students.model.blog import Article
 from students.view.common import TeachersView, user_authorized_to_course
 from students.view.util import remove_file
 
@@ -94,6 +95,36 @@ class LectureFormView(TeachersView):
                     return redirect(reverse("course", kwargs={'id': course.id}))
             return render(request, self.template_name,
                           {'course': course, 'form': form, 'instance': lecture, 'model': self.model})
+        raise Exception(u"User is not authorized")
+
+
+class ArticleFormView(TeachersView):
+    template_name = "forms/model_form.html"
+    model = u"статью"
+
+    def handle(self, request, *args, **kwargs):
+        article = None
+        course = None
+        if 'article_id' in kwargs:
+            article = Article.objects.get(pk=kwargs['article_id'])
+            course = article.course
+        if 'id' in kwargs:
+            course = Course.objects.get(pk=kwargs['id'])
+        if user_authorized_to_course(request.user, course):
+            form = ArticleForm(instance=article)
+            if request.method == 'POST':
+                form = ArticleForm(request.POST, request.FILES, instance=article)
+                if form.is_valid():
+                    form.instance.course = course
+                    form.instance.author = request.user
+                    form.instance.save()
+                    if article:
+                        messages.success(request, u"Статья изменена успешно!")
+                    else:
+                        messages.success(request, u"Статья добавлена успешно!")
+                    return redirect(reverse("course", kwargs={'id': course.id}))
+            return render(request, self.template_name,
+                          {'course': course, 'form': form, 'instance': article, 'model': self.model})
         raise Exception(u"User is not authorized")
 
 

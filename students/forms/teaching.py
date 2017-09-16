@@ -1,7 +1,9 @@
 # coding=utf-8
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
 from django.forms import ModelForm, Form
 from students.model.base import Lecture, LabTask, Task, Course, Group
+from students.model.blog import Article
 
 
 class LectureForm(ModelForm):
@@ -9,6 +11,15 @@ class LectureForm(ModelForm):
     class Meta:
         model = Lecture
         exclude = ['course']
+
+
+class ArticleForm(ModelForm):
+    preview = forms.CharField(widget=CKEditorUploadingWidget(config_name="article"), label=u"Превью", help_text=u"Эта часть будет отображаться в списке")
+    body = forms.CharField(widget=CKEditorUploadingWidget(config_name="article"), label=u"Текст", help_text=u"Эта часть будет дополнением для превью")
+
+    class Meta:
+        model = Article
+        exclude = ['course', 'author', 'viewed', 'viewed_mobile']
 
 
 class CourseForm(ModelForm):

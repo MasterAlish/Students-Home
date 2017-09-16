@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'ckeditor',
+    'ckeditor_uploader',
     'students',
     'contest',
 )
@@ -112,7 +113,7 @@ USE_L10N = True
 
 USE_TZ = False
 
-CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_JQUERY_URL = '//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'
 
 CKEDITOR_CONFIGS = {
@@ -123,7 +124,7 @@ CKEDITOR_CONFIGS = {
         'toolbarCanCollapse': False,
     },
     'article': {
-        'toolbar': [['Smiley', 'Bold', 'Italic', 'Underline', 'Strike'], ['Link', 'Unlink'], ['CodeSnippet', 'Source']],
+        'toolbar': [['Smiley', 'Bold', 'Italic', 'Underline', 'Strike'], ['Link', 'Unlink'], ['CodeSnippet', 'Source'], ['Image']],
         'height': 150,
         'width': 800,
         'toolbarCanCollapse': False,

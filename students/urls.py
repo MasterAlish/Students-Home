@@ -19,7 +19,7 @@ from students.view.profile import TeacherGroupsView, TeacherView, StudentView
 from students.view.auth import HomeView,on_error, on_not_found, auth_logout, \
     auth_profile, register_student, password_change, user_change, reset_password, register_teacher
 from students.view.teaching import LectureFormView, LectureActionView, LabTaskFormView, LabTaskActionView, \
-    TaskActionView, TaskFormView, CoursesListView, CourseFormView, CourseActionView
+    TaskActionView, TaskFormView, CoursesListView, CourseFormView, CourseActionView, ArticleFormView
 from students.view.todo import TodoActView
 
 handler500 = 'students.view.main.on_error'
@@ -59,6 +59,9 @@ urlpatterns = [
     url(r'^course/(?P<id>\d+)/lectures/new$', login_required(LectureFormView.as_view()), name='add_lecture'),
     url(r'^lectures/(?P<lecture_id>\d+)/edit$', login_required(LectureFormView.as_view()), name='edit_lecture'),
     url(r'^lectures/(?P<id>\d+)/action', login_required(LectureActionView.as_view()), name='lecture_action'),
+
+    url(r'^course/(?P<id>\d+)/articles/new$', login_required(ArticleFormView.as_view()), name='add_article'),
+    url(r'^articles/(?P<article_id>\d+)/edit$', login_required(ArticleFormView.as_view()), name='edit_article'),
 
     url(r'^course/(?P<id>\d+)/labtasks/new$', login_required(LabTaskFormView.as_view()), name='add_labtask'),
     url(r'^labtasks/(?P<labtask_id>\d+)/edit$', login_required(LabTaskFormView.as_view()), name='edit_labtask'),
