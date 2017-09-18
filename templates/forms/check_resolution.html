@@ -1,0 +1,42 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block head %}
+    <script type="text/javascript" src="/static/ckeditor/ckeditor-init.js"></script>
+    <script type="text/javascript" src="/static/ckeditor/ckeditor/ckeditor.js"></script>
+    <script src="{% static 'js/form_controls.js' %}"></script>
+    <script>
+        addClassToInputs("this-form");
+    </script>
+{% endblock %}
+
+{% block content %}
+    <h1>Решение от {{ resolution.student.name }}</h1>
+    <div class="lead">
+        {% trans 'Курс' %}: {{ course.name }}<br>
+        {% trans 'Лаба' %}: {{ resolution.task.title }}
+    </div>
+    <div style="margin-top: 10px;" class="panel panel-default">
+        <div class="panel-body">
+            {% if resolution.file.name %}
+                <a target="_blank" class="btn btn-sm btn-info" href="{{ resolution.index_file }}">
+                    <span class="fa fa-download"></span> {% trans 'Скачать работу' %}
+                </a>
+            {% endif %}
+            {% if resolution.index_file %}
+                <a target="_blank" class="btn btn-sm btn-success" href="{{ resolution.index_file }}">
+                    <span class="fa fa-external-link"></span> {% trans 'Посмотреть работу' %}
+                </a>
+            {% endif %}
+            <br><br>
+            <form method="post" id="this-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-sm btn-success">
+                    <span class="fa fa-check-square-o"></span> Оценить
+                </button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

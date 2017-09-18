@@ -2,7 +2,7 @@
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
 from django.forms import ModelForm, Form
-from students.model.base import Lecture, LabTask, Task, Course, Group
+from students.model.base import Lecture, LabTask, Task, Course, Group, Resolution
 from students.model.blog import Article
 
 
@@ -29,6 +29,11 @@ class CourseForm(ModelForm):
         exclude = ['teachers']
 
 
+class CheckResolutionForm(Form):
+    comment = forms.CharField(widget=CKEditorUploadingWidget(config_name="default"), label=u"Комментарий", required=False)
+    mark = forms.IntegerField(label=u"Баллы", required=True)
+
+
 class SelectGroupForm(Form):
     group = forms.ModelChoiceField(Group.objects.all(), label=u"Группа")
 
@@ -41,6 +46,7 @@ class GroupForm(ModelForm):
 
 
 class LabTaskForm(ModelForm):
+    body = forms.CharField(widget=CKEditorUploadingWidget(config_name="long"), label=u"Текст")
     field_order = ['title', 'short_name', 'body', 'created_at', 'deadline', 'active', 'important']
 
     def __init__(self, data=None, files=None, instance=None):

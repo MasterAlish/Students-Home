@@ -36,6 +36,7 @@ class CourseView(StudentsAndTeachersView):
         course = Course.objects.get(pk=kwargs['id'])
         if user_authorized_to_course(request.user, course):
             self.context['course'] = course
+            self.context['new_solutions_count'] = Resolution.objects.filter(mark=0, task__course=course).count()
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
 

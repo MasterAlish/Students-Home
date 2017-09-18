@@ -5,8 +5,8 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from students.forms.teaching import LectureForm, LabTaskForm, TaskForm, CourseForm, ArticleForm
-from students.model.base import Course, Lecture, LabTask, Task, Group
+from students.forms.teaching import LectureForm, LabTaskForm, TaskForm, CourseForm, ArticleForm, CheckResolutionForm
+from students.model.base import Course, Lecture, LabTask, Task, Group, Resolution
 from students.model.blog import Article
 from students.view.common import TeachersView, user_authorized_to_course
 from students.view.util import remove_file
@@ -142,6 +142,46 @@ class LectureActionView(TeachersView):
                 lecture.delete()
                 messages.success(request, u"Лекция удалена успешно!")
             return redirect(reverse("course", kwargs={'id': course.id}))
+        raise Exception(u"User is not authorized")
+
+
+class ResolutionsView(TeachersView):
+    template_name = "courses/resolutions.html"
+
+    def handle(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['id'])
+        if user_authorized_to_course(request.user, course):
+            context = {
+                'course': course,
+                'labtasks': course.active_labtasks().reverse()
+            }
+            return render(request, self.template_name, context)
+        raise Exception(u"User is not authorized")
+
+
+class CheckResolutionView(TeachersView):
+    template_name = "forms/check_resolution.html"
+
+    def handle(self, request, *args, **kwargs):
+        resolution = Resolution.objects.get(pk=kwargs['id'])
+        if user_authorized_to_course(request.user, resolution.task.course):
+            form = CheckResolutionForm(initial={
+                'comment': resolution.comment,
+                'mark': resolution.mark
+            })
+            if request.method == 'POST':
+                form = CheckResolutionForm(request.POST)
+                if form.is_valid():
+                    resolution.comment = form.cleaned_data['comment']
+                    resolution.mark = form.cleaned_data['mark']
+                    resolution.save()
+                    return redirect(reverse("resolutions", kwargs={'id': resolution.task.course_id}))
+            context = {
+                'course': resolution.task.course,
+                'resolution': resolution,
+                'form': form
+            }
+            return render(request, self.template_name, context)
         raise Exception(u"User is not authorized")
 
 

@@ -63,6 +63,10 @@
             Лабораторные работы
             {% if is_teacher %}
                 <a class="btn btn-xs btn-info" href="{% url 'add_labtask' course.id %}">{{ 'plus'|fa }}</a>
+                {% if new_solutions_count > 0 %}
+                    <span class="badge badge-important">{{ new_solutions_count }}</span>
+                {% endif %}
+                <a class="btn btn-xs btn-default" href="{% url 'resolutions' course.id %}">{{ 'edit'|fa }} Проверить</a>
             {% endif %}
         </h3>
         {% if is_teacher %}

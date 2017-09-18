@@ -176,3 +176,20 @@ main {
 .tab-pill-tab.active{
     display: block;
 }
+
+span.badge.badge-important{
+    background-color: rgb(210, 0, 0);
+}
+
+span.badge.badge-success{
+    background-color: rgb(78, 182, 57);
+}
+
+span.badge.badge-info{
+    background-color: rgb(78, 169, 180);
+}
+
+.timesince{
+    font-size: 10px;
+    color: grey;
+}

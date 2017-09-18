@@ -198,6 +198,9 @@ class Task(PolymorphicModel):
     def __unicode__(self):
         return unicode(self.title)
 
+    def reversed_resolutions(self):
+        return self.resolutions.all().order_by("-datetime")
+
     def to_dict(self):
         return {
             'id': self.id,
