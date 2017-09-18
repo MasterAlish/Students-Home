@@ -159,6 +159,20 @@ class ResolutionsView(TeachersView):
         raise Exception(u"User is not authorized")
 
 
+class HomeworksView(TeachersView):
+    template_name = "courses/homeworks.html"
+
+    def handle(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['id'])
+        if user_authorized_to_course(request.user, course):
+            context = {
+                'course': course,
+                'homeworks': course.homeworks.all().order_by("-datetime")
+            }
+            return render(request, self.template_name, context)
+        raise Exception(u"User is not authorized")
+
+
 class CheckResolutionView(TeachersView):
     template_name = "forms/check_resolution.html"
 

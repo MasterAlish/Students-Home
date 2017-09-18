@@ -378,7 +378,7 @@ class FileResolution(Resolution):
 
 
 class HomeWorkSolution(models.Model):
-    course = models.ForeignKey(Course, verbose_name=_(u"Курс"))
+    course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name="homeworks")
     student = models.ForeignKey(Student, verbose_name=_(u"Студент"), related_name='homeworks')
     task = models.CharField(max_length=255, verbose_name=_(u"Задание"), help_text=_(u"Какое было задание?"))
     comment = RichTextField(verbose_name=_(u"Комментарий"), config_name="default",

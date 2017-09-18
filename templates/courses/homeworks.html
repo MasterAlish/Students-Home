@@ -1,0 +1,41 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <h1>Проверка домашних работ</h1>
+    <div class="lead">
+        {% trans 'Курс' %}: {{ course.name }}
+    </div>
+    <div>
+        <table class="table table-bordered table-condensed table-hover table-striped">
+            <tr>
+                <th>#</th>
+                <th>Загружено</th>
+                <th>Студент</th>
+                <th>Задание</th>
+                <th>Комментарий</th>
+                <th>Действия</th>
+            </tr>
+            {% for homework in homeworks %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        {{ homework.datetime|date:"d.m.y H:i" }}
+                        <div class="timesince">{{ homework.datetime|timesince}} назад</div>
+                    </td>
+                    <td>{{ homework.student.name }}</td>
+                    <td style="font-size: 12px;">{{ homework.task }}</td>
+                    <td style="font-size: 12px;">{{ homework.comment|safe }}</td>
+                    <td>
+                        {% if homework.file.name %}
+                            <a download class="btn btn-xs btn-success" href="{{ homework.file.url }}">
+                                <span class="fa fa-download"></span> {% trans 'Скачать' %}
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}

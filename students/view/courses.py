@@ -74,7 +74,7 @@ class LabTaskView(StudentsAndTeachersView):
                             lab_url = self.unpack_resolution_to_public_dir(form.instance)
                             form.instance.index_file = lab_url
                             form.instance.save()
-                        StudentsMail().report_new__file_resolution_uploaded(request, form.instance)
+                        StudentsMail().report_new_file_resolution_uploaded(request, form.instance)
                         messages.success(request, u"Решение успешно сохранено")
                         return redirect(reverse("labtask", kwargs={'id': labtask.id}))
                     else:

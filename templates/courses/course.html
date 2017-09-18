@@ -35,7 +35,12 @@
         {% endif %}
         <a class="btn btn-sm btn-default" href="{% url 'chat' course.id %}"><span class="fa fa-comments"></span> Чат</a>
         <a class="btn btn-sm btn-default" href="{% url 'marks' course.id %}"><span class="fa fa-trophy"></span> Оценки</a>
-        <a class="btn btn-sm btn-primary" href="{% url 'homework' course.id %}"><span class="fa fa-upload"></span> Сдать домашку</a>
+        {% if is_student %}
+            <a class="btn btn-sm btn-primary" href="{% url 'homework' course.id %}"><span class="fa fa-upload"></span> Сдать домашку</a>
+        {% endif %}
+        {% if is_teacher %}
+            <a class="btn btn-sm btn-info" href="{% url 'homeworks' course.id %}"><span class="fa fa-check-circle"></span> Проверить домашки</a>
+        {% endif %}
     </div>
     <div>
         {{ course.description|safe }}
