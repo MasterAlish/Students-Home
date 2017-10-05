@@ -225,12 +225,19 @@ class CheckResolutionView(TeachersView):
                 'comment': resolution.comment,
                 'mark': resolution.mark
             })
+
             if request.method == 'POST':
                 form = CheckResolutionForm(request.POST)
                 if form.is_valid():
                     resolution.comment = form.cleaned_data['comment']
                     resolution.mark = form.cleaned_data['mark']
                     resolution.save()
+                    if form.cleaned_data['medal']:
+                        medal = form.cleaned_data['medal']
+                        StudentMedal(student=resolution.student, course=resolution.task.course, medal=medal).save()
+                        StudentsMail().inform_about_new_medal(resolution.student, medal, resolution.task.course, request)
+                        messages.success(request, u"Медаль \"%s\" успешна выдана" % medal.name)
+                        return redirect(reverse("check_resolution", kwargs={'id': resolution.id}))
                     return redirect(reverse("resolutions", kwargs={'id': resolution.task.course_id}))
             context = {
                 'course': resolution.task.course,
