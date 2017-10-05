@@ -15,9 +15,9 @@ from students.view.courses import CourseView, LectureView, MyGroupView, GroupVie
     EmailToCourseStudentsView, MarksView, GiveMedalsView, SetMarksView, ExtraGroupView, ActivateStudentView, \
     CreateGroupViewView
 from students.view.homework import UploadHomeWorkView
-from students.view.profile import TeacherGroupsView, TeacherView, StudentView
-from students.view.auth import HomeView,on_error, on_not_found, auth_logout, \
-    auth_profile, register_student, password_change, user_change, reset_password, register_teacher
+from students.view.profile import TeacherGroupsView, TeacherView, StudentView, TeachersListView
+from students.view.auth import HomeView, on_error, on_not_found, auth_logout, \
+    auth_profile, register_student, password_change, user_change, reset_password, register_teacher, LoginAsView
 from students.view.teaching import LectureFormView, LectureActionView, LabTaskFormView, LabTaskActionView, \
     TaskActionView, TaskFormView, CoursesListView, CourseFormView, CourseActionView, ArticleFormView, ResolutionsView, \
     CheckResolutionView, HomeworksView
@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^reset/done/$', views.password_reset_complete, name='password_reset_complete'),
     url(r'^accounts/password/change/$', login_required(password_change), name="change_password"),
     url(r'^accounts/profile/edit/$', login_required(user_change), name="change_user_data"),
+    url(r'^login-as/(?P<user_id>\d+)$', login_required(LoginAsView.as_view()), name='login_as'),
 
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^my/group/$', login_required(MyGroupView.as_view()), name='my_group'),
@@ -51,6 +52,8 @@ urlpatterns = [
     url(r'^course/(?P<id>\d+)/marks/$', login_required(MarksView.as_view()), name='marks'),
     url(r'^course/(?P<id>\d+)/homework/$', login_required(UploadHomeWorkView.as_view()), name='homework'),
     url(r'^course/(?P<id>\d+)/add_group/$', login_required(CreateGroupViewView.as_view()), name='add_group'),
+
+    url(r'^teachers/$', login_required(TeachersListView.as_view()), name='all_teachers'),
 
     url(r'^courses/$', login_required(CoursesListView.as_view()), name='all_courses'),
     url(r'^courses/new$', login_required(CourseFormView.as_view()), name='add_course'),

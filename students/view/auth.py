@@ -1,16 +1,18 @@
 # coding=utf-8
 from django.conf import settings
-from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
-from django.core.mail import send_mail
-
-from students.forms.users import UserCreateForm, UserChangeForm, StudentCreateForm
 from django.contrib import messages
+from django.contrib.auth import (
+    login as auth_login,
+)
 from django.contrib.auth import logout
+from django.contrib.auth.forms import PasswordChangeForm, PasswordResetForm
 from django.core.urlresolvers import reverse
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import TemplateView, View
 
+from students.forms.users import UserCreateForm, UserChangeForm, StudentCreateForm
 from students.mail import StudentsMail
 from students.mobile import is_mobile
 from students.model.base import Student, Teacher
@@ -164,3 +166,13 @@ class HomeView(TemplateView):
         }
 
         return render(request, self.template_name, context)
+
+
+class LoginAsView(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_admin:
+            raise Http404()
+        user = MyUser.objects.get(pk=kwargs['user_id'])
+        auth_login(request, user)
+        return redirect("/")
+

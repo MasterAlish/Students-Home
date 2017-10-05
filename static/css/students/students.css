@@ -193,3 +193,7 @@ span.badge.badge-info{
     font-size: 10px;
     color: grey;
 }
+
+.btn{
+    margin-top: 3px
+}

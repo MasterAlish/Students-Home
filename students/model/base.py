@@ -143,7 +143,8 @@ class Lecture(models.Model):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.title and self.copy_from:
             self.title = self.copy_from.title
-        assert self.id != self.copy_from_id
+        if self.copy_from:
+            assert self.id != self.copy_from_id
         return super(Lecture, self).save(force_insert, force_update, using, update_fields)
 
     def delete(self, using=None, keep_parents=False):

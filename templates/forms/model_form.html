@@ -36,6 +36,7 @@
             {{ form.as_p }}
             {% if instance %}
                 <input type="submit" class="btn btn-sm btn-default" value="Сохранить">
+                <input type="submit" class="btn btn-sm btn-info" name="save_and_close" value="Сохранить и Закрыть">
             {% else %}
                 <input type="submit" class="btn btn-sm btn-default" value="Добавить">
             {% endif %}

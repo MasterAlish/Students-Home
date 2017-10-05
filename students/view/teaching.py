@@ -122,7 +122,10 @@ class ArticleFormView(TeachersView):
                         messages.success(request, u"Статья изменена успешно!")
                     else:
                         messages.success(request, u"Статья добавлена успешно!")
-                    return redirect(reverse("course", kwargs={'id': course.id}))
+                    if request.POST.get("save_and_close", None):
+                        return redirect(reverse("course", kwargs={'id': course.id}))
+                    else:
+                        return redirect(reverse("edit_article", kwargs={'article_id': form.instance.id}))
             return render(request, self.template_name,
                           {'course': course, 'form': form, 'instance': article, 'model': self.model})
         raise Exception(u"User is not authorized")
@@ -155,6 +158,18 @@ class ResolutionsView(TeachersView):
                 'course': course,
                 'labtasks': course.active_labtasks().reverse()
             }
+
+            if request.method == 'POST':
+                solution = Resolution.objects.get(pk=request.POST.get('solution_id', None))
+                action = request.POST.get("action", None)
+                if action == 'delete':
+                    try:
+                        remove_file(solution.file.path)
+                        solution.delete()
+                    except:
+                        pass
+                    messages.success(request, u"Решение удалено успешно!")
+                    return redirect(reverse("resolutions", kwargs={'id': course.id} ))
             return render(request, self.template_name, context)
         raise Exception(u"User is not authorized")
 

@@ -12,7 +12,7 @@
                 <th>#</th>
                 <th>Загружено</th>
                 <th>Студент</th>
-                <th>Комментарий</th>
+                <th style="max-width: 400px;">Комментарий</th>
                 <th>Балл</th>
                 <th>Действия</th>
             </tr>
@@ -30,7 +30,7 @@
                                 <div class="timesince">{{ solution.datetime|timesince}} назад</div>
                             </td>
                             <td>{{ solution.student.name }}</td>
-                            <td style="font-size: 12px;">{{ solution.comment|safe }}</td>
+                            <td style="font-size: 12px; max-width: 400px;">{{ solution.comment|safe }}</td>
                             <td>
                                 {% if solution.mark == 0 %}
                                     <span class="badge badge-important">{{ solution.mark }}</span>
@@ -47,6 +47,12 @@
                                         <span class="fa fa-external-link"></span> {% trans 'Посмотреть работу' %}
                                     </a>
                                 {% endif %}
+                                <form method="post" style="display: inline-block;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="solution_id" value="{{ solution.id }}">
+                                    <button class="btn btn-xs btn-danger delete-button">Удалить</button>
+                                </form>
                             </td>
                         </tr>
                     {% endfor %}

@@ -19,7 +19,7 @@
     <div style="margin-top: 10px;" class="panel panel-default">
         <div class="panel-body">
             {% if resolution.file.name %}
-                <a target="_blank" class="btn btn-sm btn-info" href="{{ resolution.index_file }}">
+                <a target="_blank" class="btn btn-sm btn-info" href="{{ resolution.file.url }}">
                     <span class="fa fa-download"></span> {% trans 'Скачать работу' %}
                 </a>
             {% endif %}

@@ -1,0 +1,32 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <h1>Все преподаватели</h1>
+
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>ФИО</th>
+                <th>Email</th>
+                <th>Тел.</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for teacher in teachers %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ teacher.user.fullname }}</td>
+                    <td>{{ teacher.user.email }}</td>
+                    <td>{{ teacher.phone }}</td>
+                    <td>
+                        <a href="{% url 'login_as' teacher.user.id %}" class="btn btn-sm btn-primary">Войти</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="clearfix"></div>
+{% endblock %}
