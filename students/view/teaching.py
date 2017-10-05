@@ -5,10 +5,13 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
+from students.forms.courses import MedalForm
 from students.forms.teaching import LectureForm, LabTaskForm, TaskForm, CourseForm, ArticleForm, CheckResolutionForm
-from students.model.base import Course, Lecture, LabTask, Task, Group, Resolution
+from students.mail import StudentsMail
+from students.model.base import Course, Lecture, LabTask, Task, Group, Resolution, HomeWorkSolution, StudentMedal
 from students.model.blog import Article
 from students.view.common import TeachersView, user_authorized_to_course
+from students.view.courses import GiveMedalsView
 from students.view.util import remove_file
 
 
@@ -183,6 +186,30 @@ class HomeworksView(TeachersView):
             context = {
                 'course': course,
                 'homeworks': course.homeworks.all().order_by("-datetime")
+            }
+            return render(request, self.template_name, context)
+        raise Exception(u"User is not authorized")
+
+
+class HomeworkView(TeachersView):
+    template_name = "courses/homework.html"
+
+    def handle(self, request, *args, **kwargs):
+        homework = HomeWorkSolution.objects.get(pk=kwargs['id'])
+        if user_authorized_to_course(request.user, homework.course):
+            form = MedalForm()
+            if request.method == "POST":
+                form = MedalForm(request.POST)
+                if form.is_valid():
+                    medal = form.cleaned_data['medal']
+                    student = homework.student
+                    StudentMedal(student=student, course=homework.course, medal=medal).save()
+                    StudentsMail().inform_about_new_medal(student, medal, homework.course, request)
+                    messages.success(request, u"Медаль \"%s\" успешна выдана" % medal.name)
+                    return redirect(reverse("homework", kwargs={'id': homework.id}))
+            context = {
+                'homework': homework,
+                'form': form
             }
             return render(request, self.template_name, context)
         raise Exception(u"User is not authorized")

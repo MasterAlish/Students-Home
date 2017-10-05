@@ -20,7 +20,7 @@ from students.view.auth import HomeView, on_error, on_not_found, auth_logout, \
     auth_profile, register_student, password_change, user_change, reset_password, register_teacher, LoginAsView
 from students.view.teaching import LectureFormView, LectureActionView, LabTaskFormView, LabTaskActionView, \
     TaskActionView, TaskFormView, CoursesListView, CourseFormView, CourseActionView, ArticleFormView, ResolutionsView, \
-    CheckResolutionView, HomeworksView
+    CheckResolutionView, HomeworksView, HomeworkView
 from students.view.todo import TodoActView
 
 handler500 = 'students.view.main.on_error'
@@ -70,6 +70,7 @@ urlpatterns = [
     url(r'^course/(?P<id>\d+)/labtasks/new/$', login_required(LabTaskFormView.as_view()), name='add_labtask'),
     url(r'^course/(?P<id>\d+)/resolutions/$', login_required(ResolutionsView.as_view()), name='resolutions'),
     url(r'^course/(?P<id>\d+)/homeworks/$', login_required(HomeworksView.as_view()), name='homeworks'),
+    url(r'^homeworks/(?P<id>\d+)/$', login_required(HomeworkView.as_view()), name='homework'),
     url(r'^labtasks/(?P<labtask_id>\d+)/edit/$', login_required(LabTaskFormView.as_view()), name='edit_labtask'),
     url(r'^labtasks/(?P<id>\d+)/action/$', login_required(LabTaskActionView.as_view()), name='labtask_action'),
     url(r'^resolution/(?P<id>\d+)/check/$', login_required(CheckResolutionView.as_view()), name='check_resolution'),

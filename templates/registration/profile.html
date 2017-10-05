@@ -46,6 +46,20 @@
         </div>
     </div>
     <div class="clearfix"></div>
+    {% if is_student %}
+        <div class="row">
+            <div class="col-md-12">
+                <h4>{% trans 'Мои медали' %}</h4>
+                {% for medal in user.student.medals.all %}
+                    <div class="medal">
+                        <img src="{{ medal.medal.image.url }}" title="{{ medal.medal.name }}">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <br>
+    {% endif %}
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <h4>{% trans 'Мои планы' %}</h4>

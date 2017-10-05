@@ -28,6 +28,9 @@
                     <td style="font-size: 12px;">{{ homework.comment|safe }}</td>
                     <td>
                         {% if homework.file.name %}
+                            <a class="btn btn-xs btn-primary" href="{% url 'homework' homework.id %}">
+                                <span class="fa fa-street-view"></span> {% trans 'Открыть' %}
+                            </a>
                             <a download class="btn btn-xs btn-success" href="{{ homework.file.url }}">
                                 <span class="fa fa-download"></span> {% trans 'Скачать' %}
                             </a>

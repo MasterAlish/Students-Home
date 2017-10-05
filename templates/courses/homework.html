@@ -1,0 +1,31 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <h1>Проверка домашней работы</h1>
+    <div class="lead">
+        {% trans 'Курс' %}: {{ homework.course.name }}
+    </div>
+    <h4>Дата</h4>
+    {{ homework.datetime|date:"d.m.Y H:i" }}
+
+    <h4>Задание</h4>
+    <div>
+        {{ homework.task }}
+    </div>
+    <h4>Комментарий</h4>
+    <p>
+        {{ homework.comment|safe }}
+    </p>
+
+    <div>
+        <a href="{{ homework.file.url }}" download class="btn btn-sm btn-success">Скачать</a>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Выдать медаль" class="btn btn-sm btn-primary">
+        </form>
+    </div>
+
+{% endblock %}
