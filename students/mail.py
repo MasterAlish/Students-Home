@@ -60,7 +60,10 @@ class StudentsMail(object):
         subject = u"Зарегистрировался новый студент: %s" % unicode(student)
         link = unicode(request.META["HTTP_ORIGIN"] + reverse("group", kwargs={'id': student.group_id}))
         message = u"Перейдите по ссылку чтобы активировать аккаунт студента %s " % link
-        recipients = [settings.EMAIL_ADMIN_EMAIL]
+        recipients = []
+        for course in student.group.courses.all():
+            for teacher in course.teachers.all():
+                recipients.append(teacher.user.email)
         self.save_mail(subject, message, message, recipients)
 
     def teacher_registered(self, request, teacher):
