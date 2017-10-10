@@ -1,0 +1,48 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n %}
+{% block content %}
+    <h1>Литература</h1>
+    <div class="lead">
+        {{ course }} <br>
+    </div>
+
+    {% if is_teacher %}
+        <a href="{% url 'add_literature' course.id %}" class="btn btn-sm btn-success">
+            <i class="fa fa-plus-circle"> Добавить</i>
+        </a>
+    {% endif %}
+
+    <br><br>
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Название</th>
+                <th>Автор</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for material in literature %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ material.name }}</td>
+                    <td>{{ material.author }}</td>
+                    <td>
+                        {% if material.link %}
+                            <a href="{{ material.link }}" class="btn btn-xs btn-info" target="_blank">Открыть</a>
+                        {% endif %}
+                        {% if material.file.name %}
+                            <a href="{{ material.file.url }}" class="btn btn-xs btn-primary" download>Скачать</a>
+                        {% endif %}
+                        {% if is_teacher %}
+                            <a href="{% url 'edit_literature' material.id %}" class="btn btn-xs btn-warning">Изменить</a>
+                            <a href="{% url 'delete_literature' material.id %}" class="btn btn-xs btn-danger delete-button">Удалить</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -9,12 +9,13 @@ from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
+from contest.forms import LiteratureForm
 from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalForm, GroupStudentsSelectForm, \
     GroupStudentsInputForm, StudentException
 from students.forms.teaching import GroupForm, SelectGroupForm
 from students.mail import StudentsMail
 from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution, Resolution, Task, \
-    GroupMock, Point, Student, Teacher
+    GroupMock, Point, Student, Teacher, Literature
 from students.model.checks import ZipContainsFileConstraint
 from students.view.common import StudentsView, user_authorized_to_course, StudentsAndTeachersView, \
     user_authorized_to_group, TeachersView
@@ -340,3 +341,80 @@ class CreateGroupViewView(TeachersView):
                 'existing_group_form': existing_group_form,
                 'course': course
             })
+
+
+class LiteratureView(StudentsAndTeachersView):
+    template_name = "students/literature.html"
+
+    def handle(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['id'])
+        if course and not user_authorized_to_course(request.user, course):
+            raise Exception(u"User is not authorized")
+        context = {
+            'literature': course.literature.all(),
+            'course': course
+        }
+        return render(request, self.template_name, context)
+
+
+class AddLiteratureView(TeachersView):
+    template_name = "forms/literature_form.html"
+
+    def handle(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['id'])
+        if course and not user_authorized_to_course(request.user, course):
+            raise Exception(u"User is not authorized")
+        if not self.teacher:
+            raise Exception(u"User is not authorized")
+        form = LiteratureForm()
+        if request.method == 'POST':
+            form = LiteratureForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.instance.course = course
+                form.instance.save()
+                messages.success(request, u"Литература успешно добавлена")
+                return redirect(reverse("literature", kwargs={'id': course.id}))
+
+        context = {
+            'form': form,
+            'course': course
+        }
+        return render(request, self.template_name, context)
+
+
+class EditLiteratureView(TeachersView):
+    template_name = "forms/literature_form.html"
+
+    def handle(self, request, *args, **kwargs):
+        literature = Literature.objects.get(pk=kwargs['id'])
+        if not user_authorized_to_course(request.user, literature.course):
+            raise Exception(u"User is not authorized")
+        if not self.teacher:
+            raise Exception(u"User is not authorized")
+        form = LiteratureForm(instance=literature)
+        if request.method == 'POST':
+            form = LiteratureForm(request.POST, request.FILES, instance=literature)
+            if form.is_valid():
+                form.instance.course = course
+                form.instance.save()
+                messages.success(request, u"Литература успешно изменена")
+                return redirect(reverse("literature", kwargs={'id': literature.course.id}))
+
+        context = {
+            'literature': literature,
+            'form': form,
+            'course': literature.course
+        }
+        return render(request, self.template_name, context)
+
+
+class DeleteLiteratureView(TeachersView):
+    def handle(self, request, *args, **kwargs):
+        literature = Literature.objects.get(pk=kwargs['id'])
+        course = literature.course
+        if not user_authorized_to_course(request.user, course):
+            raise Exception(u"User is not authorized")
+        if not self.teacher:
+            raise Exception(u"User is not authorized")
+        literature.delete()
+        return redirect(reverse("literature", kwargs={'id': course.id}))

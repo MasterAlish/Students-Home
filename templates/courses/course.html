@@ -35,6 +35,9 @@
         {% endif %}
         <a class="btn btn-sm btn-default" href="{% url 'chat' course.id %}"><span class="fa fa-comments"></span> Чат</a>
         <a class="btn btn-sm btn-default" href="{% url 'marks' course.id %}"><span class="fa fa-trophy"></span> Оценки</a>
+        <a class="btn btn-sm btn-default" href="{% url 'literature' course.id %}"><span class="fa fa-book"></span> Литература
+            <span class="badge badge-success">{{ course.literature.all.count }}</span>
+        </a>
         {% if is_student %}
             <a class="btn btn-sm btn-primary" href="{% url 'homework' course.id %}"><span class="fa fa-upload"></span> Сдать домашку</a>
         {% endif %}

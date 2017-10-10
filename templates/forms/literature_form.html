@@ -1,0 +1,25 @@
+{% extends 'students/base.html' %}
+{% load staticfiles my_tags i18n %}
+{% block head %}
+    <script src="{% static 'js/form_controls.js' %}"></script>
+    <script>
+        addClassToInputs("this-form");
+    </script>
+{% endblock %}
+{% block content %}
+    {% if literature %}
+        <h1>Изменить литературу</h1>
+    {% else %}
+        <h1>Добавить литературу</h1>
+    {% endif %}
+    <div class="lead">
+        {{ course }} <br>
+    </div>
+
+    <form method="post" id="this-form" style="max-width: 350px;" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <span style="color: grey; font-size: 12px;">Макс: 10 мб</span><br>
+        <input type="submit" class="btn btn-sm btn-success" value="Сохранить">
+    </form>
+{% endblock %}

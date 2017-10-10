@@ -13,7 +13,7 @@ from students.view.articles import ArticleView
 from students.view.chat import ChatView, NewMessagesView, PostMessageView
 from students.view.courses import CourseView, LectureView, MyGroupView, GroupView, LabTaskView, \
     EmailToCourseStudentsView, MarksView, GiveMedalsView, SetMarksView, ExtraGroupView, ActivateStudentView, \
-    CreateGroupViewView
+    CreateGroupViewView, LiteratureView, EditLiteratureView, AddLiteratureView, DeleteLiteratureView
 from students.view.homework import UploadHomeWorkView
 from students.view.profile import TeacherGroupsView, TeacherView, StudentView, TeachersListView
 from students.view.auth import HomeView, on_error, on_not_found, auth_logout, \
@@ -66,6 +66,11 @@ urlpatterns = [
 
     url(r'^course/(?P<id>\d+)/articles/new$', login_required(ArticleFormView.as_view()), name='add_article'),
     url(r'^articles/(?P<article_id>\d+)/edit$', login_required(ArticleFormView.as_view()), name='edit_article'),
+
+    url(r'^course/(?P<id>\d+)/literature/$', login_required(LiteratureView.as_view()), name='literature'),
+    url(r'^literature/(?P<id>\d+)/add/$', login_required(AddLiteratureView.as_view()), name='add_literature'),
+    url(r'^literature/(?P<id>\d+)/edit/$', login_required(EditLiteratureView.as_view()), name='edit_literature'),
+    url(r'^literature/(?P<id>\d+)/delete/$', login_required(DeleteLiteratureView.as_view()), name='delete_literature'),
 
     url(r'^course/(?P<id>\d+)/labtasks/new/$', login_required(LabTaskFormView.as_view()), name='add_labtask'),
     url(r'^course/(?P<id>\d+)/resolutions/$', login_required(ResolutionsView.as_view()), name='resolutions'),

@@ -491,3 +491,15 @@ class UserActivity(models.Model):
             activity = UserActivity(user=user, month=month, year=year)
             activity.activity = "0" * 31 * 24
             return activity
+
+
+class Literature(models.Model):
+    course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name="literature")
+    name = models.CharField(max_length=500, verbose_name=_(u"Название"))
+    author = models.CharField(max_length=255, verbose_name=_(u"Автор"), null=True, blank=True)
+    link = models.URLField(verbose_name=_(u"Ссылка"), null=True, blank=True)
+    file = models.FileField(verbose_name=_(u"Файл"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = u"Литература"
+        verbose_name_plural = u"Литература"
