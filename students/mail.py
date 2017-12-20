@@ -73,6 +73,13 @@ class StudentsMail(object):
         recipients = [settings.EMAIL_ADMIN_EMAIL]
         self.save_mail(subject, message, message, recipients)
 
+    def inform_about_new_event(self, request, event):
+        subject = u"Новое событие в приложении Аиды"
+        message = u"Перейдите по ссылку чтобы просмотреть все события %s " % unicode(
+            request.META["HTTP_HOST"] + "/admin/events/event/")
+        recipients = [settings.EMAIL_ADMIN_EMAIL]
+        self.save_mail(subject, message, message, recipients)
+
     def inform_about_new_medal(self, student, medal, course, request):
         """
         :type student: students.model.base.Student

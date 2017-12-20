@@ -46,7 +46,7 @@ class FileSizeConstraint(UploadConstraint):
         return 1024L*1024L*5L
 
     def __unicode__(self):
-        return u"%s %s - %s" % (self.task, self.min_size or "0", self.max_size)
+        return u"Размер файла: %s - %s" % (self.min_size or "0", self.max_size)
 
 
 class FileNameConstraint(UploadConstraint):
@@ -63,7 +63,7 @@ class FileNameConstraint(UploadConstraint):
         return True, u""
 
     def __unicode__(self):
-        return u"%s %s %s" % (self.task, self.file_name or "*", self.extension or "*")
+        return u"Название файла: %s.%s" % (self.file_name or "*", self.extension or "*")
 
 
 class ZipFileConstraint(UploadConstraint):
@@ -84,6 +84,9 @@ class ZipFileConstraint(UploadConstraint):
         if not_ascii_file_name:
             return False, _(u"В архиве есть файл с неправильным названием %s. Все файлы должны быть названы латинскими буквами.") % not_ascii_file_name.decode('utf-8', 'ignore')
         return True, u""
+
+    def __unicode__(self):
+        return u"Формат файлы: ZIP-архив. Файлы латинскими буквами."
 
 
 class ZipContainsFileConstraint(UploadConstraint):
@@ -109,4 +112,4 @@ class ZipContainsFileConstraint(UploadConstraint):
         return True, u""
 
     def __unicode__(self):
-        return u"%s wis files [%s]" % (self.task, self.file_names)
+        return u"Архив должен содержать в корне: %s" % self.file_names

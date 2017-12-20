@@ -1,4 +1,5 @@
 # coding=utf-8
+import logging
 import os
 import shutil
 import zipfile
@@ -9,14 +10,13 @@ from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from contest.forms import LiteratureForm
 from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalForm, GroupStudentsSelectForm, \
     GroupStudentsInputForm, StudentException
-from students.forms.teaching import GroupForm, SelectGroupForm
+from students.forms.teaching import GroupForm, SelectGroupForm, LiteratureForm
 from students.mail import StudentsMail
-from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, FileResolution, Resolution, Task, \
+from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, Resolution, Task, \
     GroupMock, Point, Student, Teacher, Literature
-from students.model.checks import ZipContainsFileConstraint
+from students.model.checks import ZipContainsFileConstraint, FileNameConstraint
 from students.view.common import StudentsView, user_authorized_to_course, StudentsAndTeachersView, \
     user_authorized_to_group, TeachersView
 from students.view.util import remove_file
@@ -58,6 +58,7 @@ class LabTaskView(StudentsAndTeachersView):
     template_name = "courses/labtask.html"
 
     def handle(self, request, *args, **kwargs):
+        logger = logging.getLogger("django")
         labtask = LabTask.objects.get(pk=kwargs['id'])
         if user_authorized_to_course(request.user, labtask.course):
             self.context['labtask'] = labtask
@@ -71,18 +72,28 @@ class LabTaskView(StudentsAndTeachersView):
                     form.instance.save()
                     valid, message = self.validate_file(form.instance, labtask)
                     if valid:
-                        if self.has_html_index_file(labtask):
-                            lab_url = self.unpack_resolution_to_public_dir(form.instance)
-                            form.instance.index_file = lab_url
-                            form.instance.save()
-                        StudentsMail().report_new_file_resolution_uploaded(request, form.instance)
-                        messages.success(request, u"Решение успешно сохранено")
-                        return redirect(reverse("labtask", kwargs={'id': labtask.id}))
+                        try:
+                            if self.is_zip_with_html_index_file(labtask):
+                                lab_url = self.unpack_resolution_to_public_dir(form.instance)
+                                form.instance.index_file = lab_url
+                                form.instance.save()
+                            if self.is_single_html_file(labtask):
+                                form.instance.index_file = form.instance.file.url
+                                form.instance.save()
+                            StudentsMail().report_new_file_resolution_uploaded(request, form.instance)
+                            messages.success(request, u"Решение успешно сохранено")
+                            return redirect(reverse("labtask", kwargs={'id': labtask.id}))
+                        except Exception as e:
+                            logger.exception(repr(e))
+                            remove_file(form.instance.file.path)
+                            form.instance.delete()
+                            form.add_error("file", repr(e))
                     else:
                         try:
                             remove_file(form.instance.file.path)
                             form.instance.delete()
-                        except:pass
+                        except Exception as e:
+                            logger.exception(repr(e))
                         form.add_error("file", message)
 
             self.context['form'] = form
@@ -117,9 +128,15 @@ class LabTaskView(StudentsAndTeachersView):
         lab_url = os.path.join(settings.MEDIA_URL, "sites", labname, username, "index.html")
         return lab_url
 
-    def has_html_index_file(self, labtask):
+    def is_zip_with_html_index_file(self, labtask):
         for constraint in labtask.constraints.instance_of(ZipContainsFileConstraint):
             if u'index.html' in constraint.file_names:
+                return True
+        return False
+
+    def is_single_html_file(self, labtask):
+        for constraint in labtask.constraints.instance_of(FileNameConstraint):
+            if u'html' == constraint.extension:
                 return True
         return False
 
@@ -395,7 +412,7 @@ class EditLiteratureView(TeachersView):
         if request.method == 'POST':
             form = LiteratureForm(request.POST, request.FILES, instance=literature)
             if form.is_valid():
-                form.instance.course = course
+                form.instance.course = literature.course
                 form.instance.save()
                 messages.success(request, u"Литература успешно изменена")
                 return redirect(reverse("literature", kwargs={'id': literature.course.id}))

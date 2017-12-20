@@ -1,8 +1,9 @@
 # coding=utf-8
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm, Form
-from students.model.base import Lecture, LabTask, Task, Course, Group, Resolution, Medal
+from students.model.base import Lecture, LabTask, Task, Course, Group, Resolution, Medal, Literature
 from students.model.blog import Article
 
 
@@ -57,6 +58,13 @@ class LabTaskForm(ModelForm):
             initial['deadline'] = instance.deadline.strftime("%d.%m.%Y")
         super(LabTaskForm, self).__init__(data=data, files=files, instance=instance, initial=initial)
 
+    def clean_attachment(self):
+        attachment = self.cleaned_data.get('attachment', False)
+        if attachment:
+            if attachment.size > 10 * 1024 * 1024:
+                raise ValidationError(u"Размер приложения не должен превышать 10 МБ")
+            return attachment
+
     class Meta:
         model = LabTask
         exclude = ['course', 'number', 'color']
@@ -74,3 +82,16 @@ class TaskForm(ModelForm):
     class Meta:
         model = Task
         exclude = ['course', 'color']
+
+
+class LiteratureForm(forms.ModelForm):
+    class Meta:
+        model = Literature
+        exclude = ['course']
+
+    def clean_file(self):
+        liter_file = self.cleaned_data.get('file', False)
+        if liter_file:
+            if liter_file.size > 10 * 1024 * 1024:
+                raise ValidationError(u"Размер файла не должен превышать 10 МБ")
+            return liter_file

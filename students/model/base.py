@@ -223,6 +223,7 @@ class Task(PolymorphicModel):
 class LabTask(Task):
     number = models.IntegerField(verbose_name=u"Номер", default=0)
     deadline = models.DateTimeField(verbose_name=_(u"Крайний срок сдачи"))
+    attachment = models.FileField(verbose_name=_(u"Приложение"), null=True, blank=True)
 
     def to_dict(self):
         data = super(LabTask, self).to_dict()

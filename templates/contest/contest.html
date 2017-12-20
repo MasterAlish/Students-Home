@@ -1,0 +1,54 @@
+{% extends 'students/base.html' %}
+{% load i18n %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>{{ contest.name }}</h3>
+            {% if contest.active %}
+                {% if contest.start < now and now <= contest.end %}
+                    <span class="label label-success">Идет</span>
+                {% elif contest.start >= now %}
+                    <span class="label label-info">Начнется через: {{ contest.start|timeuntil }}</span>
+                {% else %}
+                    <span class="label label-danger">Завершен</span>
+                {% endif %}
+            {% else %}
+                <span class="label label-default">Не начат</span>
+            {% endif %}
+            <br>
+            {% if user.is_admin %}
+                <a class="btn btn-sm btn-success" href="{% url 'add_problem' %}?contest={{ contest.id }}">Добавить задачу</a>
+                <a class="btn btn-sm btn-danger delete-button" href="{% url 'delete_contest' contest.id %}">Удалить соревнование</a>
+            {% endif %}
+            <a class="btn btn-sm btn-info" href="{% url 'submits' %}?contest={{ contest.id }}">Результаты проверки</a>
+            <a class="btn btn-sm btn-primary" href="{% url 'ranklist' %}?contest={{ contest.id }}">Рейтинг</a>
+            <br><br>
+            <div>
+                {{ contest.description|safe }}
+            </div>
+            <br><br>
+            <h4>Задачи</h4>
+            <table class="table table-condensed table-bordered" style="margin-top: 10px;">
+                <tr>
+                    <th></th>
+                    <th>№</th>
+                    <th>Название</th>
+                    <th>Сложность</th>
+                    <th>Действия</th>
+                </tr>
+
+                {% for problem in contest.sorted_problems %}
+                    <tr>
+                        <td></td>
+                        <td>{{ problem.acm_id }}</td>
+                        <td><a href="{% url 'problem' problem.id %}">{{ problem.title }}</a></td>
+                        <td>{{ problem.difficulty }}</td>
+                        <td>
+                            <a href="{% url 'submit_problem' problem.id %}" class="btn btn-xs btn-default">Отправить</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

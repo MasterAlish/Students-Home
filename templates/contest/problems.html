@@ -4,7 +4,9 @@
     <div class="row">
         <div class="col-sm-12">
             <h3>Все задачи</h3>
-            <a class="btn btn-sm btn-success" href="{% url 'add_problem' %}">Добавить задачу</a>
+            {% if user.is_admin %}
+                <a class="btn btn-sm btn-success" href="{% url 'add_problem' %}">Добавить задачу</a>
+            {% endif %}
 
             <table class="table table-condensed table-bordered" style="margin-top: 10px;">
                 <tr>

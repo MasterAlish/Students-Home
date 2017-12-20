@@ -13,8 +13,20 @@
                 Перед участием, вам обязательно нужно зарегистрироваться на сайте Timus Online Judge и указать ваш
                 JUDGE_ID <a href="{% url 'register_acm' %}">в этой форме</a>.
             </p>
-            <a href="{% url 'all_problems' %}" class="btn btn-lg btn-info">Все задачи</a>
-            <a href="{% url 'submits' %}" class="btn btn-lg btn-info">Результаты проверки</a>
+            {% if user.is_admin %}
+                <a href="{% url 'add_contest' %}" class="btn btn-lg btn-success">
+                    <i class="fa fa-plus-circle"></i> Добавить соревнование
+                </a><br>
+            {% endif %}
+            <a href="{% url 'all_contests' %}" class="btn btn-lg btn-warning">
+                <i class="fa fa-star"></i> Соревнования
+            </a><br>
+            <a href="{% url 'all_problems' %}" class="btn btn-lg btn-info">
+                <i class="fa fa-list-alt"></i> Архив задач
+            </a><br>
+            <a href="{% url 'submits' %}" class="btn btn-lg btn-primary">
+                <i class="fa fa-check-square"></i> Результаты проверки
+            </a><br>
         </div>
     </div>
 {% endblock %}

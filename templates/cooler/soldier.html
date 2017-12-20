@@ -1,0 +1,245 @@
+{% extends 'students/base.html' %}
+{% load i18n staticfiles %}
+{% block head %}
+    <style type="text/css" media="screen">
+        #editor {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+    </style>
+    <script src="{% static 'ace/ace.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script>
+        $(document).ready(function () {
+            var editor = ace.edit("editor");
+            editor.setTheme("ace/theme/chrome");
+            editor.getSession().setMode("ace/mode/javascript");
+
+            $("#run_button").click(function () {
+                $(this).attr("disabled", "true");
+                run();
+                return false;
+            });
+
+            $("#refresh_button").click(function () {
+                refreshGame();
+                startTimer();
+                $("#run_button").removeAttr("disabled");
+                return false;
+            });
+        });
+
+        function run() {
+            var code = ace.edit('editor').getValue();
+            eval(code);
+            game();
+        }
+    </script>
+    <script id="new_code">
+
+    </script>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Солдат и танк</h3>
+
+            <p>
+                <img style=" float:left;width: 250px; height: 250px; margin-right: 20px; margin-bottom: 20px;"
+                     src="{% static 'soldier/screenshot.png' %}">
+                В этой задаче вам нужно написать маленький скрипт для управления солдатом. У вас есть поле 10х10 ячеек.
+                Изначально солдат и танк находятся в случайных ячейках. Вам известны их координаты.
+                Цель солдата уничтожить танк гранатой. У солдата только одна граната и он может
+                бросить гранану не дальше чем на одну ячейку от себя.<br>
+                <br>
+
+                Ваш скрипт должен находиться внутри функции game(). Но, можно создать другие функции. Вы можете
+                обращаться к переменным x,y - это координаты
+                солдата, tx, ty - координаты танка. Чтобы двигать солдатом, используйте функции up(), down(), left(),
+                right().
+                А чтобы бросить гранату используйте функцию grenade(x, y), передавая как параметр координаты, куда нужно
+                бросить гранату.
+                <br><br>
+
+                Нельзя делать так grenade(tx, ty) чтобы сразу попасть в танка.
+
+            </p>
+            <div style="clear: both;"></div>
+
+            <b>Доступные переменные:</b><br>
+            <ul style="color: green; font-weight: 500;">
+                <li>x</li>
+                <li>y</li>
+                <li>tx</li>
+                <li>ty</li>
+            </ul>
+
+            <b>Доступные функции:</b><br>
+            <ul style="color: #005bb4; font-weight: 500;">
+                <li>left()</li>
+                <li>right()</li>
+                <li>up()</li>
+                <li>down()</li>
+                <li>grenade(x, y)</li>
+            </ul>
+            <textarea style="display:none;" id="old_code">// Это пример кода
+
+function game(){
+    if(tx > x){
+        right();
+        right();
+    }else{
+        left();
+        left();
+    }
+    grenade(x+1, y+1);
+}</textarea>
+            <h3 id="editor_title">Введите код сюда</h3>
+            <div style=" float: left;">
+                <div style="width: 400px; height: 400px; position: relative;">
+                    <div id="editor"></div>
+                </div>
+                <a href="#" class="btn btn-small btn-success" id="run_button">Запустить</a>
+                <a href="#" class="btn btn-small btn-warning" id="refresh_button">Возобновить</a>
+
+            </div>
+
+            <div>
+                <style>
+                    .cell {
+                        width: 48px;
+                        height: 48px;
+                        background-size: 48px 48px;
+                        border: 1px solid pink;
+                        float: left;
+                        color: black;
+                        font-weight: bold;
+                        font-size: 30px;
+                        text-align: center;
+                    }
+
+                    #result {
+                        width: 500px;
+                        text-align: center;
+                        font-size: 25px;
+                        font-weight: bold;
+                        color: orange;
+                    }
+                </style>
+                <script>
+
+                    function refreshGame() {
+                        x = parseInt(Math.random() * 9);
+                        y = parseInt(Math.random() * 9);
+                        tx = 0;
+                        ty = parseInt(Math.random() * 9);
+                        ggx = null;
+                        ggy = null;
+
+                        steps = [];
+                        show();
+                        $("#result").text("Уничтожить танк!!");
+                        $("#result").css("color", "#ff8b00");
+                    }
+
+                    var x = parseInt(Math.random() * 9);
+                    var y = parseInt(Math.random() * 9);
+                    var tx = 0;
+                    var ty = parseInt(Math.random() * 9);
+                    var ggx = null;
+                    var ggy = null;
+
+
+                    var steps = [];
+
+                    function up() {
+                        y--;
+                        show();
+                    }
+
+                    function down() {
+                        y++;
+                        show();
+                    }
+
+                    function right() {
+                        x++;
+                        show();
+                    }
+
+                    function left() {
+                        x--;
+                        show();
+                    }
+
+                    function grenade(gx, gy) {
+                        ggx = gx;
+                        ggy = gy;
+                    }
+
+                    function show() {
+                        steps.push([x, y]);
+                    }
+
+                    $(document).ready(function () {
+                        ace.edit('editor').setValue($("#old_code").val());
+                        show();
+
+                    });
+
+                    var $timer;
+                    startTimer();
+                    function startTimer(){
+                         $timer = setInterval(function () {
+                            if (steps.length > 0) {
+                                $(".cell").css("background-image", "");
+                                $("#cell_" + tx + "_" + ty).css("background-image", "url('/static/soldier/tank.png')");
+                                var $xy = steps.reverse().pop();
+                                steps.reverse();
+                                var $x = $xy[0];
+                                var $y = $xy[1];
+                                if ($x < 0 || $y < 0 || $x > 9 || $y > 9) {
+                                    clearInterval($timer);
+                                    $("#result").text("AAAAAAAAAAAaaaaaaaaaa!");
+                                    $("#result").css("color", "#FF0000");
+                                }
+                                console.log($x);
+                                console.log($y);
+                                $("#cell_" + $x + "_" + $y).css("background-image", "url('/static/soldier/soldier.png')");
+                            } else {
+                                if (ggx !== null) {
+                                    $("#cell_" + ggx + "_" + ggy).css("background-image", "url('/static/soldier/explosion.png')");
+                                    if (ggx === tx && ggy === ty) {
+                                        $("#result").text("Вы выиграли!");
+                                        $("#result").css("color", "#00cf00");
+                                    } else {
+                                        $("#result").text("Вы проиграли!");
+                                        $("#result").css("color", "red");
+                                    }
+                                    ggx = null;
+                                    clearInterval($timer);
+                                }
+                            }
+                        }, 400);
+                    }
+
+                </script>
+                <div style="float: left; margin-left: 10px;">
+                    <div id="field" style="width: 500px; height:500px; background: #FFF;">
+                        <script>
+                            for (var i = 0; i < 10; i++) {
+                                for (var j = 0; j < 10; j++) {
+                                    document.write("<div class='cell' id='cell_" + j + "_" + i + "'></div>");
+                                }
+                            }
+                        </script>
+                    </div>
+                    <div id="result">Уничтожить танк!</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

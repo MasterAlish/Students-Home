@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group as UserGroup
 
 from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture, ChatMessage, \
     Medal, StudentMedal, LabTask, Task, Resolution, FileResolution, UserActivity, ExtraStudent, Todo, Point, \
-    HomeWorkSolution, University, Department
+    HomeWorkSolution, University, Department, Mail
 from students.model.blog import Article
 from students.model.checks import FileSizeConstraint, FileNameConstraint, ZipContainsFileConstraint, ZipFileConstraint
 from students.model.extra import Feedback
@@ -84,6 +84,22 @@ class FeedbackAdmin(ModelAdmin):
     ordering = ['-datetime']
 
 
+class FileSizeConstraintAdmin(ModelAdmin):
+    list_display = ['task', 'min_size', 'max_size']
+
+
+class FileNameConstraintAdmin(ModelAdmin):
+    list_display = ['task', 'extension', 'file_name']
+
+
+class ZipFileConstraintAdmin(ModelAdmin):
+    list_display = ['task']
+
+
+class ZipContainsConstraintAdmin(ModelAdmin):
+    list_display = ['task', 'file_names']
+
+
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Course)
 admin.site.register(StudentGroup)
@@ -97,10 +113,10 @@ admin.site.register(FileResolution, ResolutionAdmin)
 admin.site.register(Medal)
 admin.site.register(StudentMedal)
 admin.site.register(ChatMessage, MessageAdmin)
-admin.site.register(FileSizeConstraint)
-admin.site.register(FileNameConstraint)
-admin.site.register(ZipFileConstraint)
-admin.site.register(ZipContainsFileConstraint)
+admin.site.register(FileSizeConstraint, FileSizeConstraintAdmin)
+admin.site.register(FileNameConstraint, FileNameConstraintAdmin)
+admin.site.register(ZipFileConstraint, ZipFileConstraintAdmin)
+admin.site.register(ZipContainsFileConstraint, ZipContainsConstraintAdmin)
 admin.site.register(UserActivity)
 admin.site.register(Article)
 admin.site.register(ExtraStudent)
@@ -108,4 +124,11 @@ admin.site.register(Todo)
 admin.site.register(Point)
 admin.site.register(HomeWorkSolution, HomeWorkSolutionAdmin)
 admin.site.register(Feedback, FeedbackAdmin)
+
+
+class MailAdmin(ModelAdmin):
+    list_display = ['subject', 'recipients']
+
+
+admin.site.register(Mail, MailAdmin)
 

@@ -9,6 +9,7 @@ from students.models import MyUser
 
 class Problem(models.Model):
     title = models.CharField(max_length=255, verbose_name=_(u"Название"))
+    contest = models.ForeignKey('Contest', verbose_name="Соревнование", null=True, on_delete=models.SET_NULL, related_name='problems')
     body = RichTextField(verbose_name=_(u"Описание"), config_name='article')
     limits = RichTextField(verbose_name=_(u"Ограничения"), null=True, blank=True)
     acm_id = models.IntegerField(verbose_name=_(u"Номер задачи"))
@@ -39,6 +40,7 @@ class Contestant(models.Model):
 
 class ProblemSolution(models.Model):
     problem = models.ForeignKey(Problem, verbose_name=_(u"Задача"), on_delete=models.CASCADE)
+    contest = models.ForeignKey('Contest', verbose_name=_(u"Соревнование"), null=True, blank=True, on_delete=models.CASCADE, related_name='solutions')
     contestant = models.ForeignKey(Contestant, verbose_name=_(u"Участник"), on_delete=models.CASCADE)
     acm_id = models.IntegerField(verbose_name=_(u"Номер попытки"), null=True, blank=True)
     datetime = models.DateTimeField(auto_now_add=True, verbose_name=_(u"Время"))
@@ -57,3 +59,21 @@ class ProblemSolution(models.Model):
     class Meta:
         verbose_name = u"Решение"
         verbose_name_plural = u"Решения"
+
+
+class Contest(models.Model):
+    name = models.CharField(max_length=1000, verbose_name=_(u"Название"))
+    description = RichTextField(verbose_name=_(u"Описание"), config_name='article')
+    start = models.DateTimeField(verbose_name=_(u"Начало"))
+    end = models.DateTimeField(verbose_name=_(u"Конец"))
+    active = models.BooleanField(verbose_name=_(u"Активен"), default=True)
+
+    def sorted_problems(self):
+        return self.problems.order_by("difficulty")
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = u"Соревнование"
+        verbose_name_plural = u"Соревнования"

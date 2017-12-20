@@ -286,6 +286,7 @@ class LabTaskActionView(TeachersView):
             if action == "edit":
                 return redirect(reverse("edit_labtask", kwargs={'labtask_id': labtask.id}))
             elif action == 'delete':
+                remove_file(labtask.attachment)
                 labtask.delete()
                 messages.success(request, u"Лабораторная работа удалена успешно!")
             return redirect(reverse("course", kwargs={'id': course.id}))

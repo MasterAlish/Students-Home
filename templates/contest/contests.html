@@ -1,0 +1,44 @@
+{% extends 'students/base.html' %}
+{% load i18n %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Соревнования</h3>
+            {% if user.is_admin %}
+                <a class="btn btn-sm btn-success" href="{% url 'add_contest' %}">Добавить соревнование</a>
+            {% endif %}
+
+            <table class="table table-condensed table-bordered" style="margin-top: 10px;">
+                <tr>
+                    <th>№</th>
+                    <th>Название</th>
+                    <th>Дата начала</th>
+                    <th>Дата начала</th>
+                    <th>Статус</th>
+                </tr>
+
+                {% for contest in contests %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><a href="{% url 'contest' contest.id %}">{{ contest.name }}</a></td>
+                        <td>{{ contest.start|date:"d.m.Y H:i" }}</td>
+                        <td>{{ contest.end|date:"d.m.Y H:i" }}</td>
+                        <td>
+                            {% if contest.active  %}
+                                {% if contest.start < now and now <= contest.end %}
+                                    <span class="label label-success">Идет</span>
+                                {% elif contest.start >= now %}
+                                    <span class="label label-info">Не начат</span>
+                                {% else %}
+                                    <span class="label label-danger">Завершен</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="label label-default">Не начат</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

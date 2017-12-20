@@ -1,0 +1,21 @@
+{% extends 'students/base.html' %}
+{% load i18n %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Рейтинг</h3>
+
+            <table class="table table-condensed table-bordered" style="margin-top: 10px;">
+                <tr>
+                    <th>Место</th>
+                    <th>Участник</th>
+                    {% for problem in problems %}
+                        <th>{{ problem.acm_id }}</th>
+                    {% endfor %}
+                    <th>Решено задач</th>
+                    <th>Очки</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}

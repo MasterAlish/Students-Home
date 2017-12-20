@@ -39,7 +39,7 @@
             <span class="badge badge-success">{{ course.literature.all.count }}</span>
         </a>
         {% if is_student %}
-            <a class="btn btn-sm btn-primary" href="{% url 'homework' course.id %}"><span class="fa fa-upload"></span> Сдать домашку</a>
+            <a class="btn btn-sm btn-primary" href="{% url 'submit_homework' course.id %}"><span class="fa fa-upload"></span> Сдать домашку</a>
         {% endif %}
         {% if is_teacher %}
             <a class="btn btn-sm btn-info" href="{% url 'homeworks' course.id %}"><span class="fa fa-check-circle"></span> Проверить домашки</a>

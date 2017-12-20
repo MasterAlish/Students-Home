@@ -18,6 +18,7 @@ from students.view.homework import UploadHomeWorkView
 from students.view.profile import TeacherGroupsView, TeacherView, StudentView, TeachersListView
 from students.view.auth import HomeView, on_error, on_not_found, auth_logout, \
     auth_profile, register_student, password_change, user_change, reset_password, register_teacher, LoginAsView
+from students.view.sitemap import SitemapView
 from students.view.teaching import LectureFormView, LectureActionView, LabTaskFormView, LabTaskActionView, \
     TaskActionView, TaskFormView, CoursesListView, CourseFormView, CourseActionView, ArticleFormView, ResolutionsView, \
     CheckResolutionView, HomeworksView, HomeworkView
@@ -50,7 +51,7 @@ urlpatterns = [
     url(r'^course/(?P<id>\d+)/give_medals/$', login_required(GiveMedalsView.as_view()), name='give-medals'),
     url(r'^course/(?P<id>\d+)/chat/$', login_required(csrf_exempt(ChatView.as_view())), name='chat'),
     url(r'^course/(?P<id>\d+)/marks/$', login_required(MarksView.as_view()), name='marks'),
-    url(r'^course/(?P<id>\d+)/homework/$', login_required(UploadHomeWorkView.as_view()), name='homework'),
+    url(r'^course/(?P<id>\d+)/homework/$', login_required(UploadHomeWorkView.as_view()), name='submit_homework'),
     url(r'^course/(?P<id>\d+)/add_group/$', login_required(CreateGroupViewView.as_view()), name='add_group'),
 
     url(r'^teachers/$', login_required(TeachersListView.as_view()), name='all_teachers'),
@@ -100,10 +101,13 @@ urlpatterns = [
 
     url(r'^todo/act/$', TodoActView.as_view(), name='todo_act'),
 
+    url(r'^sitemap.xml$', SitemapView.as_view()),
     url(r'^error/$', on_error, name='error500'),
     url(r'^not-found/$', on_not_found, name='error404'),
     url(r'^contest/', include('contest.urls')),
+    url(r'^cooler/', include('cooler.urls')),
     url(r'^api/', include('students.api.urls')),
+    url(r'^events/', include('events.urls')),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/',  include(admin.site.urls)),

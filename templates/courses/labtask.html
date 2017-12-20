@@ -12,6 +12,14 @@
                 <div style="{% if not form.errors %} display: none; {% endif %} margin-top: 10px; width: 700px;"
                      id="upload-form" class="panel panel-default">
                     <div class="panel-body">
+                        {% if labtask.constraints.count > 0 %}
+                            <b>Ограничения:</b>
+                            <ul class="errorlist" style="font-size: 12px; list-style: disc; margin-left: 17px;">
+                                {% for cons in labtask.constraints.all %}
+                                    <li>{{ cons }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form.media }}
@@ -45,6 +53,10 @@
         </form>
     {% endif %}
     <div>
+        {% if labtask.attachment.name %}
+            <b>Приложение к лабе:</b> <a href="{{ labtask.attachment.url }}" download>Скачать</a>
+            <hr>
+        {% endif %}
         {{ labtask.body|safe }}
     </div>
     <script>
