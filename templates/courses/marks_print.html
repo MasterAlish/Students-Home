@@ -1,0 +1,46 @@
+{% extends 'students/base.html' %}
+
+{% load staticfiles my_tags i18n humanize %}
+{% block content %}
+    <div class="container">
+        <h1>{{ course.name }}</h1>
+        <div class="lead">
+            Оценки студентов <br>
+        </div>
+        <div class="long-view" style="overflow: scroll;">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>№</th>
+                    <th>ФИО</th>
+                    {% for task in tasks %}
+                        <th>{{ task.short_name }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for group in course.groups_with_extra %}
+                    <tr>
+                        <th colspan="{{ 3|add:tasks.count }}">{{ group.name }}</th>
+                    </tr>
+                    {% for student in group.students.all %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                {{ student.user.get_full_name }}
+                            </td>
+                            {% for task in tasks %}
+                                {% best_solution_of resolutions_map|resolutions_for_task:task student as best_resolution %}
+                                <td style="{% if task.important %}font-weight: bold;{% endif %}">
+                                    {{ best_resolution.mark }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+{% endblock %}

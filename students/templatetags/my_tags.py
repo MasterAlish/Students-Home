@@ -10,7 +10,7 @@ from django.utils import translation
 from django.utils.safestring import mark_safe
 from html2text import html2text
 
-from students.model.base import Student, Teacher, FileResolution, Resolution, LastReadMessage
+from students.model.base import Student, Teacher, FileResolution, Resolution, LastReadMessage, QuizResult
 from students.view.common import is_teacher, is_student
 
 register = template.Library()
@@ -152,3 +152,11 @@ def get(collection, index):
 @register.filter
 def fa(name):
     return mark_safe("<span class='fa fa-%s'></span>" % name)
+
+
+@register.filter
+def get_quiz_result_for(task, user):
+    try:
+        return QuizResult.objects.get(task=task, student=user)
+    except:
+        return None

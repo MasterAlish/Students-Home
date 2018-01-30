@@ -67,7 +67,7 @@ class LabTaskForm(ModelForm):
 
     class Meta:
         model = LabTask
-        exclude = ['course', 'number', 'color']
+        exclude = ['course', 'number', 'color', 'quiz', 'quiz_count', 'quiz_attempts']
 
 
 class TaskForm(ModelForm):

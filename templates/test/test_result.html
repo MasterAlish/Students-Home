@@ -1,0 +1,103 @@
+{% extends 'students/base.html' %}
+{% load staticfiles %}
+{% block head %}
+    <script src="{% static 'js/form_controls.js' %}"></script>
+    <script>
+        addClassToInputs("this-form");
+    </script>
+    <style>
+
+        body {
+            font-family: Helvetica, Arial, Tahoma;
+        }
+
+        td {
+            vertical-align: top;
+        }
+
+        .code {
+            margin-left: 10px;
+            color: #4573ce;
+            font-family: monospace;
+            display: block;
+        }
+
+        .answer {
+            color: #ce635b;
+            font-family: monospace;
+            display: inline-block;
+            font-size: 12px;
+        }
+
+        .tab, .space {
+            display: inline-block;
+            content: "&nbsp;";
+            width: 20px;
+        }
+
+        .var {
+            display: inline-block;
+            float: left;
+            margin-right: 62px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <h1>Задание: {{ task.title }}</h1>
+    <div class="lead">
+        {{ task.course }} <br>
+        Дата: {{ task.created_at|date:"d.m.Y H:i" }}<br>
+    </div>
+    {% if results is not None %}
+        <h2>Результаты</h2>
+        <table class="table table-bordered table-condensed">
+            <tr>
+                <th>#</th>
+                <th>Студент</th>
+                <th>Оценка</th>
+                <th>Проверен</th>
+                <th>Действия</th>
+            </tr>
+            {% for result in results %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td><a href="?id={{ result.id }}">{{ result.student.get_full_name }}</a></td>
+                    <td>
+                        {{ result.result|floatformat }}
+                    </td>
+                    <td>
+                        {% if result.checked %}
+                            <span class="badge badge-success">Проверен</span>
+                        {% else %}
+                            <span class="badge badge-important">Не проверен</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'delete_quiz_result' result.id %}" class="btn btn-xs btn-danger delete-button">Дать еще шанс</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h2>{{ result.student.get_full_name }}</h2>
+        {% if result.checked %}
+            <span class="badge badge-success">Проверен</span><br>
+            <b>Оценка: {{ result.result|floatformat }}</b><br><br>
+        {% else %}
+            <span class="badge badge-important">Не проверен</span><br>
+            <b>Предварительная оценка: {{ result.result|floatformat }}</b><br><br>
+        {% endif %}
+
+        {{ result.answer|safe }}
+
+        {% if is_teacher and not result.checked %}
+            <h3>Поставить оценку</h3>
+            <form method="post" id="this-form" style="width: 300px;">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" class="btn btn-success" value="Оценить">
+            </form>
+        {% endif %}
+
+    {% endif %}
+{% endblock %}

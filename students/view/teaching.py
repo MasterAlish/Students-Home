@@ -311,7 +311,7 @@ class TaskFormView(TeachersView):
                 form = TaskForm(request.POST, request.FILES, instance=task)
                 if form.is_valid():
                     form.instance.course = course
-                    form.instance.save()
+                    form.save()
                     if task:
                         messages.success(request, u"Задание изменено успешно!")
                     else:

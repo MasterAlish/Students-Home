@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group as UserGroup
 
 from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture, ChatMessage, \
     Medal, StudentMedal, LabTask, Task, Resolution, FileResolution, UserActivity, ExtraStudent, Todo, Point, \
-    HomeWorkSolution, University, Department, Mail
+    HomeWorkSolution, University, Department, Mail, Quiz, QuizAnswer, QuizQuestion, QuizResult, Subject
 from students.model.blog import Article
 from students.model.checks import FileSizeConstraint, FileNameConstraint, ZipContainsFileConstraint, ZipFileConstraint
 from students.model.extra import Feedback
@@ -100,6 +100,26 @@ class ZipContainsConstraintAdmin(ModelAdmin):
     list_display = ['task', 'file_names']
 
 
+class QuizAdmin(ModelAdmin):
+    list_display = ['name', 'subject']
+
+
+class SubjectAdmin(ModelAdmin):
+    list_display = ['name']
+
+
+class QuizQuestionAdmin(ModelAdmin):
+    list_display = ['quiz', 'text', 'type']
+
+
+class QuizAnswerAdmin(ModelAdmin):
+    list_display = ['question', 'text', 'type']
+
+
+class QuizResultAdmin(ModelAdmin):
+    list_display = ['student', 'result']
+
+
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Course)
 admin.site.register(StudentGroup)
@@ -124,6 +144,11 @@ admin.site.register(Todo)
 admin.site.register(Point)
 admin.site.register(HomeWorkSolution, HomeWorkSolutionAdmin)
 admin.site.register(Feedback, FeedbackAdmin)
+admin.site.register(Subject, SubjectAdmin)
+admin.site.register(Quiz, QuizAdmin)
+admin.site.register(QuizQuestion, QuizQuestionAdmin)
+admin.site.register(QuizAnswer, QuizAnswerAdmin)
+admin.site.register(QuizResult, QuizResultAdmin)
 
 
 class MailAdmin(ModelAdmin):

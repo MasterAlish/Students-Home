@@ -129,6 +129,20 @@
                                 </button>
                             </form>
                         {% endif %}
+                        {% if task.quiz.count %}
+                            {% if is_student %}
+                                {% with task|get_quiz_result_for:user as quiz_result %}
+                                    {% if quiz_result %}
+                                        <a class="btn btn-xs btn-success" href="{% url 'quiz_results' task.id %}?id={{ quiz_result.id }}">{{ 'star'|fa }} Результат</a>
+                                    {% else %}
+                                        <a class="btn btn-xs btn-danger" href="{% url 'start_quiz' task.id %}">{{ 'pencil-square-o'|fa }} Пройти тест</a>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                            {% if is_teacher %}
+                                <a class="btn btn-xs btn-info" href="{% url 'quiz_results' task.id %}">{{ 'bar-chart'|fa }} Результаты</a>
+                            {% endif %}
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ol>

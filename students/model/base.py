@@ -70,6 +70,17 @@ class Department(models.Model):
         return u"%s: %s" % (self.university, self.name)
 
 
+class Subject(models.Model):
+    name = models.CharField(max_length=255, verbose_name=_(u"Название"))
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = u"Предметы"
+        verbose_name = u"Предмет"
+
+
 class Course(models.Model):
     SEMESTER_CHOICES = (
         ('spring', _(u"Весенний")),
@@ -83,6 +94,7 @@ class Course(models.Model):
     year = models.IntegerField(verbose_name=_(u"Год"), default=2016)
     semester = models.CharField(max_length=10, verbose_name=_(u"Семестр"), choices=SEMESTER_CHOICES)
     archived = models.BooleanField(default=False, verbose_name=_(u"Завершен"))
+    subject = models.ForeignKey(Subject, null=True, blank=True, on_delete=models.SET_NULL, verbose_name=u"Предмет")
 
     def __unicode__(self):
         return unicode(self.name) + u" ("+self.get_semester_display()+u", "+str(self.year)+u")"
@@ -190,6 +202,10 @@ class Task(PolymorphicModel):
     body = RichTextField(verbose_name=_(u"Текст"), config_name="long")
     color = models.CharField(verbose_name=_(u"Цвет"), max_length=20, default="#dff0d8")
     important = models.BooleanField(verbose_name=_(u"Важное"), default=False)
+    max_score = models.FloatField(verbose_name=_(u"Мак. баллов"), default=30)
+    quiz = models.ManyToManyField('Quiz', verbose_name=_(u"Добавить тесты"), blank=True)
+    quiz_count = models.IntegerField(verbose_name=_(u"Кол-во вопросов в тесте"), default=15)
+    quiz_attempts = models.IntegerField(verbose_name=_(u"Кол-во попыток в тесте"), default=1)
 
     def save(self, *args, **kwargs):
         if not self.short_name:
@@ -307,6 +323,7 @@ class Student(models.Model, AvatarMixin):
     class Meta:
         verbose_name = u"Студент"
         verbose_name_plural = u"Студенты"
+        ordering = ['user__fullname']
 
 
 class Todo(models.Model):
@@ -504,3 +521,67 @@ class Literature(models.Model):
     class Meta:
         verbose_name = u"Литература"
         verbose_name_plural = u"Литература"
+
+
+class Quiz(Model):
+    name = models.CharField(verbose_name=u"Название", max_length=255)
+    subject = models.ForeignKey(Subject, null=True, blank=True, verbose_name=u"Предмет", on_delete=models.SET_NULL)
+
+    def __unicode__(self):
+        return self.name
+
+
+class QuizQuestion(Model):
+    CHOICES = [
+        ['single', "Один ответ"],
+        ['multiple', "Много ответов"],
+        ['text', "Текст"],
+        ['bigtext', "Большой текст"],
+        ['task', "Задачка с правильным ответом"],
+    ]
+    text = models.TextField(verbose_name=u"Вопрос")
+    quiz = models.ForeignKey(Quiz, verbose_name=u"Тест", related_name="questions")
+    type = models.CharField(max_length=20, verbose_name=u"Тип", choices=CHOICES)
+
+    def random_answers(self):
+        return self.answers.all().order_by("?")
+
+    def check_answer(self, answer_ids):
+        right_answers = map(lambda s: s[0], self.answers.filter(type='right').values_list('id'))
+        wrong_answers = map(lambda s: s[0], self.answers.filter(type='wrong').values_list('id'))
+        for right in right_answers:
+            if right not in answer_ids:
+                return False
+        for wrong in wrong_answers:
+            if wrong in answer_ids:
+                return False
+        return True
+
+    def check_text_answer(self, answer):
+        if self.type == "task":
+            return self.answers.filter(type='right', text=answer).exists()
+        return True if answer else False
+
+    def __unicode__(self):
+        return self.text[:30]
+
+
+class QuizAnswer(Model):
+    CHOICES = [
+        ['wrong', u'Неправильный ответ'],
+        ['right', u'Правильный ответ'],
+        ['optional', u'Необязательный ответ'],
+    ]
+    question = models.ForeignKey(QuizQuestion, verbose_name=u"Вопрос", related_name="answers")
+    text = models.CharField(max_length=255, verbose_name=u"Ответ")
+    type = models.CharField(verbose_name=u"Тип", max_length=20, choices=CHOICES, default='wrong')
+
+
+class QuizResult(Model):
+    student = models.ForeignKey(get_user_model(), verbose_name=u"Пользователь")
+    task = models.ForeignKey(Task, verbose_name=u"Задание", null=True, blank=True)
+    result = models.FloatField(verbose_name=u"Оценка")
+    answer = models.TextField(verbose_name=u"Ответы", null=True)
+    comment = models.TextField(verbose_name=u"Комментарий препода", null=True, blank=True)
+    checked = models.BooleanField(verbose_name=u"Проверен", default=False)
+    attempts = models.IntegerField(verbose_name=u"Кол-во попыток", default=0)

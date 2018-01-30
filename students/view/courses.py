@@ -226,6 +226,7 @@ class MarksMixin(object):
 
 class MarksView(StudentsAndTeachersView, MarksMixin):
     template_name = "courses/marks.html"
+    print_template_name = "courses/marks_print.html"
 
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=kwargs['id'])
@@ -237,9 +238,10 @@ class MarksView(StudentsAndTeachersView, MarksMixin):
             self.context['medals_by_students'] = self.get_medals_by_students(course)
             self.context['xp_by_students'] = self.get_xp_by_students(course)
 
+            if request.GET.get("print"):
+                return render(request, self.print_template_name, self.context)
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
-
 
 
 class EmailToCourseStudentsView(TeachersView):

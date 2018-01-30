@@ -104,6 +104,7 @@ urlpatterns = [
     url(r'^sitemap.xml$', SitemapView.as_view()),
     url(r'^error/$', on_error, name='error500'),
     url(r'^not-found/$', on_not_found, name='error404'),
+    url(r'^study/', include('students.study.urls')),
     url(r'^contest/', include('contest.urls')),
     url(r'^cooler/', include('cooler.urls')),
     url(r'^api/', include('students.api.urls')),

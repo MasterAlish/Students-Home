@@ -1,0 +1,50 @@
+{% extends 'students/base.html' %}
+{% block head %}
+    <style>
+        .code {
+            color: #357DCE;
+            font-family: monospace;
+            display: block;
+        }
+
+        .tab, .space {
+            display: inline-block;
+            content: "&nbsp;";
+            width: 20px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <h2>{{ title }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for question in questions %}
+            <b><u>Вопрос {{ forloop.counter }}:</u> {{ question.text|safe|linebreaks }}</b>
+
+            {% if question.type == 'single' %}
+                {% for ans in question.random_answers %}
+                    <input type="radio" name="question{{ question.id }}" value="{{ ans.id }}">
+                    <span>{{ ans.text }}</span><br>
+                {% endfor %}
+            {% elif question.type == 'multiple' %}
+                {% for ans in question.random_answers %}
+                    <input type="checkbox" name="question{{ question.id }}" value="{{ ans.id }}">
+                    <span>{{ ans.text }}</span><br>
+                {% endfor %}
+            {% elif question.type == 'text' %}
+                <input style="width: 100%;" type="text"  class="form-control" placeholder="Ваш ответ" name="question{{ question.id }}" required>
+            {% elif question.type == 'bigtext' %}
+                <textarea style="width: 100%;" name="question{{ question.id }}" required  class="form-control" placeholder="Ваш ответ" ></textarea>
+            {% elif question.type == 'task' %}
+                <input style="width: 100%;" type="text" class="form-control" placeholder="Ваш ответ" name="question{{ question.id }}" required>
+            {% endif %}
+
+            <br><br>
+
+        {% endfor %}
+        {% if questions %}
+            <input class="btn btn-small btn-info" type="submit" value="Отправить">
+        {% endif %}
+    </form>
+{% endblock %}

@@ -9,6 +9,9 @@ function addClassToInputs(form_id) {
             if (this.type != 'submit' && this.type != 'checkbox')
                 $(this).addClass("form-control");
         });
+        form.find("textarea").each(function () {
+            $(this).addClass("form-control");
+        });
         form.find("select").each(function () {
             $(this).addClass("form-control");
         });
