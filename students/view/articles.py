@@ -1,23 +1,45 @@
+from django.http.response import Http404
+from django.shortcuts import render, redirect
+from django.urls.base import reverse
 from django.views.generic import TemplateView
 
+from students.model.base import Subject
 from students.model.blog import Article
+from students.view.common import user_authorized_to_course
+
+
+class ArticleRedirectView(TemplateView):
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            article = Article.objects.get(pk=kwargs['id'])
+            if not article.private or user_authorized_to_course(request.user, article.course):
+                return redirect(reverse("article", kwargs={'slug': article.slug}))
+        except:
+            pass
+        raise Http404()
 
 
 class ArticleView(TemplateView):
     template_name = "articles/article.html"
-    article = None
 
     def dispatch(self, request, *args, **kwargs):
         try:
-            self.article = Article.objects.get(pk=kwargs['id'])
-            self.article.viewed += 1
-            self.article.save()
-            return super(ArticleView, self).dispatch(request, *args, **kwargs)
+            article = Article.objects.get(slug=kwargs['slug'])
+            if not article.private or user_authorized_to_course(request.user, article.course):
+                article.viewed += 1
+                article.save()
+                return render(request, self.template_name, {'article': article})
         except:
-            self.article = None
-            return
+            pass
+        raise Http404()
 
-    def get_context_data(self, **kwargs):
-        return {
-            'article': self.article
-        }
+
+class SubjectArticlesView(TemplateView):
+    template_name = "articles/subject.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        subject = Subject.objects.get(slug=kwargs['slug'])
+        return render(request, self.template_name, {
+            'articles': subject.public_articles(),
+            'subject': subject
+        })

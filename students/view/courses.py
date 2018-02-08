@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.views.generic import TemplateView
 
 from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalForm, GroupStudentsSelectForm, \
     GroupStudentsInputForm, StudentException
@@ -16,6 +17,7 @@ from students.forms.teaching import GroupForm, SelectGroupForm, LiteratureForm
 from students.mail import StudentsMail
 from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, Resolution, Task, \
     GroupMock, Point, Student, Teacher, Literature
+from students.model.blog import Article
 from students.model.checks import ZipContainsFileConstraint, FileNameConstraint
 from students.view.common import StudentsView, user_authorized_to_course, StudentsAndTeachersView, \
     user_authorized_to_group, TeachersView
@@ -37,6 +39,8 @@ class CourseView(StudentsAndTeachersView):
         course = Course.objects.get(pk=kwargs['id'])
         if user_authorized_to_course(request.user, course):
             self.context['course'] = course
+            exclude_articles = Article.objects.filter(private=True).exclude(course=course)
+            self.context['articles'] = course.subject.all_articles().exclude(pk__in=exclude_articles)
             self.context['new_solutions_count'] = Resolution.objects.filter(mark=0, task__course=course).count()
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")

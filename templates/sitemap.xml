@@ -8,7 +8,7 @@
     </url>
     {% for article in articles %}
         <url>
-            <loc>{{ host }}{% url 'article' article.id %}</loc>
+            <loc>{{ host }}{% url 'article' article.slug %}</loc>
             <lastmod>{{ article.datetime|date:"Y-m-d" }}</lastmod>
             <changefreq>monthly</changefreq>
             <priority>0.8</priority>

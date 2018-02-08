@@ -1,0 +1,43 @@
+{% extends 'students/base.html' %}
+{% load staticfiles my_tags i18n %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/styles/monokai.css' %}"/>
+    <script src="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/highlight.pack.js' %}"></script>
+    <style>
+        code {
+            overflow: scroll;
+            white-space: inherit !important;
+            word-wrap: normal !important;
+        }
+
+        pre {
+            padding: 0px !important;
+            background-color: transparent !important;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>{{ subject.name }}</h1>
+            {% for article in articles %}
+                <div class="article">
+                    <div class="article-date">{{ article.datetime|timesince }} назад</div>
+                    <div class="article-title">
+                        <a href="{% url 'article' article.slug %}">{{ article.title }}</a>
+                    </div>
+                    <div class="article-preview">{{ article.preview|safe }}</div>
+                    <a href="{% url 'article' article.slug %}" class="btn btn-default btn-sm">Читать дальше →</a>
+                    <div class="clearfix"></div>
+                    <div class="article-data">
+                        <span class="fa fa-eye"></span> {{ article.viewed }} <span class="tab"></span>
+                        <span class="fa fa-mobile"></span> {{ article.viewed_mobile }} <span class="tab"></span>
+                        <span class="fa fa-user"></span> {{ article.author.get_full_name }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>hljs.initHighlightingOnLoad();</script>
+{% endblock %}

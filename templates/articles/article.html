@@ -21,8 +21,8 @@
     <div class="article">
         <div class="article-date">{{ article.datetime|timesince }} назад</div>
         <div class="article-title">
-            {% if article.course %}
-                <a href="{% url 'course' article.course.id %}">{{ article.course.name }}</a> →
+            {% if article.course.subject.slug %}
+                <a href="{% url 'subject' article.course.subject.slug %}">{{ article.course.subject.name }}</a> →
             {% endif %}
             {{ article.title }}
         </div>

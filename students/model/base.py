@@ -1,15 +1,17 @@
 # coding=utf-8
 from hashlib import md5
+
 from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
-from django.db import models
 from django.utils import timesince
 from django.utils.translation import ugettext as _
-from polymorphic.models import PolymorphicModel
-from students.model.checks import *
-from students.model.extra import *
+from slugify import slugify
+
 from image.color import random_bright_color
 from image.processing import image_is_big, make_image_small
+from students.model.checks import *
+from students.model.extra import *
+from students.utils.slugs import my_unique_slugify
 
 
 class AvatarMixin:
@@ -72,6 +74,20 @@ class Department(models.Model):
 
 class Subject(models.Model):
     name = models.CharField(max_length=255, verbose_name=_(u"Название"))
+    slug = models.SlugField(max_length=255, unique=True, verbose_name=_(u"Ссылка"), null=True, blank=True)
+
+    def public_articles(self):
+        from students.model.blog import Article
+        return Article.objects.filter(published=True, private=False, course__subject=self)
+
+    def all_articles(self):
+        from students.model.blog import Article
+        return Article.objects.filter(published=True, course__subject=self)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = my_unique_slugify(Subject, self.name)
+        return super(Subject, self).save(*args, **kwargs)
 
     def __unicode__(self):
         return self.name
@@ -250,6 +266,9 @@ class LabTask(Task):
     class Meta:
         verbose_name = u"Лабораторная работа"
         verbose_name_plural = u"Лабораторные работы"
+
+
+
 
 
 class Group(models.Model):

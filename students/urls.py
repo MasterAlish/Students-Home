@@ -9,7 +9,7 @@ from django.contrib.auth.views import login
 from django.views.decorators.csrf import csrf_exempt
 
 from students.view.activity import ActivityView
-from students.view.articles import ArticleView
+from students.view.articles import ArticleView, SubjectArticlesView, ArticleRedirectView
 from students.view.chat import ChatView, NewMessagesView, PostMessageView
 from students.view.courses import CourseView, LectureView, MyGroupView, GroupView, LabTaskView, \
     EmailToCourseStudentsView, MarksView, GiveMedalsView, SetMarksView, ExtraGroupView, ActivateStudentView, \
@@ -97,7 +97,9 @@ urlpatterns = [
     url(r'^activity/$', login_required(ActivityView.as_view()), name='activity'),
     url(r'^student/(?P<id>\d+)/activate/$', login_required(ActivateStudentView.as_view()), name='activate_student'),
 
-    url(r'^article/(?P<id>\d+)$', ArticleView.as_view(), name='article'),
+    url(r'^article/(?P<id>\d+)$', ArticleRedirectView.as_view(), name='old_article'),
+    url(r'^article/(?P<slug>[\d\w_-]+)$', ArticleView.as_view(), name='article'),
+    url(r'^subject/(?P<slug>[\d\w_-]+)/$', SubjectArticlesView.as_view(), name='subject'),
 
     url(r'^todo/act/$', TodoActView.as_view(), name='todo_act'),
 
