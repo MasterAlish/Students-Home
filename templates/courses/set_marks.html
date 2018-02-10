@@ -1,6 +1,8 @@
 {% extends 'students/base.html' %}
-
 {% load staticfiles my_tags i18n %}
+{% block title %}
+    <title>Выставить оценки за "{{ task }}"</title>
+{% endblock %}
 {% block content %}
     <h1>Выставить оценки за "{{ task }}"</h1>
     <div class="lead">

@@ -1,5 +1,8 @@
 {% extends 'students/base.html' %}
 {% load staticfiles my_tags i18n %}
+{% block title %}
+    <title>{{ subject.name }} | Статьи </title>
+{% endblock %}
 {% block head %}
     <link rel="stylesheet" href="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/styles/monokai.css' %}"/>
     <script src="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/highlight.pack.js' %}"></script>

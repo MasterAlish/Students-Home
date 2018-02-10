@@ -1,5 +1,8 @@
 {% extends 'students/base.html' %}
 {% load staticfiles my_tags i18n %}
+{% block title %}
+    <title>Написать сообщение</title>
+{% endblock %}
 {% block head %}
     <script src="{% static 'js/form_controls.js' %}"></script>
     <script>

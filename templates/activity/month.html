@@ -1,6 +1,9 @@
 {% extends 'students/base.html' %}
 
 {% load staticfiles my_tags i18n %}
+{% block title  %}
+    <title>{% trans 'Посещения' %}: {{ activity_user.fullname }} ({{ month_name }} {{ year }})</title>
+{% endblock %}
 {% block content %}
     <style>
         .stats{

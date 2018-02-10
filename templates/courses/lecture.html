@@ -1,6 +1,8 @@
 {% extends 'students/base.html' %}
-
 {% load staticfiles my_tags i18n %}
+{% block title %}
+    <title>Лекция: {{ lecture.title }}</title>
+{% endblock %}
 {% block content %}
     <h1>{{ lecture.title }}</h1>
     <div class="lead">

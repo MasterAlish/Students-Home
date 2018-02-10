@@ -4,7 +4,9 @@
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
     <meta charset="utf-8">
     <link rel="shortcut icon" href="{% static 'ico/favicon.ico' %}">
-    <title>{% trans 'Универские курсы' %}</title>
+    {% block title %}
+        <title>{% trans 'Универские курсы' %}</title>
+    {% endblock %}
     <meta name="keyword" content="Универские курсы">
     <meta name="description" content="{% trans 'Универские курсы' %}">
     <script src="{% static 'js/students/jquery-2.1.1.js' %}" type="application/javascript"></script>
