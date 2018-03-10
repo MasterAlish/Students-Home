@@ -40,7 +40,10 @@ class CourseView(StudentsAndTeachersView):
         if user_authorized_to_course(request.user, course):
             self.context['course'] = course
             exclude_articles = Article.objects.filter(private=True).exclude(course=course)
-            self.context['articles'] = course.subject.all_articles().exclude(pk__in=exclude_articles)
+            if course.subject:
+                self.context['articles'] = course.subject.all_articles().exclude(pk__in=exclude_articles)
+            else:
+                self.context['articles'] = course.articles.all()
             self.context['new_solutions_count'] = Resolution.objects.filter(mark=0, task__course=course).count()
             return render(request, self.template_name, self.context)
         raise Exception(u"User is not authenticated")
@@ -164,6 +167,14 @@ class ActivateStudentView(TeachersView):
         student.user.save()
         if student.user.is_active:
             StudentsMail().report_account_activated(student, request)
+        return redirect(reverse("group", kwargs={'id': student.group_id}))
+
+
+class DeleteStudentView(TeachersView):
+
+    def handle(self, request, *args, **kwargs):
+        student = Student.objects.get(pk=kwargs['id'])
+        student.user.delete()
         return redirect(reverse("group", kwargs={'id': student.group_id}))
 
 

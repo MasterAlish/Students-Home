@@ -14,11 +14,11 @@ class StudentsMail(object):
         :type file_resolution: students.model.base.FileResolution
         """
         subject = u"Новая лабораторка от %s" % unicode(file_resolution.student)
-        link = unicode(request.META["HTTP_ORIGIN"] + reverse("check_resolution", kwargs={'id': file_resolution.id}))
-        message = u"Новая лабораторка от %s\n\n\"%s\"\n\nПерейдите по ссылке чтобы проверить решение %s" % \
+        link = unicode(request.META["HTTP_HOST"] + reverse("check_resolution", kwargs={'id': file_resolution.id}))
+        message = u"Новая лабораторка от %s\n\n\"%s\"\n\nПерейдите по ссылке чтобы проверить решение http://%s" % \
                   (file_resolution.student, file_resolution.comment, link)
         message_html = u"Новая лабораторка от %s<br><br>\"%s\"<br><br>Перейдите по ссылке чтобы проверить решение " \
-                       u"<a href=\"%s\">Перейти</a>" % \
+                       u"<a href=\"http://%s\">Перейти</a>" % \
                        (file_resolution.student, file_resolution.comment, link)
         recipients = map(lambda t: t.user.email, file_resolution.task.course.teachers.all())
         self.save_mail(subject, message, message_html, recipients)
@@ -27,12 +27,12 @@ class StudentsMail(object):
         """
         :type homework: students.model.base.HomeworkSolution
         """
-        link = unicode(request.META["HTTP_ORIGIN"] + reverse("homeworks", kwargs={'id': homework.course.id}))
+        link = unicode(request.META["HTTP_HOST"] + reverse("homeworks", kwargs={'id': homework.course.id}))
         subject = u"Домашнее задание от %s" % unicode(homework.student)
-        message = u"Домашнее задание от %s\n\n\"%s\"\n\nПерейдите по ссылке чтобы скачать решение %s" % \
+        message = u"Домашнее задание от %s\n\n\"%s\"\n\nПерейдите по ссылке чтобы скачать решение http://%s" % \
                   (homework.student, homework.comment, link)
         message_html = u"Домашнее задание от %s<br><br>\"%s\"<br><br>Перейдите по ссылке чтобы скачать решение " \
-                       u"<a href=\"%s\">Перейти</a>" % \
+                       u"<a href=\"http://%s\">Перейти</a>" % \
                        (homework.student, homework.comment, link)
         recipients = map(lambda t: t.user.email, homework.course.teachers.all())
         self.save_mail(subject, message, message_html, recipients)
@@ -58,8 +58,8 @@ class StudentsMail(object):
 
     def student_registered(self, request, student):
         subject = u"Зарегистрировался новый студент: %s" % unicode(student)
-        link = unicode(request.META["HTTP_ORIGIN"] + reverse("group", kwargs={'id': student.group_id}))
-        message = u"Перейдите по ссылку чтобы активировать аккаунт студента %s " % link
+        link = unicode(request.META["HTTP_HOST"] + reverse("group", kwargs={'id': student.group_id}))
+        message = u"Перейдите по ссылку чтобы активировать аккаунт студента http://%s " % link
         recipients = []
         for course in student.group.courses.all():
             for teacher in course.teachers.all():
@@ -68,8 +68,8 @@ class StudentsMail(object):
 
     def teacher_registered(self, request, teacher):
         subject = u"Зарегистрировался новый учитель: %s" % unicode(teacher)
-        message = u"Перейдите по ссылку чтобы активировать аккаунт учителя %s " % unicode(
-            request.META["HTTP_ORIGIN"] + "/admin/students/myuser/" + str(teacher.user.id))
+        message = u"Перейдите по ссылку чтобы активировать аккаунт учителя http://%s " % unicode(
+            request.META["HTTP_HOST"] + "/admin/students/myuser/" + str(teacher.user.id))
         recipients = [settings.EMAIL_ADMIN_EMAIL]
         self.save_mail(subject, message, message, recipients)
 
@@ -87,9 +87,9 @@ class StudentsMail(object):
         :type course: students.model.base.Course
         """
         subject = u"У вас новая медаль!"
-        message = u"Уважаемый, %s, поздравляем вас с новой медалью \"%s\"! Перейдите по ссылке чтобы просмотреть свои медали %s " % \
+        message = u"Уважаемый, %s, поздравляем вас с новой медалью \"%s\"! Перейдите по ссылке чтобы просмотреть свои медали http://%s " % \
                   (student.user.get_full_name(), medal.name,
-                   unicode(request.META["HTTP_ORIGIN"] + reverse('marks', kwargs={'id': course.id})))
+                   unicode(request.META["HTTP_HOST"] + reverse('marks', kwargs={'id': course.id})))
         recipients = [student.user.email]
         self.save_mail(subject, message, message, recipients)
 

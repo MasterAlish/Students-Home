@@ -26,8 +26,9 @@ class ArticleView(TemplateView):
         try:
             article = Article.objects.get(slug=kwargs['slug'])
             if not article.private or user_authorized_to_course(request.user, article.course):
-                article.viewed += 1
-                article.save()
+                if request.user != article.author:
+                    article.viewed += 1
+                    article.save()
                 return render(request, self.template_name, {'article': article})
         except:
             pass

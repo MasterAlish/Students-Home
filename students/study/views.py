@@ -11,6 +11,25 @@ from students.study.forms import QuizScoreForm
 from students.view.common import StudentsAndTeachersView, user_authorized_to_course, TeachersView
 
 
+class QuizListView(TeachersView):
+    template_name = "test/all_quizes.html"
+
+    def get_context_data(self, **kwargs):
+        return {
+            'quizes': Quiz.objects.all()
+        }
+
+
+class QuizView(TeachersView):
+    template_name = "test/quiz.html"
+
+    def get_context_data(self, **kwargs):
+        quiz = Quiz.objects.get(pk=kwargs['id'])
+        return {
+            'quiz': quiz
+        }
+
+
 def get_random_questions(questions, count):
     result = []
     selected = set([])

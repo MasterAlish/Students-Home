@@ -22,6 +22,12 @@ main {
     background-color: #e3e1e5
 }
 
+@media print {
+    .navbar, .footer{
+        display: none;
+    }
+}
+
 .footer a {
     color: #646466 !important;
 }
@@ -213,4 +219,13 @@ span.badge.badge-info{
 
 .btn{
     margin-top: 3px
+}
+
+.deadline {
+    font-size: 12px;
+    color: #887136;
+    margin-left: 10px;
+    border: 1px solid rgba(136, 120, 68, 0.33);
+    padding: 0px 10px;
+    border-radius: 5px;
 }

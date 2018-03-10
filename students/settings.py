@@ -150,10 +150,17 @@ CKEDITOR_CONFIGS = {
         'toolbar': [['Font', 'FontSize', 'TextColor', 'BGColor'], ['Bold', 'Italic', 'Underline', 'Strike'],
                     ['NumberedList', 'BulletedList'],
                     ['Link', 'Unlink'],
+                    ['CodeSnippet'],
                     ['Smiley', 'Image']],
         'height': 250,
         'width': '100%',
         'toolbarCanCollapse': False,
+        'extraPlugins': ','.join(
+            [
+                'codesnippet',
+                'widget',
+                'dialog',
+            ]),
     }
 }
 

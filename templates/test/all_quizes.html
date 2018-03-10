@@ -1,0 +1,13 @@
+{% extends 'students/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <ul>
+            {% for quiz in quizes %}
+                <li>
+                    <a href="{% url 'quiz' quiz.id %}">{{ quiz.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

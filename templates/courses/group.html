@@ -48,6 +48,7 @@
                                 <a href="{% url 'activate_student' student.id %}" class="btn btn-xs btn-danger">Деактивировать</a>
                             {% else %}
                                 <a href="{% url 'activate_student' student.id %}" class="btn btn-xs btn-success">Активировать</a>
+                                <a href="{% url 'delete_student' student.id %}" class="btn btn-xs btn-danger delete-button">Удалить</a>
                             {% endif %}
                         </td>
                     </tr>

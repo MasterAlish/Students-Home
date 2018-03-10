@@ -1,0 +1,22 @@
+{% extends 'students/base.html' %}
+
+{% block content %}
+    <style>
+    .code{
+        display: inline;
+        color: blue;
+    }
+    </style>
+    <div class="container">
+        <h2>{{ quiz.name }}</h2>
+        {% for question in quiz.questions.all %}
+            <b>{{ forloop.counter }}. {{ question.text|safe }}</b>
+            <ul type="a">
+                {% for answer in question.answers.all %}
+                    <li>{{ answer.text }}</li>
+                {% endfor %}
+            </ul>
+            <br>
+        {% endfor %}
+    </div>
+{% endblock %}
