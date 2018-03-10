@@ -14,4 +14,17 @@
             <priority>0.8</priority>
         </url>
     {% endfor %}
+    <url>
+        <loc>{{ host }}{% url 'puzzles' %}</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    {% for puzzle in puzzles %}
+        <url>
+            <loc>{{ host }}{% url 'puzzle' puzzle.slug %}</loc>
+            <lastmod>{{ puzzle.datetime|date:"Y-m-d" }}</lastmod>
+            <changefreq>monthly</changefreq>
+            <priority>0.8</priority>
+        </url>
+    {% endfor %}
 </urlset>

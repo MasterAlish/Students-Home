@@ -1,0 +1,29 @@
+{% extends 'students/base.html' %}
+{% load i18n staticfiles %}
+{% block title %}
+    <title>Головоломки</title>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="jumbotron">
+                <h2>Головоломки</h2>
+                <p>
+                    Здесь буду собирать очень разные, интересные головоломки, многие из которых используется в
+                    собеседованиях в разные IT компании мира. Если знаете хорошую головоломку, можете добавить ее
+                    сюда.
+                </p>
+                <p>
+                    <b>Есть одно важное правило!</b> Ответы или способы решения нельзя сообщать другим, чтобы
+                    головоломки не теряли свой дух и оставались интересными.
+                </p>
+            </div>
+
+            <ol style="font-size: 20px;">
+                {% for puzzle in puzzles %}
+                    <li><a href="{% url 'puzzle' puzzle.slug %}">{{ puzzle.title }}</a></li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+{% endblock %}

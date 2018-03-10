@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{% static 'css/students/students.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/students/font-awesome.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}" type="text/css">
-{#    <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">#}
+    {#    <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">#}
     <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}">
     {% block head %}
 
@@ -72,8 +72,17 @@
                     {% endif %}
                     {% if user.is_authenticated %}
                         <li><a href="{% url 'contests' %}">Контест</a></li>
-                        <li><a href="{% url 'cooler' %}">Ништяки</a></li>
                     {% endif %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">Ништяки<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'puzzles' %}">Головоломки</a></li>
+                            {% if user.is_authenticated %}
+                                <li><a href="{% url 'cooler' %}">Ништяки</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
@@ -122,7 +131,7 @@
 <footer class="footer">
     <div class="container">
         <p style="float: left;">Designed and built for students by Alisher</p>
-        <p style="float: right;"><a href="https://freedns.afraid.org/">Free DNS</a></p>
+        <p style="float: right;"></p>
     </div>
 </footer>
 </body>

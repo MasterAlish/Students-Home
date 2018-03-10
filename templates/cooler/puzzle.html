@@ -1,0 +1,20 @@
+{% extends 'students/base.html' %}
+{% load i18n staticfiles %}
+{% block title %}
+    <title>Головоломка: {{ puzzle.title }}</title>
+{% endblock %}
+{% block content %}
+    <div class="article">
+        <div class="article-date">{{ puzzle.datetime|timesince }} назад</div>
+        <div class="article-title">
+            <a href="{% url 'puzzles' %}">Головоломки</a> →
+            {{ puzzle.title }}
+        </div>
+        {{ puzzle.body|safe }}
+        <div class="clearfix"></div>
+        <div class="article-data">
+            <span class="fa fa-eye"></span> {{ puzzle.viewed }} <span class="tab"></span>
+            <span class="fa fa-user"></span> {{ puzzle.added.get_full_name }}
+        </div>
+    </div>
+{% endblock %}

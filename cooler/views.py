@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
-from cooler.models import CoolSnippet
+from cooler.models import CoolSnippet, Puzzle
 
 
 class CoolerView(TemplateView):
@@ -23,3 +23,23 @@ class SoldierAndTankView(TemplateView):
                 else:
                     CoolSnippet.objects.create(user=request.user, code=code, task=task)
         return render(request, self.template_name, context)
+
+
+class PuzzlesView(TemplateView):
+    template_name = "cooler/puzzles.html"
+
+    def get_context_data(self, **kwargs):
+        return {
+            'puzzles': Puzzle.objects.all()
+        }
+
+
+class PuzzleView(TemplateView):
+    template_name = "cooler/puzzle.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        puzzle = Puzzle.objects.get(slug=kwargs['slug'])
+        if request.user != puzzle.added:
+            puzzle.viewed += 1
+            puzzle.save()
+        return render(request, self.template_name, {'puzzle': puzzle})
