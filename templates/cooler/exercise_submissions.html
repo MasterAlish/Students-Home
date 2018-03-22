@@ -1,0 +1,43 @@
+{% extends 'students/base.html' %}
+{% load i18n staticfiles my_tags %}
+{% block title %}
+    <title>Онлайн статус</title>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Онлайн статус</h2><br>
+
+            <a class="btn btn-sm btn-success" href="{% url 'exercises' %}">Все упражнения</a><br><br>
+
+            <table class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Упражнение</th>
+                        <th>Отправил</th>
+                        <th>Результат</th>
+                        <th>Время</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for submission in submissions %}
+                        <tr>
+                            <td>{{ submission.id }}</td>
+                            <td>
+                                <a href="{% url 'exercise' submission.exercise.id %}">{{ submission.exercise.id }}. {{ submission.exercise }}</a>
+                            </td>
+                            <td>{{ submission.user.get_full_name }}</td>
+                            {% if submission.accepted %}
+                                <td style="color: #41c848;">{{ submission.message }}</td>
+                            {% else %}
+                                <td style="color: #d20000;">{{ submission.message }}</td>
+                            {% endif %}
+                            <td>{{ submission.datetime|date:"d.m.Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

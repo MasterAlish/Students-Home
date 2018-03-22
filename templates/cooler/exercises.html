@@ -1,0 +1,30 @@
+{% extends 'students/base.html' %}
+{% load i18n staticfiles %}
+{% block title %}
+    <title>Упражнения по программированию</title>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Упражнения по программированию</h2> <br>
+            <a class="btn btn-sm btn-info" href="{% url 'exercise_submissions' %}">Онлайн статус</a><br><br>
+
+            <table class="table table-bordered table-condensed table-hover">
+                <tr>
+                    <th>№</th>
+                    <th>Название</th>
+                    <th>Решили</th>
+                    <th>Отправили</th>
+                </tr>
+                {% for exercise in exercises %}
+                    <tr {% if exercise.id in solved %}class="bg-success success" {% endif %}>
+                        <td>{{ exercise.id }}</td>
+                        <td><a href="{% url 'exercise' exercise.id %}">{{ exercise.id }}. {{ exercise.title }}</a></td>
+                        <td>{{ exercise.accepted }}</td>
+                        <td>{{ exercise.submitted }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

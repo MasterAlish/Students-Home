@@ -1,0 +1,30 @@
+{% extends 'students/base.html' %}
+{% load i18n staticfiles %}
+{% block title %}
+    <title>Упражнение: {{ exercise.title }}</title>
+{% endblock %}
+{% block head %}
+    <script src="{% static 'js/form_controls.js' %}"></script>
+    <script>
+        addClassToInputs("myform");
+    </script>
+{% endblock %}
+{% block content %}
+    <div class="article">
+        <div class="article-date">{{ exercise.datetime|date:"d.m.Y" }}</div>
+        <div class="article-title">{{ exercise.title }}</div>
+
+        {{ exercise.body|safe }}
+
+        <div class="clearfix"></div>
+        <br>
+        <br>
+
+        <h4>Отправить на проверку</h4>
+        <form method="post" id="myform">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" class="btn btn-sm btn-success" value="Отправить">
+        </form>
+    </div>
+{% endblock %}

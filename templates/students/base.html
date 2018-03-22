@@ -80,6 +80,7 @@
                             <li><a href="{% url 'puzzles' %}">Головоломки</a></li>
                             {% if user.is_authenticated %}
                                 <li><a href="{% url 'cooler' %}">Ништяки</a></li>
+                                <li><a href="{% url 'exercises' %}">Упражнения</a></li>
                             {% endif %}
                         </ul>
                     </li>

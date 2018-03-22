@@ -2,7 +2,6 @@
 
 from django.core.management import BaseCommand
 
-from students.management.commands.tests import Type
 from students.models import MyUser
 
 

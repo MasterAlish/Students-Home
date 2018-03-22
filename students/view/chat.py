@@ -1,8 +1,5 @@
 # coding=utf-8
 import json
-from httplib import HTTPResponse
-
-from datetime import datetime, timedelta
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
