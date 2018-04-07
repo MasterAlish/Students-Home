@@ -229,3 +229,33 @@ span.badge.badge-info{
     padding: 0px 10px;
     border-radius: 5px;
 }
+
+.must-know-group-item{
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.must-know-item{
+    color: red;
+}
+
+.must-know-item.done{
+    color: #35a136;
+}
+
+.must-know-item .fa{
+    cursor: pointer;
+}
+
+.must-knows-progress{
+    color: red;
+}
+
+.must-knows-progress .done{
+    color: #35a136;
+    font-size: larger;
+}
+
+.margin-left-20{
+    margin-left: 20px;
+}

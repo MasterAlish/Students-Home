@@ -1,4 +1,5 @@
 # coding=utf-8
+import json
 import logging
 import os
 import shutil
@@ -7,7 +8,9 @@ import zipfile
 from django.conf import settings
 from django.contrib import messages
 from django.db.models import Sum
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.generic import TemplateView
 
@@ -16,7 +19,7 @@ from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalFor
 from students.forms.teaching import GroupForm, SelectGroupForm, LiteratureForm
 from students.mail import StudentsMail
 from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, Resolution, Task, \
-    GroupMock, Point, Student, Teacher, Literature
+    GroupMock, Point, Student, Teacher, Literature, MustKnow, AlreadyKnow, MustKnowGroup
 from students.model.blog import Article
 from students.model.checks import ZipContainsFileConstraint, FileNameConstraint
 from students.view.common import StudentsView, user_authorized_to_course, StudentsAndTeachersView, \
@@ -131,7 +134,7 @@ class LabTaskView(StudentsAndTeachersView):
             zip_ref.extractall(labpath)
             zip_ref.close()
         except Exception as e:
-            print "Error: "+repr(e)
+            print "Error: " + repr(e)
         lab_url = os.path.join(settings.MEDIA_URL, "sites", labname, username, "index.html")
         return lab_url
 
@@ -160,7 +163,6 @@ class GroupView(StudentsAndTeachersView):
 
 
 class ActivateStudentView(TeachersView):
-
     def handle(self, request, *args, **kwargs):
         student = Student.objects.get(pk=kwargs['id'])
         student.user.is_active = not student.user.is_active
@@ -171,7 +173,6 @@ class ActivateStudentView(TeachersView):
 
 
 class DeleteStudentView(TeachersView):
-
     def handle(self, request, *args, **kwargs):
         student = Student.objects.get(pk=kwargs['id'])
         student.user.delete()
@@ -179,7 +180,6 @@ class DeleteStudentView(TeachersView):
 
 
 class ActivateTeacherView(TeachersView):
-
     def handle(self, request, *args, **kwargs):
         teacher = Teacher.objects.get(pk=kwargs['id'])
         teacher.user.is_active = not teacher.user.is_active
@@ -192,7 +192,7 @@ class ExtraGroupView(StudentsAndTeachersView):
 
     def handle(self, request, *args, **kwargs):
         course = Course.objects.get(pk=kwargs['course_id'])
-        group = GroupMock(u"Доп. группа: "+course.name, course, course.extra_students)
+        group = GroupMock(u"Доп. группа: " + course.name, course, course.extra_students)
         if user_authorized_to_course(request.user, course):
             self.context['group'] = group
             return render(request, self.template_name, self.context)
@@ -200,7 +200,6 @@ class ExtraGroupView(StudentsAndTeachersView):
 
 
 class MarksMixin(object):
-
     def map_resolutions(self, resolutions):
         """
         :type resolutions: list of students.base.model.Resolution
@@ -302,7 +301,8 @@ class GiveMedalsView(TeachersView):
                         for student in selected_students:
                             StudentMedal(student=student, course=course, medal=medal).save()
                             StudentsMail().inform_about_new_medal(student, medal, course, request)
-                        messages.success(request, u"Медаль \"%s\" успешна выдана %d студентам" % (medal.name, len(selected_students)))
+                        messages.success(request, u"Медаль \"%s\" успешна выдана %d студентам" % (
+                        medal.name, len(selected_students)))
                         return redirect(reverse("course", kwargs={'id': course.id}))
             self.context['medal_form'] = medal_form
             self.context['group_forms'] = group_forms
@@ -452,3 +452,65 @@ class DeleteLiteratureView(TeachersView):
             raise Exception(u"User is not authorized")
         literature.delete()
         return redirect(reverse("literature", kwargs={'id': course.id}))
+
+
+class MustKnowsView(StudentsAndTeachersView):
+    template_name = "courses/must_knows.html"
+
+    def handle(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['id'])
+        if course and not user_authorized_to_course(request.user, course):
+            raise Exception(u"User is not authorized")
+
+        context = {
+            'course': course,
+            'total_must_knows': MustKnow.objects.filter(group__course=course).count(),
+            'already_know': [x[0] for x in request.user.i_know.filter(must_know__group__course=course).values_list("must_know__id")]
+        }
+        return render(request, self.template_name, context)
+
+
+class MustKnowToggleView(StudentsAndTeachersView):
+    def handle(self, request, *args, **kwargs):
+        must_know = MustKnow.objects.get(pk=kwargs['id'])
+        if not user_authorized_to_course(request.user, must_know.group.course):
+            raise Exception(u"User is not authorized")
+        done = True
+        if AlreadyKnow.objects.filter(user=request.user, must_know=must_know).exists():
+            AlreadyKnow.objects.filter(user=request.user, must_know=must_know).delete()
+            done = False
+        else:
+            AlreadyKnow(user=request.user, must_know=must_know).save()
+
+        return JsonResponse({'done': done})
+
+
+class MustKnowAddView(StudentsAndTeachersView):
+    template_name = "blocks/must_know_item.html"
+
+    def handle(self, request, *args, **kwargs):
+        must_know_group = MustKnowGroup.objects.get(pk=kwargs['group_id'])
+        if not user_authorized_to_course(request.user, must_know_group.course):
+            return HttpResponse()
+        name = request.GET.get("name", "").strip()
+        if name:
+            item = MustKnow(group=must_know_group, text=name)
+            item.save()
+
+            return render(request, self.template_name, {'item': item})
+        return HttpResponse()
+
+
+class MustKnowActionView(StudentsAndTeachersView):
+
+    def handle(self, request, *args, **kwargs):
+        must_know = MustKnow.objects.get(pk=kwargs['id'])
+        if not user_authorized_to_course(request.user, must_know.group.course):
+            return HttpResponse()
+        action = request.GET.get("action")
+        if action == "up":
+            must_know.up()
+        elif action == "down":
+            must_know.down()
+
+        return HttpResponse()

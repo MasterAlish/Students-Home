@@ -1,0 +1,7 @@
+<div class="must-know-item" data-url="{% url 'toggle_must_know' item.id %}"
+data-action-url="{% url 'must_know_action' item.id %}">
+    <i class="item-check fa fa-square-o"></i> {{ item.text }}
+    <a href="#" class="up"><i class="margin-left-20 fa fa-arrow-circle-up"></i></a>
+    <a href="#" class="down"><i class="fa fa-arrow-circle-down"></i></a>
+    <a target="_blank" href="/admin/students/mustknow/{{ item.id }}/change/"><i class="fa fa-pencil-square"></i></a>
+</div>

@@ -1,0 +1,74 @@
+{% extends 'students/base.html' %}
+{% load staticfiles my_tags i18n %}
+{% block title %}
+    <title>{{ course.name }} {{ course.year }}</title>
+{% endblock %}
+{% block head %}
+    <script src="{% static 'js/mustknow.js' %}"></script>
+{% endblock %}
+{% block content %}
+    <h1>{{ course.name }}</h1>
+    <div class="lead">
+        {{ course.get_semester_display }} семестр {{ course.year }} года <br>
+        Преподаватели:
+        {% for teacher in course.teachers.all %}
+            <a href="{% url 'teacher' teacher.id %}">
+                {{ teacher.user.get_full_name }}
+            </a>
+            {% if not forloop.last %},{% endif %}
+        {% endfor %}
+    </div>
+    <div>
+        <h4>
+            Достижения по курсу:
+            <span class="must-knows-progress">
+                <span class="done">{{ already_know|length }}</span> / <span class="total">{{ total_must_knows }}</span>
+            </span>
+        </h4>
+        <div>
+
+            <form id="add_group" data-course-id="{{ course.id }}">
+                <input type="text" placeholder="Новая группа">
+                <input type="submit" class="btn btn-info btn-xs" value="Добавить">
+            </form>
+            {% for group in course.must_know_groups.all %}
+                <div class="must-know-group-item">
+                    <i class="fa fa-angle-double-right"></i> {{ group.name }}
+                    {% if is_teacher %}
+                        <a href="#"><i class="margin-left-20 fa fa-arrow-circle-up"></i></a>
+                        <a href="#"><i class="fa fa-arrow-circle-down"></i></a>
+                        <a target="_blank" href="/admin/students/mustknowgroup/{{ group.id }}/change/"><i class="fa fa-pencil-square"></i></a>
+                    {% endif %}
+                </div>
+                {% for item in group.items.all %}
+                    {% if item.id in already_know %}
+                        <div class="must-know-item done" data-url="{% url 'toggle_must_know' item.id %}"
+                        data-action-url="{% url 'must_know_action' item.id %}">
+                            <i class="item-check fa fa-check-square-o"></i> {{ item.text }}
+                            {% if is_teacher %}
+                                <a href="#" class="up"><i class="margin-left-20 fa fa-arrow-circle-up"></i></a>
+                                <a href="#" class="down"><i class="fa fa-arrow-circle-down"></i></a>
+                                <a target="_blank" href="/admin/students/mustknow/{{ item.id }}/change/"><i class="fa fa-pencil-square"></i></a>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="must-know-item" data-url="{% url 'toggle_must_know' item.id %}"
+                        data-action-url="{% url 'must_know_action' item.id %}">
+                            <i class="item-check fa fa-square-o"></i> {{ item.text }}
+                            {% if is_teacher %}
+                                <a href="#" class="up"><i class="margin-left-20 fa fa-arrow-circle-up"></i></a>
+                                <a href="#" class="down"><i class="fa fa-arrow-circle-down"></i></a>
+                                <a target="_blank" href="/admin/students/mustknow/{{ item.id }}/change/"><i class="fa fa-pencil-square"></i></a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <form class="add_item" data-url="{% url 'must_know_add' group.id %}">
+                    <input id="item_name" placeholder="Новое знание">
+                    <input type="submit" class="btn btn-info btn-xs" value="Добавить">
+                </form>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

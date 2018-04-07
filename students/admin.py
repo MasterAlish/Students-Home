@@ -6,7 +6,8 @@ from django.contrib.auth.models import Group as UserGroup
 
 from students.model.base import Teacher, Student, Course, Group as StudentGroup, Lecture, ChatMessage, \
     Medal, StudentMedal, LabTask, Task, Resolution, FileResolution, UserActivity, ExtraStudent, Todo, Point, \
-    HomeWorkSolution, University, Department, Mail, Quiz, QuizAnswer, QuizQuestion, QuizResult, Subject
+    HomeWorkSolution, University, Department, Mail, Quiz, QuizAnswer, QuizQuestion, QuizResult, Subject, MustKnowGroup, \
+    MustKnow, AlreadyKnow
 from students.model.blog import Article
 from students.model.checks import FileSizeConstraint, FileNameConstraint, ZipContainsFileConstraint, ZipFileConstraint
 from students.model.extra import Feedback
@@ -141,6 +142,9 @@ admin.site.register(UserActivity)
 admin.site.register(Article)
 admin.site.register(ExtraStudent)
 admin.site.register(Todo)
+admin.site.register(MustKnowGroup)
+admin.site.register(MustKnow)
+admin.site.register(AlreadyKnow)
 admin.site.register(Point)
 admin.site.register(HomeWorkSolution, HomeWorkSolutionAdmin)
 admin.site.register(Feedback, FeedbackAdmin)

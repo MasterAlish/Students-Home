@@ -49,6 +49,7 @@
     </div>
     <div>
         {{ course.description|safe }}
+        <a class="btn btn-xs btn-warning" href="{% url 'must_knows' course.id %}">Что я буду знать?</a>
     </div>
 
     <div>

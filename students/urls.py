@@ -13,7 +13,8 @@ from students.view.articles import ArticleView, SubjectArticlesView, ArticleRedi
 from students.view.chat import ChatView, NewMessagesView, PostMessageView
 from students.view.courses import CourseView, LectureView, MyGroupView, GroupView, LabTaskView, \
     EmailToCourseStudentsView, MarksView, GiveMedalsView, SetMarksView, ExtraGroupView, ActivateStudentView, \
-    CreateGroupViewView, LiteratureView, EditLiteratureView, AddLiteratureView, DeleteLiteratureView, DeleteStudentView
+    CreateGroupViewView, LiteratureView, EditLiteratureView, AddLiteratureView, DeleteLiteratureView, DeleteStudentView, \
+    MustKnowsView, MustKnowToggleView, MustKnowAddView, MustKnowActionView
 from students.view.homework import UploadHomeWorkView
 from students.view.profile import TeacherGroupsView, TeacherView, StudentView, TeachersListView
 from students.view.auth import HomeView, on_error, on_not_found, auth_logout, \
@@ -60,6 +61,11 @@ urlpatterns = [
     url(r'^courses/new$', login_required(CourseFormView.as_view()), name='add_course'),
     url(r'^courses/(?P<course_id>\d+)/edit$', login_required(CourseFormView.as_view()), name='edit_course'),
     url(r'^courses/(?P<id>\d+)/action', login_required(CourseActionView.as_view()), name='course_action'),
+
+    url(r'^courses/(?P<id>\d+)/must_knows/', login_required(MustKnowsView.as_view()), name='must_knows'),
+    url(r'^must_knows/(?P<id>\d+)/toggle/', login_required(MustKnowToggleView.as_view()), name="toggle_must_know"),
+    url(r'^must_knows/(?P<group_id>\d+)/add/', login_required(MustKnowAddView.as_view()), name="must_know_add"),
+    url(r'^must_knows/(?P<id>\d+)/action/', login_required(MustKnowActionView.as_view()), name="must_know_action"),
 
     url(r'^course/(?P<id>\d+)/lectures/new$', login_required(LectureFormView.as_view()), name='add_lecture'),
     url(r'^lectures/(?P<lecture_id>\d+)/edit$', login_required(LectureFormView.as_view()), name='edit_lecture'),

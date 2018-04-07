@@ -159,6 +159,109 @@ class Course(models.Model):
         return groups
 
 
+class OrderedModel(models.Model):
+    order = models.FloatField(default=0, verbose_name=_(u"Порядок"))
+
+    def save(self, *args, **kwargs):
+        if self.order == 0:
+            if self.__class__.objects.count() > 0:
+                self.order = self.__class__.objects.all().last().order + 0.1
+            else:
+                self.order = 0.1
+        return super(OrderedModel, self).save(*args, **kwargs)
+
+    def up(self):
+        prevs = self.__class__.objects.filter(order__lt=self.order)
+        if prevs.count() > 0:
+            previous = prevs.last()
+            self.order, previous.order = previous.order, self.order
+            self.save()
+            previous.save()
+
+    def down(self):
+        nexts = self.__class__.objects.filter(order__gt=self.order)
+        if nexts.count() > 0:
+            next = nexts.first()
+            self.order, next.order = next.order, self.order
+            self.save()
+            next.save()
+
+    class Meta:
+        ordering = ['order']
+        abstract = True
+
+
+class MustKnowGroup(OrderedModel):
+    course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name="must_know_groups")
+    name = models.CharField(max_length=100, verbose_name=_(u"Группа знаний"))
+
+    def __unicode__(self):
+        return self.name
+
+    def up(self):
+        prevs = MustKnowGroup.objects.filter(order__lt=self.order, course=self.course)
+        if prevs.count() > 0:
+            previous = prevs.last()
+            self.order, previous.order = previous.order, self.order
+            self.save()
+            previous.save()
+
+    def down(self):
+        nexts = MustKnowGroup.objects.filter(order__gt=self.order, course=self.course)
+        if nexts.count() > 0:
+            next = nexts.first()
+            self.order, next.order = next.order, self.order
+            self.save()
+            next.save()
+
+    class Meta:
+        verbose_name = u"Группа знаний курса"
+        verbose_name_plural = u"Группы знаний курса"
+        ordering = ['order']
+
+
+class MustKnow(OrderedModel):
+    group = models.ForeignKey(MustKnowGroup, verbose_name=_(u"Группа"), related_name="items")
+    text = models.CharField(max_length=255, verbose_name=_(u"Что должен знать студент?"))
+
+    def __unicode__(self):
+        return self.text
+
+    class Meta:
+        verbose_name = u"То, что должен знать студент"
+        verbose_name_plural = u"То, что должен знать студент"
+        ordering = ['order']
+
+    def up(self):
+        prevs = MustKnow.objects.filter(order__lt=self.order, group=self.group)
+        if prevs.count() > 0:
+            previous = prevs.last()
+            self.order, previous.order = previous.order, self.order
+            self.save()
+            previous.save()
+
+    def down(self):
+        nexts = MustKnow.objects.filter(order__gt=self.order, group=self.group)
+        if nexts.count() > 0:
+            next = nexts.first()
+            self.order, next.order = next.order, self.order
+            self.save()
+            next.save()
+
+
+class AlreadyKnow(models.Model):
+    user = models.ForeignKey(get_user_model(), verbose_name=_(u"Пользователь"), related_name="i_know")
+    datetime = models.DateTimeField(auto_now=True, verbose_name=_(u"Время"))
+    must_know = models.ForeignKey(MustKnow, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.must_know
+
+    class Meta:
+        verbose_name = u"Студент уже знает"
+        verbose_name_plural = u"То, что студент уже знает"
+
+
 class Lecture(models.Model):
     course = models.ForeignKey(Course, verbose_name=_(u"Курс"), related_name='lectures')
     title = models.CharField(max_length=255, verbose_name=_(u"Тема"), null=True, blank=True)
