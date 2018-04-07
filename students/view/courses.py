@@ -22,8 +22,9 @@ from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, R
     GroupMock, Point, Student, Teacher, Literature, MustKnow, AlreadyKnow, MustKnowGroup
 from students.model.blog import Article
 from students.model.checks import ZipContainsFileConstraint, FileNameConstraint
+from students.models import MyUser
 from students.view.common import StudentsView, user_authorized_to_course, StudentsAndTeachersView, \
-    user_authorized_to_group, TeachersView
+    user_authorized_to_group, TeachersView, is_teacher
 from students.view.util import remove_file
 
 
@@ -461,11 +462,33 @@ class MustKnowsView(StudentsAndTeachersView):
         course = Course.objects.get(pk=kwargs['id'])
         if course and not user_authorized_to_course(request.user, course):
             raise Exception(u"User is not authorized")
-
+        if request.POST and is_teacher(request.user):
+            group_name = request.POST.get("name", "").strip()
+            if group_name:
+                MustKnowGroup(course=course, name=group_name).save()
+                return redirect(reverse("must_knows", kwargs={'id': course.id}))
         context = {
+            'selected_user': request.user,
             'course': course,
             'total_must_knows': MustKnow.objects.filter(group__course=course).count(),
             'already_know': [x[0] for x in request.user.i_know.filter(must_know__group__course=course).values_list("must_know__id")]
+        }
+        return render(request, self.template_name, context)
+
+
+class MustKnowOfStudentView(StudentsAndTeachersView):
+    template_name = "courses/must_knows.html"
+
+    def handle(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['course_id'])
+        user = MyUser.objects.get(pk=kwargs['id'])
+        if course and not user_authorized_to_course(request.user, course):
+            raise Exception(u"User is not authorized")
+        context = {
+            'selected_user': user,
+            'course': course,
+            'total_must_knows': MustKnow.objects.filter(group__course=course).count(),
+            'already_know': [x[0] for x in user.i_know.filter(must_know__group__course=course).values_list("must_know__id")]
         }
         return render(request, self.template_name, context)
 
@@ -490,7 +513,7 @@ class MustKnowAddView(StudentsAndTeachersView):
 
     def handle(self, request, *args, **kwargs):
         must_know_group = MustKnowGroup.objects.get(pk=kwargs['group_id'])
-        if not user_authorized_to_course(request.user, must_know_group.course):
+        if not is_teacher(request.user) and not user_authorized_to_course(request.user, must_know_group.course):
             return HttpResponse()
         name = request.GET.get("name", "").strip()
         if name:
@@ -505,7 +528,7 @@ class MustKnowActionView(StudentsAndTeachersView):
 
     def handle(self, request, *args, **kwargs):
         must_know = MustKnow.objects.get(pk=kwargs['id'])
-        if not user_authorized_to_course(request.user, must_know.group.course):
+        if not is_teacher(request.user) and not user_authorized_to_course(request.user, must_know.group.course):
             return HttpResponse()
         action = request.GET.get("action")
         if action == "up":

@@ -51,6 +51,9 @@
                                         <span class="fa fa-calendar"></span>
                                     </a>
                                 {% endif %}
+                                <a href="{% url 'student_knows' course.id student.user_id %}">
+                                    <span class="fa fa-check-square-o"></span>
+                                </a>
                                 <br>
                                     <span class="last-seen">Был(а):
                                         {% if student.user.last_seen %}

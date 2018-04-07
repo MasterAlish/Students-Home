@@ -255,7 +255,7 @@ class AlreadyKnow(models.Model):
     must_know = models.ForeignKey(MustKnow, null=True, blank=True)
 
     def __unicode__(self):
-        return self.must_know
+        return self.must_know.text
 
     class Meta:
         verbose_name = u"Студент уже знает"
