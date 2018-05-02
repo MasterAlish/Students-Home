@@ -31,7 +31,7 @@
                                     {{ group.name }}
                                 </a>
                             </td>
-                            <td>{{ group.students.count }}</td>
+                            <td>{{ group.active_students.count }}</td>
                         </tr>
                     {% endfor %}
                     {% if course.extra_students|length > 0 %}

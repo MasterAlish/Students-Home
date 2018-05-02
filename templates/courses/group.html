@@ -26,7 +26,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for student in group.students.all %}
+                {% for student in group.active_students %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>
@@ -46,6 +46,7 @@
                         <td>
                             {% if student.user.is_active %}
                                 <a href="{% url 'activate_student' student.id %}" class="btn btn-xs btn-danger">Деактивировать</a>
+                                <a href="{% url 'expel_student' student.id %}" class="btn btn-xs btn-warning delete-button">Отчислить</a>
                             {% else %}
                                 <a href="{% url 'activate_student' student.id %}" class="btn btn-xs btn-success">Активировать</a>
                                 <a href="{% url 'delete_student' student.id %}" class="btn btn-xs btn-danger delete-button">Удалить</a>

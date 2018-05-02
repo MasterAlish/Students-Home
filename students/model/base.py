@@ -371,13 +371,13 @@ class LabTask(Task):
         verbose_name_plural = u"Лабораторные работы"
 
 
-
-
-
 class Group(models.Model):
     name = models.CharField(max_length=100, verbose_name=_(u"Название"))
     courses = models.ManyToManyField(Course, blank=True, verbose_name=_(u"Курсы"), related_name="groups")
     department = models.ForeignKey(Department, verbose_name=_(u"Факультет"), null=True, blank=True)
+
+    def active_students(self):
+        return self.students.filter(active=True)
 
     def __unicode__(self):
         return unicode(self.name)
@@ -412,6 +412,7 @@ class Student(models.Model, AvatarMixin):
     user = models.OneToOneField(get_user_model(), related_name="student")
     group = models.ForeignKey(Group, verbose_name=_(u"Группа"), related_name="students")
     color = models.CharField(max_length=20, verbose_name=_(u"Цвет"), default="#ff1493")
+    active = models.BooleanField(default=True, verbose_name=u"Активен")
 
     def __unicode__(self):
         return self.user.get_full_name() + u" " + unicode(self.group)

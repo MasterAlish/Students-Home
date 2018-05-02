@@ -173,6 +173,14 @@ class ActivateStudentView(TeachersView):
         return redirect(reverse("group", kwargs={'id': student.group_id}))
 
 
+class ExpelStudentView(TeachersView):
+    def handle(self, request, *args, **kwargs):
+        student = Student.objects.get(pk=kwargs['id'])
+        student.active = False
+        student.save()
+        return redirect(reverse("group", kwargs={'id': student.group_id}))
+
+
 class DeleteStudentView(TeachersView):
     def handle(self, request, *args, **kwargs):
         student = Student.objects.get(pk=kwargs['id'])

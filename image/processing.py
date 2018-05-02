@@ -6,8 +6,11 @@ from slugify import slugify_unicode, slugify
 
 def image_is_big(media_path, image_len=256):
     infile = os.path.join(settings.MEDIA_ROOT, media_path)
-    im = Image.open(infile)
-    return im.size[0] > image_len or im.size[1] > image_len
+    try:
+        im = Image.open(infile)
+        return im.size[0] > image_len or im.size[1] > image_len
+    except:
+        return False
 
 
 def get_aspect_ratio_size(size, image_len=256):
