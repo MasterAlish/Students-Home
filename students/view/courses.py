@@ -23,6 +23,7 @@ from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, R
 from students.model.blog import Article
 from students.model.checks import ZipContainsFileConstraint, FileNameConstraint
 from students.models import MyUser
+from students.utils.unpacker import unpack_resolution_to_public_dir
 from students.view.common import StudentsView, user_authorized_to_course, StudentsAndTeachersView, \
     user_authorized_to_group, TeachersView, is_teacher
 from students.view.util import remove_file
@@ -85,7 +86,7 @@ class LabTaskView(StudentsAndTeachersView):
                     if valid:
                         try:
                             if self.is_zip_with_html_index_file(labtask):
-                                lab_url = self.unpack_resolution_to_public_dir(form.instance)
+                                lab_url = unpack_resolution_to_public_dir(form.instance)
                                 form.instance.index_file = lab_url
                                 form.instance.save()
                             if self.is_single_html_file(labtask):
@@ -117,27 +118,6 @@ class LabTaskView(StudentsAndTeachersView):
             if not valid:
                 return valid, message
         return True, u""
-
-    def unpack_resolution_to_public_dir(self, resolution):
-        labname = "lab%d" % resolution.task.number
-        username = resolution.student.get_short_name()
-        labpath = os.path.join(settings.MEDIA_ROOT, "sites", labname, username)
-        try:
-            os.makedirs(labpath)
-        except:
-            pass
-        try:
-            shutil.rmtree(labpath)
-        except:
-            pass
-        try:
-            zip_ref = zipfile.ZipFile(resolution.file.path)
-            zip_ref.extractall(labpath)
-            zip_ref.close()
-        except Exception as e:
-            print "Error: " + repr(e)
-        lab_url = os.path.join(settings.MEDIA_URL, "sites", labname, username, "index.html")
-        return lab_url
 
     def is_zip_with_html_index_file(self, labtask):
         for constraint in labtask.constraints.instance_of(ZipContainsFileConstraint):

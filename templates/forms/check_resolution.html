@@ -16,6 +16,13 @@
         {% trans 'Курс' %}: {{ course.name }}<br>
         {% trans 'Лаба' %}: {{ resolution.task.title }}
     </div>
+    <div>
+        {% for medal in resolution.student.medals.all %}
+            <div class="medal">
+                <img src="{{ medal.medal.image.url }}" title="{{ medal.medal.name }}">
+            </div>
+        {% endfor %}
+    </div>
     <div style="margin-top: 10px;" class="panel panel-default">
         <div class="panel-body">
             {% if resolution.file.name %}

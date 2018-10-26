@@ -19,7 +19,7 @@
                 <th>Действия</th>
             </tr>
             {% for homework in homeworks %}
-                <tr>
+                <tr {% if not homework.viewed %}class="info"{% endif %}>
                     <td>{{ forloop.counter }}</td>
                     <td>
                         {{ homework.datetime|date:"d.m.y H:i" }}

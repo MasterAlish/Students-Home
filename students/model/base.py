@@ -527,6 +527,7 @@ class HomeWorkSolution(models.Model):
                             help_text=u"Опишите как вы решили, что использовали и т.п.")
     datetime = models.DateTimeField(verbose_name=_(u"Время"), auto_now_add=True)
     file = models.FileField(verbose_name=_(u"Файл"))
+    viewed = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = u"Решение ДЗ"

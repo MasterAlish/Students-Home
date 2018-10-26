@@ -197,6 +197,9 @@ class HomeworkView(TeachersView):
     def handle(self, request, *args, **kwargs):
         homework = HomeWorkSolution.objects.get(pk=kwargs['id'])
         if user_authorized_to_course(request.user, homework.course):
+            if not homework.viewed:
+                homework.viewed = True
+                homework.save()
             form = MedalForm()
             if request.method == "POST":
                 form = MedalForm(request.POST)

@@ -8,6 +8,13 @@
     <div class="lead">
         {% trans 'Курс' %}: {{ homework.course.name }}
     </div>
+    <div>
+        {% for medal in homework.student.medals.all %}
+            <div class="medal">
+                <img src="{{ medal.medal.image.url }}" title="{{ medal.medal.name }}">
+            </div>
+        {% endfor %}
+    </div>
     <h4>Дата</h4>
     {{ homework.datetime|date:"d.m.Y H:i" }}
 
