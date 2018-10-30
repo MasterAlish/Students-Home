@@ -108,7 +108,7 @@ class ZipContainsFileConstraint(UploadConstraint):
                 not_existing_files.append(file_name)
 
         if len(not_existing_files) > 0:
-            return False, u"В корне архива должны быть следующие файлы %s" % unicode(not_existing_files)
+            return False, unicode(self)
         return True, u""
 
     def __unicode__(self):

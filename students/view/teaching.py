@@ -10,6 +10,7 @@ from students.forms.teaching import LectureForm, LabTaskForm, TaskForm, CourseFo
 from students.mail import StudentsMail
 from students.model.base import Course, Lecture, LabTask, Task, Group, Resolution, HomeWorkSolution, StudentMedal
 from students.model.blog import Article
+from students.model.checks import FileSizeConstraint
 from students.view.common import TeachersView, user_authorized_to_course
 from students.view.courses import GiveMedalsView
 from students.view.util import remove_file
@@ -273,6 +274,7 @@ class LabTaskFormView(TeachersView):
                     if labtask:
                         messages.success(request, u"Лабораторная работа изменена успешно!")
                     else:
+                        FileSizeConstraint(task=form.instance).save()
                         messages.success(request, u"Лабораторная работа добавлена успешно!")
                     return redirect(reverse("course", kwargs={'id': course.id}))
             return render(request, self.template_name,
