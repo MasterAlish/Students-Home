@@ -11,6 +11,10 @@ class CoolerView(TemplateView):
     template_name = "cooler/cooler.html"
 
 
+class SenseiView(TemplateView):
+    template_name = "cooler/sensei.html"
+
+
 class SoldierAndTankView(TemplateView):
     template_name = "cooler/soldier.html"
 

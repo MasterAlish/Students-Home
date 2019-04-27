@@ -389,6 +389,9 @@ class Group(models.Model):
 
 
 class ModelManagerMock(object):
+    def __iter__(self):
+        return iter(self.data)
+
     def __init__(self, data):
         self.data = data
 
@@ -405,6 +408,9 @@ class GroupMock:
         self.name = name
         self.courses = ModelManagerMock([course])
         self.students = ModelManagerMock(students)
+
+    def active_students(self):
+        return self.students
 
 
 class Student(models.Model, AvatarMixin):

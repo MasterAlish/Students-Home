@@ -81,13 +81,13 @@ class GroupStudentsInputForm(Form):
     def __init__(self, group, task):
         super(GroupStudentsInputForm, self).__init__()
         self.group = group
-        for student in group.students.all():
+        for student in group.active_students().all():
             field = forms.CharField(label=student.name, required=False)
             field.initial = self.get_mark_for(student, task)
             self.fields[self.field_name(student)] = field
 
     def set_vals(self, DATA):
-        for student in self.group.students.all():
+        for student in self.group.active_students().all():
             field_name = self.field_name(student)
             value = DATA.get(field_name, None)
             if value:
@@ -95,7 +95,7 @@ class GroupStudentsInputForm(Form):
 
     def get_ints(self, DATA):
         values = {}
-        for student in self.group.students.all():
+        for student in self.group.active_students().all():
             field_name = self.field_name(student)
             value = DATA.get(field_name, None)
             if value:
