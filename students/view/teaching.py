@@ -102,39 +102,6 @@ class LectureFormView(TeachersView):
         raise Exception(u"User is not authorized")
 
 
-class ArticleFormView(TeachersView):
-    template_name = "forms/model_form.html"
-    model = u"статью"
-
-    def handle(self, request, *args, **kwargs):
-        article = None
-        course = None
-        if 'article_id' in kwargs:
-            article = Article.objects.get(pk=kwargs['article_id'])
-            course = article.course
-        if 'id' in kwargs:
-            course = Course.objects.get(pk=kwargs['id'])
-        if user_authorized_to_course(request.user, course):
-            form = ArticleForm(instance=article)
-            if request.method == 'POST':
-                form = ArticleForm(request.POST, request.FILES, instance=article)
-                if form.is_valid():
-                    form.instance.course = course
-                    form.instance.author = request.user
-                    form.instance.save()
-                    if article:
-                        messages.success(request, u"Статья изменена успешно!")
-                    else:
-                        messages.success(request, u"Статья добавлена успешно!")
-                    if request.POST.get("save_and_close", None):
-                        return redirect(reverse("course", kwargs={'id': course.id}))
-                    else:
-                        return redirect(reverse("edit_article", kwargs={'article_id': form.instance.id}))
-            return render(request, self.template_name,
-                          {'course': course, 'form': form, 'instance': article, 'model': self.model})
-        raise Exception(u"User is not authorized")
-
-
 class LectureActionView(TeachersView):
     def handle(self, request, *args, **kwargs):
         lecture = Lecture.objects.get(pk=kwargs['id'])

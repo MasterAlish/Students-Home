@@ -162,9 +162,7 @@
         <div class="col-xs-12">
             <h3>
                 Последние статьи
-                {% if is_teacher %}
-                    <a class="btn btn-xs btn-info" href="{% url 'add_article' course.id %}">{{ 'plus'|fa }}</a>
-                {% endif %}
+                <a class="btn btn-xs btn-info" href="{% url 'add_article' course.id %}">{{ 'plus'|fa }}</a>
             </h3>
             {% for article in articles %}
                 <div class="article">
@@ -175,7 +173,7 @@
 
                     <div class="article-preview">{{ article.preview|safe }}</div>
                     <a href="{% url 'article' article.slug %}" class="btn btn-default btn-sm">Читать дальше →</a>
-                    {% if article.author == user %}
+                    {% if article.author == user or user.is_admin %}
                         <a class="btn btn-sm btn-info" href="{% url 'edit_article' article.id %}">{{ 'pencil'|fa }} Изменить</a>
                     {% endif %}
                     <div class="clearfix"></div>

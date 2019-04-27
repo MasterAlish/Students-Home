@@ -9,7 +9,7 @@ from django.contrib.auth.views import login
 from django.views.decorators.csrf import csrf_exempt
 
 from students.view.activity import ActivityView
-from students.view.articles import ArticleView, SubjectArticlesView, ArticleRedirectView
+from students.view.articles import ArticleView, SubjectArticlesView, ArticleRedirectView, ArticleFormView
 from students.view.chat import ChatView, NewMessagesView, PostMessageView
 from students.view.courses import CourseView, LectureView, MyGroupView, GroupView, LabTaskView, \
     EmailToCourseStudentsView, MarksView, GiveMedalsView, SetMarksView, ExtraGroupView, ActivateStudentView, \
@@ -21,7 +21,7 @@ from students.view.auth import HomeView, on_error, on_not_found, auth_logout, \
     auth_profile, register_student, password_change, user_change, reset_password, register_teacher, LoginAsView
 from students.view.sitemap import SitemapView
 from students.view.teaching import LectureFormView, LectureActionView, LabTaskFormView, LabTaskActionView, \
-    TaskActionView, TaskFormView, CoursesListView, CourseFormView, CourseActionView, ArticleFormView, ResolutionsView, \
+    TaskActionView, TaskFormView, CoursesListView, CourseFormView, CourseActionView, ResolutionsView, \
     CheckResolutionView, HomeworksView, HomeworkView
 from students.view.todo import TodoActView
 

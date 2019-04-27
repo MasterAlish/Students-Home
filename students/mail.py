@@ -37,6 +37,20 @@ class StudentsMail(object):
         recipients = map(lambda t: t.user.email, homework.course.teachers.all())
         self.save_mail(subject, message, message_html, recipients)
 
+    def report_article_added(self, request, article):
+        """
+        :type article: students.model.blog.Article
+        """
+        link = unicode(request.META["HTTP_HOST"] + reverse("article", kwargs={'slug': article.slug}))
+        subject = u"Новая статья от %s" % unicode(article.author.get_full_name())
+        message = u"Новая статья от %s\n\nПерейдите по ссылке http://%s" % \
+                  (article.author.get_full_name(), link)
+        message_html = u"Новая статья от %s<br><br>Перейдите по ссылке " \
+                       u"<a href=\"http://%s\">Перейти</a>" % \
+                       (article.author.get_full_name(), link)
+        recipients = [settings.EMAIL_ADMIN_EMAIL]
+        self.save_mail(subject, message, message_html, recipients)
+
     def inform_students_of_course(self, course, subject, html_text):
         """
         :type course: students.model.base.Course
