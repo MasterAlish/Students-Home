@@ -16,13 +16,14 @@ from django.views.generic import TemplateView
 
 from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalForm, GroupStudentsSelectForm, \
     GroupStudentsInputForm, StudentException
-from students.forms.teaching import GroupForm, SelectGroupForm, LiteratureForm
+from students.forms.teaching import GroupForm, SelectGroupForm, LiteratureForm, AddPointForm
 from students.mail import StudentsMail
 from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, Resolution, Task, \
     GroupMock, Point, Student, Teacher, Literature, MustKnow, AlreadyKnow, MustKnowGroup
 from students.model.blog import Article
 from students.model.checks import ZipContainsFileConstraint, FileNameConstraint
 from students.models import MyUser
+from students.study.points import get_rating
 from students.utils.unpacker import unpack_resolution_to_public_dir
 from students.view.common import StudentsView, user_authorized_to_course, StudentsAndTeachersView, \
     user_authorized_to_group, TeachersView, is_teacher
@@ -223,7 +224,17 @@ class MarksMixin(object):
         xp_by_students = {}
         points_map = Point.objects.filter(course=course).values("student").annotate(xp=Sum("points"))
         for points in points_map:
-            xp_by_students[points['student']] = points['xp']
+            xp_by_students[points['student']] = {
+                "points": points['xp'],
+                "rating": get_rating(points['xp'])
+            }
+        for group in course.groups_with_extra():
+            for student in group.active_students():
+                if student.id not in xp_by_students:
+                    xp_by_students[student.id] = {
+                        "points": 0,
+                        "rating": get_rating(0)
+                    }
         return xp_by_students
 
 
@@ -477,6 +488,35 @@ class MustKnowOfStudentView(StudentsAndTeachersView):
             'course': course,
             'total_must_knows': MustKnow.objects.filter(group__course=course).count(),
             'already_know': [x[0] for x in user.i_know.filter(must_know__group__course=course).values_list("must_know__id")]
+        }
+        return render(request, self.template_name, context)
+
+
+class StudentXPView(StudentsAndTeachersView):
+    template_name = "courses/xps.html"
+
+    def handle(self, request, *args, **kwargs):
+        course = Course.objects.get(pk=kwargs['course_id'])
+        student = Student.objects.get(pk=kwargs['id'])
+        if course and not user_authorized_to_course(request.user, course):
+            raise Exception(u"User is not authorized")
+        form = AddPointForm()
+        if request.method == "POST" and is_teacher(request.user):
+            form = AddPointForm(request.POST)
+            if form.is_valid():
+                form.instance.student = student
+                form.instance.course = course
+                form.instance.save()
+                return redirect(request.path)
+        xps = Point.objects.filter(course=course, student=student)
+        points_sum = xps.aggregate(Sum("points"))["points__sum"] or 0
+        context = {
+            'student': student,
+            'course': course,
+            'xps': xps,
+            'points_sum': points_sum,
+            'rating': get_rating(points_sum),
+            'form': form
         }
         return render(request, self.template_name, context)
 

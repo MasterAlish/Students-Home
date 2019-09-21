@@ -144,7 +144,7 @@ def min_length(data, req_length):
 
 @register.filter
 def get(collection, index):
-    if index in collection:
+    if collection and index in collection:
         return collection[index]
     return None
 

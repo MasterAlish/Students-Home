@@ -123,6 +123,10 @@ class QuizResultAdmin(ModelAdmin):
     list_display = ['student', 'result']
 
 
+class PointAdmin(ModelAdmin):
+    list_display = ['student', 'points', 'reason']
+
+
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Course)
 admin.site.register(StudentGroup)
@@ -147,7 +151,7 @@ admin.site.register(Todo)
 admin.site.register(MustKnowGroup)
 admin.site.register(MustKnow)
 admin.site.register(AlreadyKnow)
-admin.site.register(Point)
+admin.site.register(Point, PointAdmin)
 admin.site.register(HomeWorkSolution, HomeWorkSolutionAdmin)
 admin.site.register(Feedback, FeedbackAdmin)
 admin.site.register(Subject, SubjectAdmin)

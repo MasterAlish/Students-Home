@@ -44,7 +44,7 @@
                             <td>{{ forloop.counter }}</td>
                             <td>
                                 {{ student.user.get_full_name }}
-                                <a class="xp" href="#">{{ xp_by_students|get:student.id|default_if_none:0 }}</a><span class="xp-sign">xp</span>
+                                <a class="xp" href="{% url 'student_xps' course.id student.id %}">{{ xp_by_students|get:student.id|get:"points"|default_if_none:0 }}</a><span class="xp-sign">xp</span>
                                 {% if is_teacher %}
                                     <a href="{% url 'activity' %}?user_id={{ student.user_id }}"
                                        title="{% trans 'Посещения' %}">
@@ -55,13 +55,18 @@
                                     <span class="fa fa-check-square-o"></span>
                                 </a>
                                 <br>
-                                    <span class="last-seen">Был(а):
-                                        {% if student.user.last_seen %}
-                                            {{ student.user.last_seen|timesince }} назад
-                                        {% else %}
-                                            {% trans 'никогда' %}
-                                        {% endif %}
+                                {% with xp_by_students|get:student.id|get:"rating" as rating %}
+                                    <span class="rating">
+                                        <img src="/static/img/rating/rr{{ rating.number }}.gif"> {{ rating.title }}
                                     </span>
+                                {% endwith %}
+                                <span class="last-seen">Был(а):
+                                    {% if student.user.last_seen %}
+                                        {{ student.user.last_seen|timesince }} назад
+                                    {% else %}
+                                        {% trans 'никогда' %}
+                                    {% endif %}
+                                </span>
                             </td>
                             {% for task in tasks %}
                                 {% best_solution_of resolutions_map|resolutions_for_task:task student as best_resolution %}

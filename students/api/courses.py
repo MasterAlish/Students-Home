@@ -61,7 +61,6 @@ class MarksApi(AuthView, MarksMixin):
             tasks = course.active_tasks()
             resolutions_map = self.map_resolutions(Resolution.objects.filter(task__in=tasks))
             medals_by_students = self.get_medals_by_students(course)
-            xp_by_students = self.get_xp_by_students(course)
 
             for task_id in resolutions_map:
                 for student_id in resolutions_map[task_id]:

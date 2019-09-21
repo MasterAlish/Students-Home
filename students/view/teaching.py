@@ -11,6 +11,7 @@ from students.mail import StudentsMail
 from students.model.base import Course, Lecture, LabTask, Task, Group, Resolution, HomeWorkSolution, StudentMedal
 from students.model.blog import Article
 from students.model.checks import FileSizeConstraint
+from students.study.points import PointUtil
 from students.view.common import TeachersView, user_authorized_to_course
 from students.view.courses import GiveMedalsView
 from students.view.util import remove_file
@@ -209,6 +210,9 @@ class CheckResolutionView(TeachersView):
                         StudentsMail().inform_about_new_medal(resolution.student, medal, resolution.task.course, request)
                         messages.success(request, u"Медаль \"%s\" успешна выдана" % medal.name)
                         return redirect(reverse("check_resolution", kwargs={'id': resolution.id}))
+                    if form.cleaned_data['add_points']:
+                        point_util = PointUtil(resolution.student, resolution.task.course)
+                        point_util.add_points(u"За выполнение лабы: \"%s\"" % resolution.task.title, resolution.mark)
                     return redirect(reverse("resolutions", kwargs={'id': resolution.task.course_id}))
             context = {
                 'course': resolution.task.course,

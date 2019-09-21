@@ -1,0 +1,77 @@
+{% extends 'students/base.html' %}
+{% load staticfiles my_tags i18n %}
+{% block title %}
+    <title>{{ course.name }} {{ course.year }}</title>
+{% endblock %}
+{% block head %}
+    <script src="{% static 'js/form_controls.js' %}"></script>
+    <script>
+        addClassToInputs("this-form");
+    </script>
+    <style>
+        .xp-sign {
+            font-style: italic;
+            font-size: 12px;
+            color: rgb(66, 174, 208);
+        }
+
+        .xp {
+            font-style: italic;
+            font-size: 14px;
+            color: rgb(4, 120, 198);
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <h1>{{ course.name }}</h1>
+    <div class="lead">
+        {{ course.get_semester_display }} семестр {{ course.year }} года <br>
+        Преподаватели:
+        {% for teacher in course.teachers.all %}
+            <a href="{% url 'teacher' teacher.id %}">
+                {{ teacher.user.get_full_name }}
+            </a>
+            {% if not forloop.last %},{% endif %}
+        {% endfor %}
+    </div>
+    <div style="font-size: 18px">
+        {{ student.user.get_full_name }} <span class="xp">{{ points_sum }}</span><span class="xp-sign">xp</span>
+        <br>
+        <span class="rating">
+            <img src="/static/img/rating/rr{{ rating.number }}.gif"> {{ rating.title }}
+        </span>
+    </div>
+    <div>
+        <h5>Очки опыта: </h5>
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th>#</th>
+                <th>Дата</th>
+                <th>За что</th>
+                <th>Сколько</th>
+            </tr>
+            {% for xp in xps %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ xp.datetime|date:"d.m.Y" }}</td>
+                    <td>{{ xp.reason }}</td>
+                    <td>
+                        <span class="xp">{{ xp.points }}</span><span class="xp-sign">xp</span>
+                        {% if is_teacher %}
+                            <a style="color: red;" target="_blank" href="/admin/students/point/{{ xp.id }}/delete/">Удалить</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <h5>Добавить очки опыта</h5>
+        {% if is_teacher %}
+            <form method="post" id="this-form">
+                {% csrf_token %}
+                {{ form }}
+                <input class="btn btn-small btn-success" type="submit" value="Добавить очки опыта">
+            </form>
+        {% endif %}
+    </div>
+
+{% endblock %}

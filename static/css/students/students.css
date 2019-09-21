@@ -97,9 +97,15 @@ main {
 }
 
 .last-seen {
+    margin-left: 20px;
     font-size: 11px;
     color: grey;
     font-style: italic;
+}
+
+.rating {
+    font-size: 11px;
+    color: #005a29;
 }
 
 .long-view {

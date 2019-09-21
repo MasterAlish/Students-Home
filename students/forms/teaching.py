@@ -3,7 +3,7 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, Form
-from students.model.base import Lecture, LabTask, Task, Course, Group, Resolution, Medal, Literature
+from students.model.base import Lecture, LabTask, Task, Course, Group, Resolution, Medal, Literature, Point
 from students.model.blog import Article
 
 
@@ -33,11 +33,19 @@ class CourseForm(ModelForm):
 class CheckResolutionForm(Form):
     comment = forms.CharField(widget=CKEditorUploadingWidget(config_name="default"), label=u"Комментарий", required=False)
     mark = forms.IntegerField(label=u"Баллы", required=True)
+    add_points = forms.BooleanField(label=u"Начислить очки опыта?", required=False)
     medal = forms.ModelChoiceField(queryset=Medal.objects.all(), label=u"Медаль", required=False)
 
 
 class SelectGroupForm(Form):
     group = forms.ModelChoiceField(Group.objects.all(), label=u"Группа")
+
+
+class AddPointForm(ModelForm):
+
+    class Meta:
+        model = Point
+        exclude = ['student', 'course']
 
 
 class GroupForm(ModelForm):
