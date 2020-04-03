@@ -105,7 +105,11 @@ main {
 
 .rating {
     font-size: 11px;
-    color: #005a29;
+    color: #00395a;
+}
+
+.rating img{
+    height: 12px;
 }
 
 .long-view {
