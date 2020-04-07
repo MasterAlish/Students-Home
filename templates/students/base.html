@@ -6,10 +6,12 @@
     <meta charset="utf-8">
     <link rel="shortcut icon" href="{% static 'ico/favicon.ico' %}">
     {% block title %}
-        <title>{% trans 'Универские курсы' %}</title>
+        <title>Курсы и статьи по программированию, по Python, Java</title>
     {% endblock %}
     <meta name="keyword" content="курсы, python, лабораторки, ИВТ, политех, лабораторные работы, головоломки, Бишкек, Кыргызстан, Универские курсы">
-    <meta name="description" content="{% trans 'Универские курсы' %}">
+    {% block description %}
+        <meta name="description" content="{% trans 'Курсы по программированию. Статьи по программированию. Python, Django, Java, Компьютерная графика' %}">
+    {% endblock %}
     <script src="{% static 'js/students/jquery-2.1.1.js' %}" type="application/javascript"></script>
     <script src="{% static 'js/students/utils.js' %}"></script>
     <script src="{% static 'bootstrap/js/bootstrap.js' %}"></script>

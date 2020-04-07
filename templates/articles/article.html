@@ -1,7 +1,10 @@
 {% extends 'students/base.html' %}
 {% load staticfiles %}
 {% block title %}
-    <title>{{ article.title }}</title>
+    <title>{% if article.course.subject %}{{ article.course.subject.name }}. {% endif %}{{ article.title }}</title>
+{% endblock %}
+{% block description %}
+    <meta name="description" content="{{ article.preview|striptags|safe|truncatewords:30 }}"/>
 {% endblock %}
 {% block head %}
     <link rel="stylesheet" href="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/styles/monokai.css' %}"/>
