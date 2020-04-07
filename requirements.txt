@@ -11,3 +11,6 @@ html2text
 django-polymorphic
 requests==2.13.0
 lxml==3.7.2
+django-pipeline==1.7.0
+jsmin==2.2.2
+cssmin==0.2.0

@@ -26,7 +26,7 @@ from students.view.teaching import LectureFormView, LectureActionView, LabTaskFo
     CheckResolutionView, HomeworksView, HomeworkView
 from students.view.todo import TodoActView
 
-handler500 = 'students.view.main.on_error'
+# handler500 = 'students.view.main.on_error'
 handler404 = 'students.view.main.on_not_found'
 
 urlpatterns = [

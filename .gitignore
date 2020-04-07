@@ -20,6 +20,7 @@ lib64/
 parts/
 sdist/
 media/
+collected_static/
 var/
 *.egg-info/
 .installed.cfg
@@ -63,3 +64,4 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+

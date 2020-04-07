@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'pipeline',
     'ckeditor',
     'ckeditor_uploader',
     'students',
@@ -85,7 +86,6 @@ TEMPLATES = [
         }
     },
 ]
-
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
@@ -209,16 +209,50 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
     os.path.join(BASE_DIR, "cooler", "static"),
 ]
-STATIC_ROOT = os.path.join(BASE_DIR,
-                           "collected_static")  # to where to store static files. better do it with proxy server
+STATIC_ROOT = os.path.join(BASE_DIR, "collected_static")
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'pipeline.finders.PipelineFinder',
 )
+
+PIPELINE = {
+    'STYLESHEETS': {
+        'students': {
+            'source_filenames': (
+                'css/students/students1.css',
+                'css/students/font-awesome.css',
+                'bootstrap/css/bootstrap.css',
+                'css/bootstrap-datepicker3.min.css'
+            ),
+            'output_filename': 'css/students.css',
+            'variant': 'datauri',
+            'extra_context': {
+                'media': 'screen,projection',
+            },
+        },
+    },
+    'JAVASCRIPT': {
+        'students': {
+            'source_filenames': (
+              'js/students/jquery-2.1.1.js',
+              'js/students/utils.js',
+              'bootstrap/js/bootstrap.js',
+              'js/bootstrap-datepicker.min.js',
+              'js/bootstrap-datepicker.ru.min.js',
+            ),
+            'output_filename': 'js/students.js',
+        }
+    },
+    'JS_COMPRESSOR': 'pipeline.compressors.jsmin.JSMinCompressor',
+    'CSS_COMPRESSOR': 'pipeline.compressors.cssmin.CSSMinCompressor',
+}
 
 try:
     from local_settings import *
