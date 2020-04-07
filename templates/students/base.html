@@ -1,13 +1,14 @@
-{% load staticfiles i18n my_tags %}
-<html>
+<!doctype html>
+<html lang="ru">
 <head>
+    {% load staticfiles i18n my_tags %}
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
     <meta charset="utf-8">
     <link rel="shortcut icon" href="{% static 'ico/favicon.ico' %}">
     {% block title %}
         <title>{% trans 'Универские курсы' %}</title>
     {% endblock %}
-    <meta name="keyword" content="Универские курсы">
+    <meta name="keyword" content="курсы, python, лабораторки, ИВТ, политех, лабораторные работы, головоломки, Бишкек, Кыргызстан, Универские курсы">
     <meta name="description" content="{% trans 'Универские курсы' %}">
     <script src="{% static 'js/students/jquery-2.1.1.js' %}" type="application/javascript"></script>
     <script src="{% static 'js/students/utils.js' %}"></script>
