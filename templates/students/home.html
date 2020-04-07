@@ -17,26 +17,14 @@
     </style>
 {% endblock %}
 {% block content %}
-    {% if is_mobile %}
-        <div class="row">
-            <div class="col-sm-12 " style="text-align: center; margin-bottom: 20px;" >
-                <div style="font-size: 16px; color: #003377; margin-bottom: 10px;">Скачайте мобильное приложение для сайта! </div>
-                <a style="width: 40%; display: inline-block;" href="https://play.google.com/store/apps/details?id=ma.apps.students">
-                    <img style="width: 100%;" src="{% static 'img/google-play.png' %}">
-                </a>
-                <a style="width: 40%; display: inline-block;" href="https://play.google.com/store/apps/details?id=ma.apps.students">
-                    <img style="width: 100%;" src="{% static 'img/google-play.png' %}">
-                </a>
-            </div>
-        </div>
-    {% endif %}
-
-
     <div class="jumbotron">
-        <h1>Students Home</h1>
+        <h1>Курсы по программированию для студентов</h1>
         <p>
             На этом сайте вы будете получать лекции, лабораторные работы, проходить тесты, следить за своими
-            результатами и задавать вопросы преподавателю.
+            результатами и задавать вопросы преподавателю. Также на сайте регулярно выходят новые статьи по программированию на разные темы.
+        </p>
+        <p>
+            Основные предметы: Python, Django, Java, Компьютерная графика.
         </p>
         <p>
             {% if user.is_authenticated %}

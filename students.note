@@ -1,0 +1,7 @@
+? Hosting:
+    + jino.ru
+
+? SSL certificate:
+    + From:  https://www.sslforfree.com/certificates
+        + Login: gmail
+    + By: LetsEncrypt
