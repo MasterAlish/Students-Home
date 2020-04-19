@@ -15,7 +15,7 @@ from django.views.generic import TemplateView, View
 from students.forms.users import UserCreateForm, UserChangeForm, StudentCreateForm
 from students.mail import StudentsMail
 from students.mobile import is_mobile
-from students.model.base import Student, Teacher
+from students.model.base import Student, Teacher, AppAd
 from students.model.blog import Article
 from students.models import MyUser
 from students.view.common import is_student, is_teacher
@@ -162,6 +162,7 @@ class HomeView(TemplateView):
     def dispatch(self, request, *args, **kwargs):
         context = {
             'articles': Article.objects.filter(published=True).order_by("-datetime"),
+            'app_ad': AppAd.random(),
             'is_mobile': is_mobile(request)
         }
 

@@ -269,3 +269,37 @@ span.badge.badge-info{
 .margin-left-20{
     margin-left: 20px;
 }
+
+.app_ad {
+    border: 1px solid rgba(152, 152, 152, 0.09);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.app_ad .app_ad_img {
+    width: 56px;
+    height: 56px;
+    margin: 8px;
+    float: left;
+    border-radius: 8px;
+}
+
+.app_ad .app_ad_info {
+    margin-top: 16px;
+}
+
+.app_ad .app_ad_title {
+    font-weight: bold;
+}
+
+.app_ad .app_ad_subtitle {
+    color: rgb(112, 112, 112);
+    font-size: 12px;
+}
+
+.app_ad .app_ad_arrow {
+    float: right;
+    margin-top: 23px;
+    margin-right: 16px;
+}

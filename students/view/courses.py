@@ -19,7 +19,7 @@ from students.forms.courses import FileResolutionUploadForm, EmailForm, MedalFor
 from students.forms.teaching import GroupForm, SelectGroupForm, LiteratureForm, AddPointForm
 from students.mail import StudentsMail
 from students.model.base import Course, Lecture, Group, StudentMedal, LabTask, Resolution, Task, \
-    GroupMock, Point, Student, Teacher, Literature, MustKnow, AlreadyKnow, MustKnowGroup
+    GroupMock, Point, Student, Teacher, Literature, MustKnow, AlreadyKnow, MustKnowGroup, AppAd
 from students.model.blog import Article
 from students.model.checks import ZipContainsFileConstraint, FileNameConstraint
 from students.models import MyUser
@@ -45,6 +45,7 @@ class CourseView(StudentsAndTeachersView):
         course = Course.objects.get(pk=kwargs['id'])
         if user_authorized_to_course(request.user, course):
             self.context['course'] = course
+            self.context['app_ad'] = AppAd.random()
             exclude_articles = Article.objects.filter(private=True).exclude(course=course)
             if course.subject:
                 self.context['articles'] = course.subject.all_articles().exclude(pk__in=exclude_articles)

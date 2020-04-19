@@ -33,6 +33,17 @@
             {{ article.title }}
         </h1>
         {{ article.preview|safe }}
+        {% if app_ad %}
+            <a class="app_ad hidden-lg hidden-md" href="{{ app_ad.url }}" target="_blank">
+                <img class="app_ad_img" src="{{ app_ad.icon.url }}" alt="{{ app_id.title }}">
+                <img class="app_ad_arrow" src="{% static 'img/arrow_forward.svg' %}" alt="Arrow forward">
+                <div class="app_ad_info">
+                    <div class="app_ad_title">{{ app_ad.title }}</div>
+                    <div class="app_ad_subtitle">{{ app_ad.subtitle }}</div>
+                </div>
+                <div class="clearfix"></div>
+            </a>
+        {% endif %}
         {{ article.body|safe }}
         <div class="clearfix"></div>
         {% include 'blocks/share_buttons.html' %}

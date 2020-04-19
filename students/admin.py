@@ -11,7 +11,7 @@ from students.model.base import Teacher, Student, Course, Group as StudentGroup,
     MustKnow, AlreadyKnow
 from students.model.blog import Article
 from students.model.checks import FileSizeConstraint, FileNameConstraint, ZipContainsFileConstraint, ZipFileConstraint
-from students.model.extra import Feedback
+from students.model.extra import Feedback, AppAd
 from students.models import MyUser, UserChangeForm, UserCreationForm
 
 
@@ -87,6 +87,10 @@ class FeedbackAdmin(ModelAdmin):
     ordering = ['-datetime']
 
 
+class AppAdAdmin(ModelAdmin):
+    list_display = ['title', 'subtitle']
+
+
 class FileSizeConstraintAdmin(ModelAdmin):
     list_display = ['task', 'min_size', 'max_size']
 
@@ -154,6 +158,7 @@ admin.site.register(AlreadyKnow)
 admin.site.register(Point, PointAdmin)
 admin.site.register(HomeWorkSolution, HomeWorkSolutionAdmin)
 admin.site.register(Feedback, FeedbackAdmin)
+admin.site.register(AppAd, AppAdAdmin)
 admin.site.register(Subject, SubjectAdmin)
 admin.site.register(Quiz, QuizAdmin)
 admin.site.register(QuizQuestion, QuizQuestionAdmin)

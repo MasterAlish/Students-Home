@@ -9,6 +9,7 @@ from students.forms.teaching import ArticleForm
 from students.mail import StudentsMail
 from students.model.base import Subject, Course
 from students.model.blog import Article
+from students.model.extra import AppAd
 from students.view.common import user_authorized_to_course, StudentsAndTeachersView, is_teacher
 
 
@@ -37,7 +38,10 @@ class ArticleView(TemplateView):
                 if request.user != article.author:
                     article.viewed += 1
                     article.save()
-                return render(request, self.template_name, {'article': article})
+                return render(request, self.template_name, {
+                    'article': article,
+                    'app_ad': AppAd.random()
+                })
         except:
             pass
         raise Http404()
@@ -50,6 +54,7 @@ class SubjectArticlesView(TemplateView):
         subject = Subject.objects.get(slug=kwargs['slug'])
         return render(request, self.template_name, {
             'articles': subject.public_articles(),
+            'app_ad': AppAd.random(),
             'subject': subject
         })
 
