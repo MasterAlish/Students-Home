@@ -126,7 +126,9 @@ CKEDITOR_CONFIGS = {
         'toolbarCanCollapse': False,
     },
     'article': {
-        'toolbar': [['Smiley', 'Bold', 'Italic', 'Underline', 'Strike'], ['Link', 'Unlink'], ['CodeSnippet', 'Source'], ['Image']],
+        'toolbar': [['Format', 'Font', 'FontSize'], ['Smiley', 'Bold', 'Italic', 'Underline', 'Strike'],
+                    ['TextColor', 'BGColor'],  ['Link', 'Unlink', 'Anchor'], ['CodeSnippet', 'Source'],
+                    ['Image', 'Table']],
         'height': 150,
         'width': 800,
         'toolbarCanCollapse': False,
