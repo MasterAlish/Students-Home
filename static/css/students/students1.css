@@ -156,6 +156,17 @@ main {
     max-width: 100%;
 }
 
+.articles-list article .author, article .article .author {
+    display: inline;
+}
+
+.articles-list article .article h2 {
+    font-size: 28px;
+    font-weight: 400;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 .tab {
     display: inline-block;
     width: 20px;
