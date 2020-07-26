@@ -7,6 +7,31 @@
     <meta name="description" content="{{ article.preview|striptags|safe|truncatewords:18 }}"/>
 {% endblock %}
 {% block head %}
+    <meta name='twitter:creator' content='{{ article.author.get_full_name }}'>
+    <meta property='article:author' content='{{ article.author.get_full_name }}'>
+    <meta name="twitter:title" content="{{ article.title|truncatewords:10 }}"/>
+    <meta name='twitter:url' content="{{ host }}{% url 'article' article.slug %}"/>
+    <meta name='twitter:site' content='@master_alish'/>
+    <meta name="twitter:description" content="{{ article.preview|striptags|safe|truncatewords:125 }}"/>
+    <meta name='twitter:image' content=''/>
+    <meta name='twitter:card' content='summary_large_image'/>
+
+    <meta property='article:publisher' content='https://www.facebook.com/masterAlish' />
+    <meta property="og:title" content="{{ article.title|truncatewords:10 }}"/>
+    <meta property="og:url" content="{{ host }}{% url 'article' article.slug %}"/>
+    <meta property="og:site_name" content="Students.njay.ru"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:description" content="{{ article.preview|striptags|safe|truncatewords:18 }}"/>
+    <meta property="og:image" content=""/>
+
+    <meta name="parsely-title" content="{{ article.title|truncatewords:10 }}" />
+    <meta name="parsely-link" content="{{ host }}{% url 'article' article.slug %}" />
+    <meta name="parsely-type" content="post" />
+    <meta name="parsely-image-url" content="" />
+    <meta name="parsely-pub-date" content="{{ article.datetime.date.isoformat }}" />
+    <meta name="parsely-author" content="{{ article.author.get_full_name }}" />
+    <meta name="parsely-tags" content="" />
+
     <link rel="stylesheet" href="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/styles/monokai.css' %}"/>
     <script src="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/highlight.pack.js' %}"></script>
     <style>

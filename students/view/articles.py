@@ -39,6 +39,7 @@ class ArticleView(TemplateView):
                     article.viewed += 1
                     article.save()
                 return render(request, self.template_name, {
+                    'host': '{scheme}://{host}'.format(scheme=request.scheme, host=request.get_host()),
                     'article': article,
                     'app_ad': AppAd.random()
                 })
