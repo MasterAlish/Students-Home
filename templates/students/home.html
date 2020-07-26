@@ -39,37 +39,49 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <h2>Последние статьи</h2>
-            {% for article in articles %}
-                <div class="article">
-                    <div class="article-date">{{ article.datetime|timesince }} назад</div>
-                    <div class="article-title">
-                        {% if article.course.subject.slug %}
-                            <a href="{% url 'subject' article.course.subject.slug %}">{{ article.course.subject.name }}</a> →
-                        {% endif %}
-                        <a href="{% url 'article' article.slug %}">{{ article.title }}</a>
-                    </div>
-                    <div class="article-preview">{{ article.preview|safe }}</div>
-                    <a href="{% url 'article' article.slug %}" class="btn btn-default btn-sm">Читать дальше →</a>
-                    <div class="clearfix"></div>
-                    <div class="article-data">
-                        <span class="fa fa-eye"></span> {{ article.viewed }} <span class="tab"></span>
-                        <span class="fa fa-mobile"></span> {{ article.viewed_mobile }} <span class="tab"></span>
-                        <span class="fa fa-user"></span> {{ article.author.get_full_name }}
-                    </div>
-                </div>
-                {% if forloop.counter == 2 and app_ad %}
-                    <a class="app_ad hidden-lg hidden-md" href="{{ app_ad.url }}" target="_blank">
-                        <img class="app_ad_img" src="{{ app_ad.icon.url }}" alt="{{ app_id.title }}">
-                        <img class="app_ad_arrow" src="{% static 'img/arrow_forward.svg' %}" alt="Arrow forward">
-                        <div class="app_ad_info">
-                            <div class="app_ad_title">{{ app_ad.title }}</div>
-                            <div class="app_ad_subtitle">{{ app_ad.subtitle }}</div>
+            <section class="articles-list">
+                <h2>Последние статьи</h2>
+                {% for article in articles %}
+                    <article>
+                        <div class="article">
+                            <header>
+                                <div class="article-date">
+                                    <time datetime="{{ article.datetime.date.isoformat }}" title="{{ article.datetime.date }}">
+                                        {{ article.datetime|timesince }} назад
+                                    </time>
+                                </div>
+                            </header>
+                            <div class="article-title">
+                                {% if article.course.subject.slug %}
+                                    <a href="{% url 'subject' article.course.subject.slug %}">{{ article.course.subject.name }}</a> →
+                                {% endif %}
+                                <a href="{% url 'article' article.slug %}"><h2>{{ article.title }}</h2></a>
+                            </div>
+                            <div class="article-preview">{{ article.preview|safe }}</div>
+                            <a href="{% url 'article' article.slug %}" class="btn btn-default btn-sm">Читать дальше →</a>
+                            <div class="clearfix"></div>
+                            <footer>
+                                <div class="article-data">
+                                    <span class="fa fa-eye"></span> {{ article.viewed }} <span class="tab"></span>
+                                    <span class="fa fa-mobile"></span> {{ article.viewed_mobile }} <span class="tab"></span>
+                                    <span class="fa fa-user"></span> <address class="author">{{ article.author.get_full_name }}</address>
+                                </div>
+                            </footer>
                         </div>
-                        <div class="clearfix"></div>
-                    </a>
-                {% endif %}
-            {% endfor %}
+                    </article>
+                    {% if forloop.counter == 2 and app_ad %}
+                        <a class="app_ad hidden-lg hidden-md" href="{{ app_ad.url }}" target="_blank">
+                            <img class="app_ad_img" src="{{ app_ad.icon.url }}" alt="{{ app_id.title }}">
+                            <img class="app_ad_arrow" src="{% static 'img/arrow_forward.svg' %}" alt="Arrow forward">
+                            <div class="app_ad_info">
+                                <div class="app_ad_title">{{ app_ad.title }}</div>
+                                <div class="app_ad_subtitle">{{ app_ad.subtitle }}</div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </section>
         </div>
     </div>
     <script>hljs.initHighlightingOnLoad();</script>

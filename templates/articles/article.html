@@ -7,6 +7,31 @@
     <meta name="description" content="{{ article.preview|striptags|safe|truncatewords:18 }}"/>
 {% endblock %}
 {% block head %}
+    <meta name='twitter:creator' content='{{ article.author.get_full_name }}'>
+    <meta property='article:author' content='{{ article.author.get_full_name }}'>
+    <meta name="twitter:title" content="{{ article.title|truncatewords:10 }}"/>
+    <meta name='twitter:url' content="{{ host }}{% url 'article' article.slug %}"/>
+    <meta name='twitter:site' content='@master_alish'/>
+    <meta name="twitter:description" content="{{ article.preview|striptags|safe|truncatewords:125 }}"/>
+    <meta name='twitter:image' content=''/>
+    <meta name='twitter:card' content='summary_large_image'/>
+
+    <meta property='article:publisher' content='https://www.facebook.com/masterAlish' />
+    <meta property="og:title" content="{{ article.title|truncatewords:10 }}"/>
+    <meta property="og:url" content="{{ host }}{% url 'article' article.slug %}"/>
+    <meta property="og:site_name" content="Students.njay.ru"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:description" content="{{ article.preview|striptags|safe|truncatewords:18 }}"/>
+    <meta property="og:image" content=""/>
+
+    <meta name="parsely-title" content="{{ article.title|truncatewords:10 }}" />
+    <meta name="parsely-link" content="{{ host }}{% url 'article' article.slug %}" />
+    <meta name="parsely-type" content="post" />
+    <meta name="parsely-image-url" content="" />
+    <meta name="parsely-pub-date" content="{{ article.datetime.date.isoformat }}" />
+    <meta name="parsely-author" content="{{ article.author.get_full_name }}" />
+    <meta name="parsely-tags" content="" />
+
     <link rel="stylesheet" href="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/styles/monokai.css' %}"/>
     <script src="{% static 'ckeditor/ckeditor/plugins/codesnippet/lib/highlight/highlight.pack.js' %}"></script>
     <style>
@@ -24,36 +49,44 @@
 {% endblock %}
 
 {% block content %}
-    <div class="article">
-        <div class="article-date">{{ article.datetime|timesince }} назад</div>
-        <h1 class="article-title">
-            {% if article.course.subject.slug %}
-                <a href="{% url 'subject' article.course.subject.slug %}">{{ article.course.subject.name }}</a> →
+    <article>
+        <div class="article">
+            <header>
+                <time class="article-date" datetime="{{ article.datetime.date.isoformat }}" title="{{ article.datetime.date }}">
+                    {{ article.datetime|timesince }} назад
+                </time>
+            </header>
+            <h1 class="article-title">
+                {% if article.course.subject.slug %}
+                    <a href="{% url 'subject' article.course.subject.slug %}">{{ article.course.subject.name }}</a> →
+                {% endif %}
+                {{ article.title }}
+            </h1>
+            {{ article.preview|safe }}
+            {% if app_ad %}
+                <a class="app_ad hidden-lg hidden-md" href="{{ app_ad.url }}" target="_blank">
+                    <img class="app_ad_img" src="{{ app_ad.icon.url }}" alt="{{ app_id.title }}">
+                    <img class="app_ad_arrow" src="{% static 'img/arrow_forward.svg' %}" alt="Arrow forward">
+                    <div class="app_ad_info">
+                        <div class="app_ad_title">{{ app_ad.title }}</div>
+                        <div class="app_ad_subtitle">{{ app_ad.subtitle }}</div>
+                    </div>
+                    <div class="clearfix"></div>
+                </a>
             {% endif %}
-            {{ article.title }}
-        </h1>
-        {{ article.preview|safe }}
-        {% if app_ad %}
-            <a class="app_ad hidden-lg hidden-md" href="{{ app_ad.url }}" target="_blank">
-                <img class="app_ad_img" src="{{ app_ad.icon.url }}" alt="{{ app_id.title }}">
-                <img class="app_ad_arrow" src="{% static 'img/arrow_forward.svg' %}" alt="Arrow forward">
-                <div class="app_ad_info">
-                    <div class="app_ad_title">{{ app_ad.title }}</div>
-                    <div class="app_ad_subtitle">{{ app_ad.subtitle }}</div>
+            {{ article.body|safe }}
+            <div class="clearfix"></div>
+            {% include 'blocks/share_buttons.html' %}
+            <div class="clearfix"></div>
+            <footer>
+                <div class="article-data">
+                    <span class="fa fa-eye"></span> {{ article.viewed }} <span class="tab"></span>
+                    <span class="fa fa-mobile"></span> {{ article.viewed_mobile }} <span class="tab"></span>
+                    <span class="fa fa-user"></span> <address class="author">{{ article.author.get_full_name }}</address>
                 </div>
-                <div class="clearfix"></div>
-            </a>
-        {% endif %}
-        {{ article.body|safe }}
-        <div class="clearfix"></div>
-        {% include 'blocks/share_buttons.html' %}
-        <div class="clearfix"></div>
-        <div class="article-data">
-            <span class="fa fa-eye"></span> {{ article.viewed }} <span class="tab"></span>
-            <span class="fa fa-mobile"></span> {{ article.viewed_mobile }} <span class="tab"></span>
-            <span class="fa fa-user"></span> {{ article.author.get_full_name }}
+            </footer>
+            <script>hljs.initHighlightingOnLoad();</script>
         </div>
-        <script>hljs.initHighlightingOnLoad();</script>
-    </div>
+    </article>
 {% endblock %}
 
