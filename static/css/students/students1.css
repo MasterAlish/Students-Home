@@ -132,6 +132,10 @@ main {
     margin-bottom: 10px;
 }
 
+.article .article-title h2 {
+    display: inline;
+}
+
 .article .article-title, .article .article-title a {
     font-family: 'Fira Sans', sans-serif;
     line-height: 34px;
@@ -154,6 +158,7 @@ main {
 
 .article img {
     max-width: 100%;
+    height: auto !important;
 }
 
 .articles-list article .author, article .article .author {
